@@ -86,3 +86,8 @@ markdown:
 #    - markdown-it-sup
   anchors:
     level: 2
+
+org:
+  emacs: '/usr/local/bin/emacs'
+  common: |
+          #+OPTIONS: toc:nil html-postamble:nil
