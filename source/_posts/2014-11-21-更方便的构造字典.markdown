@@ -1,0 +1,32 @@
+---
+layout: post
+title: "更方便的构造字典"
+date: 2014-11-21 17:30:31 +0800
+comments: false
+categories:
+  - Python
+---
+
+通常情况, Python的字典定义比较麻烦, key必须是字符串
+
+```python
+dict = {'a':1, 'b':2}
+```
+
+
+有更方便的方法来获得一个字典, 不需要在key的两边打引号  
+只要多定义一个函数就行
+
+```python
+def Dict(**dict):
+    return dict
+    
+dict = Dict(a=1, b=2)
+```
+
+
+然后.... Python标准库里面已经这样做了
+
+```python
+a = dict(one=1, two=2, three=3)
+```

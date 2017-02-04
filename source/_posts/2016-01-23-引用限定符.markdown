@@ -1,0 +1,107 @@
+---
+layout: post
+title: 引用限定符
+comments: false
+date: 2016-01-23 18:07:42
+tags:
+  - C++ Primer
+categories:
+  - C/C++
+---
+
+`引用限定符（reference qualifier）` 是 _C++ 11_ 新增的一个概念。
+
+用于修饰类成员函数，限制函数调用者的身份。
+
+<!--more-->
+
+{% codeblock lang:cpp 右值赋值 %}
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int main (int argc, char **argv)
+{
+  string s1, s2;
+  s1 + s2 = "wow";
+  return 0;
+}
+{% endcodeblock %}
+
+先来看这么一段奇怪的代码——给一个右值（_s1+s2_）赋值了。
+
+虽然最终 _s1 s2_ 什么都没变，但代码总归是可以运行的。
+
+引用限定符可以用来阻止这种情况的发生。
+
+## 左值限定
+
+{% codeblock lang:cpp 左值限定 %}
+#include <iostream>
+
+using namespace std;
+
+struct Test
+{
+    Test (int v) : _v (v)
+    { }
+
+    Test & lself ()
+    {
+      return *this;
+    }
+
+    Test rself ()
+    {
+      return *this;
+    }
+
+    void func () &
+    {
+      cout << _v;
+    }
+
+    int _v;
+};
+
+int main (int argc, char **argv)
+{
+  Test ins (10);
+  ins.rself ().func ();
+  return 0;
+}
+{% endcodeblock %}
+
+_func_ 函数后添加了左值限定符，这就要求调用这个函数的对象必须是左值。第 _31_ 行一个右值对象调用这个函数，是无法通过编译的。
+
+## 右值限定
+
+同理，将函数定义修改下
+
+{% codeblock lang:cpp 右值限定 %}
+void func () &&
+{
+   cout << _v;
+}
+{% endcodeblock %}
+
+就只能通过右值对象调用这个函数。如果通过左值调用，同样无法通过编译。
+
+## 重载
+
+可以提供两个版本的函数，分别对应左值和右值的情况。再给函数增加 _const_ 限定符，就可以应对所有情况了。
+
+{% codeblock lang:cpp 所有情况 %}
+void func () const &&
+{
+   cout << _v;
+}
+
+void func () const &
+{
+   cout << _v;
+}
+{% endcodeblock %}
+
+需要特别注意引用限定符和 _const_ 限定符的顺序是不能反的——_const_ 必须在前面

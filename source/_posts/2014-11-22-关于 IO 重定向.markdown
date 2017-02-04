@@ -1,0 +1,106 @@
+---
+layout: post
+title: "关于 IO 重定向"
+date: 2014-11-21 21:41:05 +0800
+comments: true
+categories:
+  - C/C++
+tags:
+  - Advanced Programming in the UNIX Environment
+---
+
+_shell_ 的 _IO_ 重定向对应到 _c_ 代码都可以看做是调用 _dup2_
+
+<!--more-->
+
+## 等效形式
+
+```bash
+from > to
+to < from
+```
+
+这两种形式的 _IO_ 重定向都等效于
+
+```c
+dup2(to, from)
+```
+
+## 等效规则
+
+1. _shell_ 解析命令是从左到右
+2. 每一个 > 或者 < 都等效于一次 _dup2_ 调用
+3. _dup2_ 调用的先后顺序, 符合 _shell_ 命令行的解析顺序
+
+## 实例一 ( _APUE exercise 3.5_ )
+
+```bash
+./a.out > outfile 2>&1
+```
+
+
+* 标准输出重定向到文件 _outfile_
+* 标准错误重定向到标准输出
+
+但实际效果我们是知道的 : 标准输出和标准错误都重定向到文件 _outfile_
+
+按照上面的 `等效形式` 和 `等效规则` 把 _IO_ 重定向部分翻译成 _c_ 代码
+
+```c
+dup2(outfile, 1);
+dup2(1, 2);	// 有的地方写成 dup2(outfile, 2), 是一样的
+```
+
+最初的时候是这样的
+
+
+{% img /images/at_init.jpg 400 %}
+
+执行了 `dup2(outfile, 1);` 后是
+
+
+
+{% img /images/after_first_call.jpg 400 %}
+
+执行了 `dup2(1, 2);` 后是
+
+
+
+{% img /images/after_second_call.jpg 400 %}
+
+最终, _3_ 文件描述符都指向了同一个文件表项
+
+## 实例二 ( _APUE exercise 3.5_ )
+
+```bash
+./a.out 2>&1 > outfile
+```
+
+这一句重定向的效果是
+
+* 标准错误的内容输出到标准输出, 打印到屏幕上
+* 原标准输出的内容输出到文件 _outfile_
+
+对应于 _c_ 代码
+
+```c
+dup2(1, 2);
+dup2(outfile, 1);   
+```
+
+还是从图来看, 最初的时候
+
+
+{% img /images/at_init.jpg 400 %}
+
+执行了 `dup2(1, 2);` 后是
+
+
+{% img /images/after_first_call_2.jpg 400 %}
+
+执行了 `dup2(outfile, 1);` 后是
+
+
+{% img /images/after_second_call_2.jpg 400 %}
+
+从图的状态可以看到, 最终的结果却是是前面讲的

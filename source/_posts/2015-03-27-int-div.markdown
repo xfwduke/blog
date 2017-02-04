@@ -1,0 +1,197 @@
+---
+layout: post
+title: "整数除法"
+date: 2015-03-27 14:55:53 +0800
+comments: false
+categories:
+  - 汇编
+tags:
+  - Professional Assembly Language
+---
+
+无符号整数除法和带符号整数除法分别对应 _div_ 和 _idiv_ 指令, 这两个指令都只有一个操作数, 格式是
+
+{% codeblock %}
+div divisor
+idiv divisor
+{% endcodeblock %}
+	
+针对不同字长的操作数, 有下列不同的组合
+
+指令后缀|除数( _divisor_ )字长|被除数 (_dividend_ )|被除数字长|商( _quotient_ )|余数( _remainder_ )
+:---:|:---:|:---:|:---:|:---:|:---:
+_b_|_8bit_|_AX_|_16bit_|_AL_|_AH_
+_w_|_16bit_|_DX:AX_|_32bit_|_AX_|_DX_
+_l_|_32bit_|_EDX:EAX_|_64bit_|_EAX_|_EDX_
+
+_divisor_ 可以是寄存器或内存中的值
+
+## 异常
+
+整数除法的异常有两类
+
+* 除 _0_ 异常
+* 商溢出异常
+
+<!--more-->
+
+### 除 _0_ 异常
+
+当除数( _divisor_ )为 _0_ 时, 执行除法指令会抛出系统异常
+
+{% codeblock %}
+.section .data
+
+.section .bss
+
+.section .text
+
+.globl _start
+
+_start:
+    xor %eax, %eax
+    xor %ebx, %ebx
+    movw $10, %ax
+    divb %bl
+
+_exit:
+    pushl $0
+    call exit{% endcodeblock %}```
+$ ./test
+Floating point exception
+```
+
+这种错误在代码中很容易写逻辑检查
+### 商溢出异常
+	
+当商结果字长大于商寄存器时, 会引发商溢出异常
+
+#### 无符号除法( 以 _divb_ 为例 )
+
+当 _dividend_ 高 _8bit_ 的值大于 _divisor_ 时, _quotient_ 的字长必定大于 _8bit_, 无法存入 _AL_ 导致商溢出
+
+当除法会导致商溢出时并不是不能计算, 而是需要对操作数做一些处理, 把原始的除法拆分
+
+{% raw %}
+$$
+\begin{equation}
+\left.\begin{alignedat}{1}
+dividend\ & = quotient \times divisor + remainder,\\
+dividend \div divisor \ & = dividend_{H} \div divisor \times 2^{8} + dividend_{L} \div divisor
+\end{alignedat}
+\right\}
+\Longrightarrow\\
+\begin{alignedat}{1}
+dividend \div divisor \ & = (quotient_{H} \times divisor + remainder_{H}) \div divisor \times 2^{8} + dividend_{L} \div divisor\\
+& = quotient_{H} \times 2^{8} + (remainder_{H} \times 2^{8} + dividend_{L}) \div divisor
+\end{alignedat}\\
+\text{令}\\
+remainder_{H} \times 2^{8} + dividend_{L} = dividend'_{L}\\
+\text{则有}\\
+dividend \div divisor = quotient_{H} \times 2^{8} + dividend'_{L} \div divisor\\
+\text{令}\\
+dividend'_{L} = quotient'_{L} \times divisor + remainder'_{L}\\
+\text{取}\\
+\begin{cases}
+\begin{alignedat}{1}
+quotient_{final} \ & = quotient_{H} \times 2^{8} + quotient'_{L},\\
+remainder_{final} \ & = remainder'_{L}
+\end{alignedat}
+\end{cases}\\
+\text{最终}\\ 
+divident = quotient_{final} \times divisor + remainder_{final}
+\end{equation}
+$$
+{% endraw %}
+	
+上面的推导看起来很复杂, 其实整个算法非常简单
+
+1. 将被除数拆分成高 _8bit_ 和 低 _8bit_ 两个数 —— 分别是高位被除数和低位被除数
+2. 将高位被除数和除数做除法运算, 得到高位商和高位余数
+3. 取 $新被除数=高位余数 \times 2^{8} + 低位被除数$
+4. 将新被除数和除数做除法运算, 得到低位商和低位余数
+5. $结果商=高位商 \times 2^{8} + 低位商$
+6. $余数=低位余数$
+
+
+{% codeblock %}
+.section .data
+output_str:
+    .asciz "%d / %d, quot = %d, remain = %d\n"
+
+.section .bss
+
+.section .text
+
+.globl _start
+
+_start:
+    xor %eax, %eax  #dividend %ax
+    xor %ebx, %ebx  #divisor %bl
+    movw $0xdd93, %ax
+    movb $0x71, %bl
+
+    cmp %bl, %ah
+    jge _extend_div
+
+_extend_div:
+    xor %edx, %edx  #to store quotient
+    pushl %eax	#store original dividend
+
+    #hight bit div
+    shrl  $8, %eax #right shift 8bit
+    movb $0, %ah
+    divb %bl
+    movb %al, %dh   #store hight bit quotient
+
+    #comprise new dividend
+    popl %ecx
+    #hight bit remaind already in %ah
+    movb %cl, %al
+    divb %bl
+    movb %al, %dl   #store low bit quotient and comprise %dx to finall quotient
+
+
+    shrl $8, %eax   #push finall remainder
+    movzx %al, %eax
+    pushl %eax
+
+    movzx %dx, %edx #push finall quotient
+    pushl %edx
+
+    movzx %bx, %ebx #push divisor
+    pushl %ebx
+
+    pushl %ecx	#push divitiend
+
+    push $output_str
+    call printf
+
+_output:
+_exit:
+    pushl $0
+    call exit
+{% endcodeblock %}
+
+这段代码即是前面算法的实现, 尝试做 $56723(0xdd93) \div {113}(0x71)$ , 不做任何处理的话肯定会出现商溢出, 因为被除数高位 _0xdd_ 比除数 _0x71_ 要大
+
+* _17_ 行比较被除数高位与除数, 判断是否需要做扩展除法
+* _24 ~ 28_ 行做高位除法
+    * _25_ 行将 _%eax_ 右移 _8bit_, 即将 _%ah_ 移动到 _%al_
+    * _26_ 行将 _%ah_ 清零, 此时 _%ax_ 即为原被除数的高 _8bit_
+    * _28_ 行将高位商暂存到 _%dh_, 因为最终需要 $\times 2^{8}$ , 所以直接存入 _%dh_, 后面和低位商(将会存入 _%dl_ )组合时, 可以省掉一次左位移 _8bit_
+    * 余数在 _%ah_ 中
+* _31 ~ 35_ 行做低位除法
+    * _31, 32_ 行将原被除数低 _8bit_ 存入 _%al_, 和 _%ah_ 的高位余数组合, 刚好构成新被除数
+    * _35_ 行将低位商存入 _%dl_
+    * 低位余数在 _%ah_ 中
+* _38 ~ 40_ 行处理最终余数, 由于最终余数(即低位余数)在 _%ah_ 中, 所以先将值右移到 _%al_, 同时扩展到 _%eax_ 存入 _stack_ —— 无法把 _8bit_ 值放入 _stack_, 所以必须做无符号扩展
+* _42, 43_ 行处理商, 同样 _%dx_ 扩展为 _%edx_
+
+#### 带符号除法
+
+对于带符号除法, 前面提到的溢出判据 `当 dividend 高 8bit 的值大于 divisor 时, quotient 的字长必定大于 8bit, 无法存入 AL 导致商溢出` 只需要修改为比较绝对值即可
+	
+所以对于整数除法是否会发生商溢出的判据是
+
+__当 _dividend_ 高半部分的绝对值大于 _divisor_ 时, 会发生商溢出__

@@ -1,0 +1,202 @@
+---
+layout: post
+title: std::function
+comments: false
+date: 2015-12-28 21:36:01
+tags:
+  - C++ Primer
+categories:
+  - C/C++
+---
+
+
+
+
+通过将可执行对象（_callable element_ 如函数）包装在 _function_ 对象中，可以实现可执行对象的复制、移动等操作[^1]
+
+[^1]:http://www.cplusplus.com/reference/functional/function/
+
+<!--more-->
+
+## 构造 _std::function_ 对象
+
+常见的可执行对象有
+* 普通函数
+* 模板函数
+* _lambda_
+* 类成员函数
+
+这些可执行对象都可以用于构造 _std::function_ 对象
+
+{% codeblock lang:cpp 各种形式 %}
+#include <functional>
+
+using namespace std;
+
+struct Test
+{
+    static int add_two_s (int a, int b)
+    {
+      return a + b;
+    }
+
+    int add_two_m (int a, int b)
+    {
+      return a + b;
+    }
+
+    int operator () (int a, int b)
+    {
+      return a + b;
+    }
+};
+
+int add_two (int a, int b)
+{
+  return a + b;
+}
+
+template<typename T1, typename T2>
+auto add_two_t (T1 a, T2 b) -> decltype (a + b)
+{
+  return a + b;
+};
+
+int main (int argc, char **argv)
+{
+  function<int (int, int)> wrap_add_two (add_two);  // 普通函数
+  function<int (int, int)> wrap_add_two_t (add_two_t<int, int>);  // 模板函数
+  function<int (int, int)> wrap_add_two_lmb = [] (int a, int b) -> int  // lambda
+  {
+      return a + b;
+  };
+  function<int (Test *, int, int)> wrap_add_two_m (&Test::add_two_m); // 成员函数
+  function<int (int, int)> wrap_add_two_s (&Test::add_two_s); //静态成员函数
+  function<int (Test *, int, int)> wrap_op (&Test::operator ());  // 操作符
+
+  wrap_add_two (1, 2);
+  wrap_add_two_t (1, 2);
+  wrap_add_two_lmb (1, 2);
+
+  Test ins;
+  wrap_add_two_m (&ins, 1, 2);
+  wrap_add_two_s (1, 2);
+  wrap_op (&ins, 1, 2);
+  return 0;
+}
+{% endcodeblock %}
+
+## _std::function::target()_
+
+这个函数在手册上的解释是
+
+{% blockquote @C++ Reference http://www.cplusplus.com/reference/functional/function/target/ %}
+__Get pointer to target__  
+
+Returns a pointer to the callable object stored in the function object.
+
+Because function is a polymorphic wrapper class, it is unaware of the static type of its target callable object, and thus the template parameter TargetType must be explicitly specified.
+
+TargetType shall match the target type, so that typeid(TargetType)==target_type(). Otherwise, the function always returns a null pointer.
+{% endblockquote %}
+    
+    
+    
+<br>
+    
+    
+要理解这个函数的工作方式，首先要搞清楚 _the callable object stored_ 到底是什么
+
+{% codeblock lang:cpp 实际是函数指针 %}
+#include <functional>
+#include <iostream>
+
+using namespace std;
+
+int add_num (int a)
+{
+  static int v = 0;
+  v += a;
+  return v;
+}
+
+int main (int argc, char **argv)
+{
+  function<int (int)> wrap_add_num (add_num);
+
+  cout << "call normal function: "<<add_num (2) << endl;
+  cout << "call std::function object: "<<wrap_add_num (3) << endl;
+  return 0;
+}
+{% endcodeblock %}
+
+{% codeblock 执行结果 %}
+call normal function: 2
+call std::function object: 5
+{% endcodeblock %}
+
+
+从代码的执行结果很容易看出这一点—— _std::function_ 对象包装的是一个函数指针——所以_std::function::targe()_ 返回的结果是 __指向函数指针的指针__
+
+{% codeblock lang:cpp 具体的调用方法 %}
+int main (int argc, char **argv)
+{
+  function<int (int)> wrap_add_num (add_num);
+
+  auto fn_ptr = *(wrap_add_num.target < int (*) (int) > ());
+  cout << fn_ptr (1) << endl << fn_ptr (2) << endl;
+  return 0;
+}
+{% endcodeblock %}
+
+代码的关键就是第 _5_ 行
+
+* _std::function::target()_ 返回一个指针的指针，需要做解引用才能得到函数指针
+* _target()_ 是个模板函数，其模板参数 _int (*) (int)_ 是一个函数指针类型——因为 _std::function_ 包装的对象是一个函数指针
+
+_target()_ 函数的实现有一段关键逻辑
+
+{% codeblock lang:cpp target() 关键逻辑的伪代码 %}
+if (typeid (TargetType) == target_type ())
+  return target;
+else
+  return null_ptr;
+{% endcodeblock %}
+
+_TargetType_ 是调用时传入的模板参数，_target_type()_ 返回被包装对象的真实类型 _ID_ ，只有在这两个类型相同时才会得到一个有效的指针
+
+这个特性导致在处理非静态的类成员函数时非常的麻烦，同时这个函数在 _C++ 11_ 中并不能正确处理 _bind_ 的返回和 _lambda_
+
+{% codeblock lang:cpp 作用于成员函数 %}
+#include <functional>
+#include <iostream>
+#include <boost/type_index.hpp>
+
+using namespace std;
+namespace bt=boost::typeindex;
+
+struct Test
+{
+    int add_two (int a, int b)
+    {
+      return a + b;
+    }
+};
+
+int main (int argc, char **argv)
+{
+  function<int (Test *, int, int)> wrap_fn (&Test::add_two);
+  auto ptr = *(wrap_fn.target < int (Test::*) (int, int) > ());
+
+  cout << bt::type_id_with_cvr<decltype (ptr)> () << endl;
+  cout << bt::type_id_with_cvr<decltype (&Test::add_two)> () << endl;
+  return 0;
+}
+{% endcodeblock %}
+
+{% codeblock 执行结果 %}
+int (Test::*)(int, int)
+int (Test::*)(int, int)
+{% endcodeblock %}
+
+从执行结果可以看到，_target()_ 返回了一个成员函数的指针——成员函数必须通过一个对象才能调用，所以得到的指针根本没法用

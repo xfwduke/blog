@@ -1,0 +1,27 @@
+---
+layout: post
+title: "减法"
+date: 2015-06-14 21:46:18 +0800
+comments: false
+categories:
+  - 汇编
+---
+
+同样有两个减法指令 `sub` 和 `dec`
+
+`dec` 对应于加法的 `inc`
+
+`sub` 则是普通的减法
+
+<!--more-->
+
+`add` 的规则几乎都适用于 `sub` —— 毕竟只要取补码, 就可以在加法与减法间随意转换
+
+对于标志位, 书中[^1]强调
+
+* 加法影响 _CF SF ZF_
+* 减法影响 _OF SF ZF_
+
+对于加法只影响 _CF_  而减法只影响 _OF_ , 实际上是因为书中将操作数都假定为无符号数, 参考 {% post_link cf-and-of CF and OF %}
+
+[^1]:《Introducetion to 64 Bit Assembly Programming for Linux and OSX》

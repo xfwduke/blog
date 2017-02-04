@@ -1,0 +1,68 @@
+title: 容器的 emplace 操作
+comments: false
+date: 2015-12-05 16:56:09
+tags:
+  - C++ Primer
+categories:
+  - C/C++
+---
+
+_C++ 11_ 中给标准容器引入了 _3_ 以 _emplace_ 开头的操作, 并和原有的操作存在对应关系
+
+* _emplace\_front_ {% raw %}$ \Longleftrightarrow ${% endraw %} _push\_front_
+* _emplace_ {% raw %}$ \Longleftrightarrow ${% endraw %} _insert_
+* _emplace\_back_ {% raw %}$ \Longleftrightarrow ${% endraw %} _push\_back_
+
+<!--more-->
+
+这些操作最终的效果都是在容器的恰当位置增加一个元素
+
+差别是 ___emplace___ __操作是直接在容器中构造元素 , 对应的 _push_ 和 _insert_ 则需要复制对象__
+
+{% codeblock emplace 示例 lang:cpp %}
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+class Test
+{
+  public:
+    Test (int a, int b) : _a (a), _b (b)
+    {
+      cout << "in constructor for (" << a << ", " << b << ")" << endl;
+    }
+
+    Test (const Test & _t)
+    {
+      cout << "in copy constructor for (" << _t._a << ", " << _t._b << ")" << endl;
+      _a = _t._a;
+      _b = _t._b;
+    }
+
+    int _a;
+    int _b;
+};
+
+int main (int argc, char **argv)
+{
+  vector<Test> tvec;
+  tvec.push_back ({1, 2});
+  tvec.emplace_back (0, 2);
+  return 0;
+}
+{% endcodeblock %}
+
+
+{% codeblock 执行结果 %}
+in constructor for (1, 2)
+in copy constructor for (1, 2)
+in constructor for (0, 2)
+in copy constructor for (1, 2)
+{% endcodeblock %}
+
+* _push\_back_ 需要一个已经构造好的对象复制到容器中, 所以代码中用了初始化列表, 而结果的第 _1, 2_ 行展示了这个过程
+
+* _emplace\_back_ 用传入的参数直接在容器中构造对象, 结果的第 _3_ 行展示了这个过程
+
+* 结果的第 _4_ 行展示了 `向 vector 容器中增加元素导致迭代器失效` 这一现象——把已有的元素复制到新的地方, 所以触发了复制构造

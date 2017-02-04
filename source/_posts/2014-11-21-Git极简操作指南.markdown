@@ -1,0 +1,258 @@
+---
+layout: post
+title: "Git极简操作指南"
+date: 2014-11-21 21:03:00 +0800
+comments: true
+categories:
+  - momo
+---
+
+
+## 环境配置
+
+* 协议 : _SSH_
+
+> 在Client机器上配置了 _/etc/hosts_  
+> _10.211.55.10		nono_  
+> 纯粹是为了使用方便
+
+<!--more-->
+
+
+## 以下各步骤只操作本地仓库
+
+
+
+### 第一步 : 获取代码
+```
+└> git clone ssh://xfwduke@nono:/home/xfwduke/test_project
+```
+_clone_ 操作会从指定的仓库获取代码  
+用上面的命令获取到的代码会放到 _test_project_ 目录下, 称为 `本地仓库`
+
+### 第二步 : 新建分支
+
+___尽可能在其他分支中做新特性开发, 保证 _master_ 分支是可以发布的稳定版本___
+
+由于 _Git_ 新建分支的代价很小, 所以 _Git_ 本身也是鼓励尽可能的多新建分支的
+
+```bash
+└> git branch 
+* master
+```
+初始的时候, 本地仓库只有一个叫做 _master_ 的分支, 并且当前分支就是 _master_ ------ _master_ 前有个 _'*'_  
+使用 _git branch_ 命令可以查看  
+
+* 仓库有哪些分支  
+* 当前工作在哪个分支
+
+```bash
+└> git branch test_branch_1
+```
+这条命令可以在当前分支上新建一个分支(__特性分支__)
+
+```bash
+└> git branch 
+* master
+  test_branch_1
+```
+马上来看看仓库的分支, 发现确实多一个叫做 _test_brach_1_ 的分支, 但当前工作分支依然是 _master_
+
+### 第三步 : 切换分支
+
+上面新建一个特性分支 _test_branch_1_ , 为了在这个分支开发, 需要执行下面这条命令
+
+```bash
+└> git checkout test_branch_1 
+Switched to branch 'test_branch_1'
+```
+再来看看仓库的分支状态
+
+```bash
+└> git branch 
+  master
+* test_branch_1
+```
+已经切换到 _test_branch_1_ 了
+
+### 第四步 : blablabla
+到这里, 已经可以在特性分支上做开发了  
+_add_ , _commit_ 操作不说了, 体验 _Git_ 玩的最多的应该就是这两个命令
+
+### 第五步 : 分支合并
+在特性分支上完成的开发, 最终需要合并到稳定分支 (如 _master_ ) 对外发布
+
+```bash
+git merge some_branch
+```
+
+这个命令的具体含义是  
+__把 _some_branch_ 合并到当前工作分支__  
+
+所以为了把 _test_branch_1_ 合并到 _master_, 需要切换到 _master_去
+
+
+## 以下各步需要和远程仓库交互
+
+
+
+_Git_ 常用在分布式多人协同的开发环境. 当完成了本地新特性开发, 需要把代码同步到远程仓库时, 团队的协同开发者可能已经提交了其他的新特性, 而这些新特性在本地仓库并不存在  
+
+假设这样一个场景
+
+* 开发者 _A_ 和 _B_ 同时从远程仓库获取代码得到了各自的本地仓库
+* _A_ 完成了自己的特性开发, 并把修改提交到了远程仓库 ------ 添加了一个文件 _add_by_A_
+* _B_ 在 _A_ 提交了代码后, 也完成了自己的开发 ------ 添加了一个文件 _add_by_B_ , 现在要把代码提交到远程仓库
+
+### 第六步 : 抓取新增修改
+
+此时 _B_ 的本地仓库并不包含 _A_ 新提交的代码, 所以首先要做的就是把新增的部分抓取下来
+
+```bash
+└> git fetch origin
+warning: no common commits
+remote: Counting objects: 3, done.
+remote: Total 3 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (3/3), done.
+From ssh://nono:/home/xfwduke/test_project
+ * [new branch]      master     -> origin/master
+```
+
+在使用 _fetch_ 命令抓取后, 看一下本地仓库的状态
+
+```bash
+└> ls -l
+total 0
+-rw-r--r-- 1 xfwduke staff 0  5 20 23:16 add_by_B
+```
+
+```bash
+└> git status
+On branch master
+Your branch and 'origin/master' have diverged,
+and have 1 and 1 different commit each, respectively.
+  (use "git pull" to merge the remote branch into yours)
+
+nothing to commit, working directory clean
+```
+可以看到, _add_by_A_ 文件并没有如期出现
+
+### 第七步 : 分支合并
+远程仓库的新增修改在抓取后存放在一个临时区域, 是不可见的. 需要做远程分支和本地分支的合并, 才能更新本地分支的状态
+
+```bash
+└> git merge origin/master 
+Merge made by the 'recursive' strategy.
+ add_by_A | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 add_by_A
+```
+
+_merge_ 操作会输出详细的合并日志. 但最直观的(在这个例子中)还是直接看下本地仓库的状态
+
+```bash
+└> ls -l
+total 0
+-rw-r--r-- 1 xfwduke staff 0  5 20 23:19 add_by_A
+-rw-r--r-- 1 xfwduke staff 0  5 20 23:16 add_by_B
+```
+
+可以看到, _add_by_A_ 文件出现了
+
+### 第八步 : 发布变更
+完成了合并操作后, 就可以向远程仓库推送(发布)所做的变更
+
+```bash
+└> git push origin master
+Counting objects: 4, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (4/4), 485 bytes | 0 bytes/s, done.
+Total 4 (delta 0), reused 0 (delta 0)
+To ssh://xfwduke@nono:/home/xfwduke/test_project
+   3b2d0ff..584f608  master -> master
+```
+
+此时, 以新开发者 _C_ 的视角来验证下所做的操作 ------ 新加入的开发者 _C_ 从获取一份代码到本地仓库, 并查看仓库状态
+
+```bash
+└> git clone ssh://xfwduke@nono:/home/xfwduke/test_project
+Cloning into 'test_project'...
+remote: Counting objects: 7, done.
+remote: Compressing objects: 100% (4/4), done.
+remote: Total 7 (delta 0), reused 0 (delta 0)
+Receiving objects: 100% (7/7), done.
+Checking connectivity... done.
+
+└> ls -l
+total 0
+-rw-r--r-- 1 xfwduke staff 0  5 20 23:29 add_by_A
+-rw-r--r-- 1 xfwduke staff 0  5 20 23:29 add_by_B
+```
+
+可以看到, _C_ 能正确的获取其他开发者提交的代码
+
+
+## 总结
+
+
+到此为止, 一个完整的 _Git_ 分布协同开发流程就算结束了  
+在这个设计场景中, 所有开发者都有权限向远程仓库提交变更 ------ 这也是 _GCS_ 开发使用的模型, 这种模型的特点是
+
+* 不存在仲裁角色来决定哪些提交申请需要合并到仓库
+* 所有开发者对远程仓库拥有同样的权限
+* 提交的代码质量, 掌握在开发者手中
+
+因此, 在 _GCS_ 的开发中, 对开发者的建议是
+
+* 执行最终的 _push_ 操作前, 需要尽可能的周密测试
+* 代码要有较强的容错性 ------ 可以不工作, 但是别崩溃
+* 尽可能降低和其他模块的耦合性
+
+### 冲突
+这个场景中的例子, 完全没有涉及到冲突及冲突解决. 冲突发生在 _merge_ 环节, 可以自己故意制造冲突试试看
+
+### 分支管理
+在本地仓库新建特性分支, 完成开发并提交代码后, 最好删除已完成的特性分支
+
+```bash
+git branch -d some_branch
+```
+
+> 这里的代码提交可以指代两种情况  
+> 1. 特性分支的代码提交到远程分支  
+> 2. 特性分支合并到了其父级分支
+
+对于不再有开发价值的特性分支, 可以强制删除
+
+```bash
+git branch -D crazy-idea
+```
+
+### 懒
+前面提到, 即使在本地仓库做开发, 也尽可能新建特性分支, 并保证 _master_ 分支的正确性. 这并不是一个强制性要求, 如果实在不喜欢, 可以跳过第二, 第四, 第五步
+
+### 懒的代价
+_Git_ 的分支管理, 让开发者能随时切换代码的状态, 投入到特定特性的开发中. 如果抛弃分支特性, 完全在 _master_ 中开发, 遇到下面的场景会非常的头疼
+
+* 完全不新建任何分支, 只在 _master_ 中开发
+* 开发进行中, _master_ 分支处于不可用(不能发布或者不能正常运行)的状态
+* 代码的其他地方突然发现严重 _BUG_, 需要紧急修复
+
+在这样的情况下, 开发者只能凭记忆(不一定是脑子, 可以是 _cp_ 出来的原始代码文件或者一个小本子)回退已经做的修改, 投入到 _BUG_ 的修复中; 等到 _BUG_ 解决, 又需要再一次逐行恢复之前的代码状态  
+
+充分利用 _Git_ 的分支特性, 应付这样的场景, 只需要少数几次的新建分支和合并操作
+
+### 其他
+_Git_ 还有很多其他的命令和特性没有在这篇文章中提到, 熟悉文中涉及到的命令就可以在 _Git_ 环境下做开发了, 但是如果想用的舒服, 想在碰到异常情况的时候不会心惊胆战, 还有很多其他的内容需要进一步学习, 如
+
+* _git reset, git rebase_ 的使用场景
+* _git log_ 的阅读
+* _.git/info/exclude_ 的配置
+
+等等
+
+## 最后
+
+_Git_ 我会用的命令其实也是一只手就数的过来, 那些看起来很高档的命令, 比如 _reset, rebase_ 什么的只能仰望, 哪位大哥有心得, 可以分享下啊
+

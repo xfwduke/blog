@@ -1,0 +1,41 @@
+---
+layout: post
+title: 引用折叠
+comments: false
+date: 2016-01-30 19:35:41
+tags:
+  - The C++ Programming Language 4th
+categories:
+  - C/C++
+---
+
+`reference collapse`——引用折叠
+
+在使用类型别名（_alias_）和模板参数的时候，会遇到引用的引用（_reference to reference_） 的情况
+
+如：
+{% codeblock lang:cpp reference to reference in alias %}
+using rr_i = int &&;
+using lr_i = int &;
+using rr_rr_i = rr_i &&;
+using lr_rr_i = rr_i &;
+using rr_lr_i = lr_i &&;
+using lr_lr_i = lr_i &;
+{% endcodeblock %}
+
+代码中 _3 ~ 6_ 行的类型最终是 _&_ 或 _&&_ 中的一个——这就是引用折叠的效果
+
+但具体是哪个呢？
+
+<!--more-->
+
+{% blockquote Bjarne Stroustrup, The C++ Programming Language 4th 7.7.3 %}
+In other words, lvalue reference always wins.
+{% endblockquote %}
+<br>
+这句简直是神总结，很容易得出结果
+
+* _rr_rr_i_ ：右值引用（_int && && {% raw %}$\rightarrow${% endraw %} int &&_）
+* _lr_rr_i_ ：左值引用（_int && & {% raw %}$\rightarrow${% endraw %} int &_）
+* _rr_lr_i_ ：左值引用（_int & && {% raw %}$\rightarrow${% endraw %} int &_）
+* _lr_lr_i_ ：左值引用（_int & & {% raw %}$\rightarrow${% endraw %} int &_）

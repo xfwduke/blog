@@ -1,0 +1,173 @@
+---
+layout: post
+title: "初窥 64bit 汇编"
+date: 2015-04-05 16:59:28 +0800
+comments: false
+categories:
+  - 汇编
+---
+
+
+前面初步学习了 _32 bit_ 环境下的汇编, 接下来需要进一步学习 _64 bit_ 汇编
+
+从 _32 bit_ 升级到 _64 bit_ 有几个明显的变化
+
+<!--more-->
+
+## 数据字长[^1]
+
+[^1]:Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 3
+
+_C declaration_ | _Intel data type_ | _GAS suffix_ | _x86-64 Size (Bytes)_
+:----:|:----:|:----:|:----:
+_char_|_Byte_|_b_|_1_
+_short_|_Word_|_w_|_2_
+_int_|_Double word_|_l_|_4_
+_unsigned int_|_Double word_|_l_|_4_
+_long int_|_Quad word_|_q_|_8_
+_unsigned long int_|_Quad word_|_q_|_8_
+_float_|_Single precision_|_s_|_4_
+_double_|_Double precision_|_d_|_8_
+_long double_|_Extended precision_|_t_|_16_指针在 _64 bit_ 环境下都是 _8 bytes_
+
+## 通用寄存器[^2]
+
+[^2]:Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 4
+
+_64 bit_ 环境下的通用寄存器主要有两个新的特性
+
+* 通用寄存器的数量从 _8_ 个增加到 _16_ 个
+* 通用寄存器字长增加到 _64 bits_
+
+通用寄存器|低 _32 bits_| 低 _16 bits_ | _8 ~ 15 bits_ | 低 _8 bits_ | 用途
+:----:|:----:|:----:|:----:|:----:|:----:
+_%rax_|_%eax_|_%ax_|_%ah_|_%al_|_Return value_
+_%rbx_|_%ebx_|_%bx_|_%bh_|_%bl_|_callee saved_
+_%rcx_|_%ecx_|_%cx_|_%ch_|_%cl_|_4th argument_
+_%rdx_|_%edx_|_%dx_|_%dh_|_%dl_|_3rd argument_
+_%rsi_|_%esi_|_%si_||_%sil_|_2nd argument_
+_%rdi_|_%edi_|_%di_||_%dil_|_1st argument_
+_%rbp_|_%ebp_|_%bp_||_%bpl_|_Callee saved_
+_%rsp_|_%esp_|_%sp_||_%spl_|_Stack pointer_
+_%r8_|_%r8d_|_%r8w_||_%r8b_|_5th argument_
+_%r9_|_%r9d_|_%r9w_||_%r9b_|_6th argument_
+_%r10_|_%r10d_|_%r10w_||_%r10b_|_Callee saved_
+_%r11_|_%r11d_|_%r11w_||_%r11b_|_Used for linking_
+_%r12_|_%r12d_|_%r12w_||_%r12b_|_Unused for C_
+_%r13_|_%r13d_|_%r13w_||_%r13b_|_Callee saved_
+_%r14_|_%r14d_|_%r14w_||_%r14b_|_Callee saved_
+_%r15_|_%r15d_|_%r15w_||_%r15b_|_Callee saved_
+
+## 状态寄存器[^3]
+
+* _flags_ —— _16 bit_ 状态寄存器
+* _eflags_ —— _32 bit_ 状态寄存器
+* _rflags_ —— _64 bit_ 状态寄存器
+
+状态寄存器可以向下兼容
+
+<table border = '1'>
+<tr>
+<th style="text-align:center"  colspan='5'>Intel x86 FLAGS register</th>
+</tr>
+<tr>
+<th style="text-align:center" >Bit #</th><th style="text-align:center" >Abbreviation</th><th style="text-align:center" >Description</th><th style="text-align:center" >Category</th>
+</tr>
+<tr>
+<th style="text-align:center"  colspan='5'>FLAGS</th>
+</tr>
+<tr><td style="text-align:center" >0</td><td style="text-align:center" >CF</td><td style="text-align:center" >Carry flag</td><td style="text-align:center" >Status</td></tr>
+<tr><td style="text-align:center" >1</td><td style="text-align:center" ></td><td style="text-align:center" >Reserved</td><td style="text-align:center" ></td></tr>
+<tr><td style="text-align:center" >2</td><td style="text-align:center" >PF</td><td style="text-align:center" >Parity flag</td><td style="text-align:center" >Status</td></tr>
+<tr><td style="text-align:center" >3</td><td style="text-align:center" ></td><td style="text-align:center" >Reserved</td><td style="text-align:center" ></td></tr>
+<tr><td style="text-align:center" >4</td><td style="text-align:center" >AF</td><td style="text-align:center" >Adjust flag</td><td style="text-align:center" >Status</td></tr>
+<tr><td style="text-align:center" >5</td><td style="text-align:center" ></td><td style="text-align:center" >Reserved</td><td style="text-align:center" ></td></tr>
+<tr><td style="text-align:center" >6</td><td style="text-align:center" >ZF</td><td style="text-align:center" >Zero flag</td><td style="text-align:center" >Status</td></tr>
+<tr><td style="text-align:center" >7</td><td style="text-align:center" >SF</td><td style="text-align:center" >Sign flag</td><td style="text-align:center" >Status</td></tr>
+<tr><td style="text-align:center" >8</td><td style="text-align:center" >TF</td><td style="text-align:center" >Trap flag (signle step)</td><td style="text-align:center" >Control</td></tr>
+<tr><td style="text-align:center" >9</td><td style="text-align:center" >IF</td><td style="text-align:center" >Interrupt enable flag</td><td style="text-align:center" >Control</td></tr>
+<tr><td style="text-align:center" >10</td><td style="text-align:center" >DF</td><td style="text-align:center" >Direction flag</td><td style="text-align:center" >Status</td></tr>
+<tr><td style="text-align:center" >11</td><td style="text-align:center" >OF</td><td style="text-align:center" >Overflow flag</td><td style="text-align:center" >Status</td></tr>
+<tr><td style="text-align:center" >12-13</td><td style="text-align:center" >IOPL</td><td style="text-align:center" >I/O privilege level (286+ only), always 1 on 8086 and 186</td><td style="text-align:center" >System</td></tr>
+<tr><td style="text-align:center" >14</td><td style="text-align:center" >NT</td><td style="text-align:center" >Netsted task flag (286+ only), always 1 on 8086 and 186</td><td style="text-align:center" >System</td></tr>
+<tr><td style="text-align:center" >15</td><td style="text-align:center" ></td><td style="text-align:center" >Reserved, always 1 on 8086 and 186, always 0 on later models</td><td style="text-align:center" ></td></tr>
+<tr><th style="text-align:center"  colspan='5'>EFLAGS</th></tr>
+<tr><td style="text-align:center" >16</td><td style="text-align:center" >RF</td><td style="text-align:center" >Resume flag (386+ only)</td><td style="text-align:center" >System</td></tr>
+<tr><td style="text-align:center" >17</td><td style="text-align:center" >VM</td><td style="text-align:center" >Virtual 8086 mode flag (386+ only)</td><td style="text-align:center" >System</td></tr>
+<tr><td style="text-align:center" >18</td><td style="text-align:center" >AC</td><td style="text-align:center" >Alignment check (486SX+ only)</td><td style="text-align:center" >System</td></tr>
+<tr><td style="text-align:center" >19</td><td style="text-align:center" >VIF</td><td style="text-align:center" >Virtual interrupt flag (Pentium+)</td><td style="text-align:center" >System</td></tr>
+<tr><td style="text-align:center" >20</td><td style="text-align:center" >VIP</td><td style="text-align:center" >Virtual interrupt pending (Pentium+)</td><td style="text-align:center" >System</td></tr>
+<tr><td style="text-align:center" >21</td><td style="text-align:center" >ID</td><td style="text-align:center" >Able to use CPUID instruction (Pentium+)</td><td style="text-align:center" >System</td></tr>
+<tr><td style="text-align:center" >22-31</td><td style="text-align:center" ></td><td style="text-align:center" >Reserved</td><td style="text-align:center" ></td></tr>
+<tr><th style="text-align:center"  colspan='5'>RFLAGS</th></tr>
+<tr><td style="text-align:center" >32-63</td><td style="text-align:center" ></td><td style="text-align:center" >Reserved</td><td style="text-align:center" ></td></tr>
+</table>
+
+
+## 函数[^4]
+
+[^4]:Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 6
+
+_64 bit_ 环境下的函数调用变化比较大
+
+* _6_ 个以及 少于 _6_ 个参数的传递不再使用栈, 改为使用寄存器
+* _call_ 指令会在栈中存入一个 _64 bits_ 的返回地址
+* 大多数函数不需要栈帧 —— 除非通用寄存器的数量无法满足函数局部变量的需求
+* 和 _AI32_ 一样, 某些寄存器被设计为 `被调用者保存 (callee-save)` —— 由被调用的函数负责保存和恢复寄存器的值 —— 对应的概念是 `调用者保存 (caller-save)`
+* Functions can access storage on the stack up to 128 bytes beyond (i.e., at a lower address than) the current value of the stack pointer. This allows some functions to store information on the stack without incrementing or decrementing the stack pointer.
+* There is no frame pointer. Instead, references to stack locations are made relative to the stack pointer. Typical functions allocate their total stack storage needs at the beginning of the call and keep the stack pointer at a fixed position.
+
+> 后面两条附上英文原文  
+> 因为没接触过, 没看懂什么意思, 等后面接触到了再回来修改
+
+### 参数传递
+
+前面提到, 在 _32 bit_ 环境下函数参数传递使用的是栈, 而在 _64 bit_ 环境下改为使用通用寄存器 (函数参数少于等于 _6_ 个时), 参数形式表格如下[^5]
+
+
+<table>
+<tr>
+<th style="text-align:center"  rowspan='2'>Argument Number</th>
+<th style="text-align:center"  colspan='4'>Operand Size (bits)</th>
+</tr>
+<tr><th style="text-align:center" >64</th><th style="text-align:center" >32</th><th style="text-align:center" >16</th><th style="text-align:center" >8</th></tr>
+<tr><td style="text-align:center" >1</td><td style="text-align:center" >%rdi</td><td style="text-align:center" >%edi</td><td style="text-align:center" >%di</td><td style="text-align:center" >%dil</td></tr>
+<tr><td style="text-align:center" >2</td><td style="text-align:center" >%rsi</td><td style="text-align:center" >%esi</td><td style="text-align:center" >%si</td><td style="text-align:center" >%sil</td></tr>
+<tr><td style="text-align:center" >3</td><td style="text-align:center" >%rdx</td><td style="text-align:center" >%edx</td><td style="text-align:center" >%dx</td><td style="text-align:center" >%dl</td></tr>
+<tr><td style="text-align:center" >4</td><td style="text-align:center" >%rcx</td><td style="text-align:center" >%ecx</td><td style="text-align:center" >%cx</td><td style="text-align:center" >%cl</td></tr>
+<tr><td style="text-align:center" >5</td><td style="text-align:center" >%r8</td><td style="text-align:center" >%r8d</td><td style="text-align:center" >%r8w</td><td style="text-align:center" >%r8b</td></tr>
+<tr><td style="text-align:center" >6</td><td style="text-align:center" >%r9</td><td style="text-align:center" >%r9d</td><td style="text-align:center" >%r9w</td><td style="text-align:center" >%r9b</td></tr>
+</table>
+
+从 _32 bit_ 汇编学到的知识来看这样的 `规定` 更像是一个 `约定` —— 汇编器并没有办法强制函数必须使用通用寄存器来传递参数, 非要使用栈也是可以的; 但是大家都遵守这个 `约定`, 这样能减少沟通的障碍, 而且寄存器的速度比内存要快的多 —— 这是我个人的理解, 先放在这里, 后面学的更详细了再回头来看对不对
+
+对于参数个数大于 _6_ 个情况, _gcc_ 的处理是前 _6_ 个参数依然使用通用寄存器, 多出来的参数使用栈
+
+### 栈帧[^6]
+
+[^6]:Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 6
+
+函数的栈帧在 _32 bit_ 环境下是一个非常重要的概念, 参考文档中非常强调 _64 bit_ 环境下函数对栈的依赖减少了 —— 因为通用寄存器更多 —— 甚至在某些情况下, 函数根本不需要栈帧
+
+但是, 可以从文档中看出 _64 bit_ 环境的汇编, 函数在栈方面并没有发生翻天覆地的变化
+
+* 如同 _32 bit_ 环境一样, 一进入函数马上把 _%rbp_ 入栈
+* 即便满足文档中 `函数可以不需要栈帧的条件` , 还是会把返回地址入栈
+
+有这两个存在, 其实也可以看做函数有自己的栈帧
+
+所以文档中强调的其实是, 由于通用寄存器增多, 函数在处理局部变量和临时数值时对栈的依赖可以有所减少 —— 但是否要使用栈, 文档中的条件也不是强制性约束, 程序员依然可以在需要的时候随意的使用栈空间
+
+## 计划
+
+以上就是 _64 bit_ 汇编的一些主要变化, 但是关于浮点操作的这里没有提及, 因为 _32 bit_ 的浮点也没怎么详细看
+
+* 接下来会以 《 _Introduction to 64 Bit Assembly Programming for Linux and OS X_ 》 为主要文档学习 _64 bit_ 汇编
+* 同时参考 《 _Professional Assembly Language_ 》 更为详细的对比 _32 bit_ 汇编
+* _64 bit_ 汇编文档的语法是 _Intel_ 语法, 所以后续的笔记总结会更为复杂 —— 会包含同一逻辑代码的 _Intel_ 版本 和 _AT & T_ 版本, 可能的情况下还会有 _64 bit_ 和 _32 bit_ 版本的对比
+
+
+
+[^5]:原书第一个参数的 _8 bit_ 形式有误
+
+[^3]:[FLAGS register](http://en.wikipedia.org/wiki/FLAGS_register)

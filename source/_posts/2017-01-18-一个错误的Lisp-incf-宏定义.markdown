@@ -1,0 +1,80 @@
+---
+layout: post
+title: 一个错误的Lisp incf 宏定义
+comments: false
+date: 2017-01-18 14:37:53
+tags:
+    - ANSI Common Lisp
+categories:
+	- Lisp
+---
+
+原书 _10.6 Generalized Rederence_ 给出了 _incf_ 宏的一个错误实现
+
+
+{% codeblock lang:Lisp 错误的实现 %}
+(defmacro our-incf (x &optional (y 1))
+  `(setf ,x (+ ,x ,y)))
+{% endcodeblock %}
+
+<!--more-->
+
+这个实现在某些情况下的结果是出乎意料的:
+
+{% codeblock lang:Lisp 执行示例 %}
+(setf lst nil)
+(our-incf (car (push 1 lst)))
+{% endcodeblock %}
+
+按上面的方法调用 _our-incf_ 宏后 _lst_ 是 _(1 2)_ ，而不是期望的 _(2)_　。
+为了弄清不正确的原因，需要用到一个辅助函数，并将 _car_ 替换为辅助函数
+
+
+{% codeblock lang:Lisp 使用辅助函数的调用 %}
+(defun my-car (lst)
+  (format t "lst=~A~%" lst)
+  (car lst))
+
+(defun (setf my-car) (val lst)
+  (format t "val=~A, lst=~A~%" val lst)
+  (setf (car lst) val))
+
+(setf lst nil)
+(our-incf (my-car (push 1 lst)))
+{% endcodeblock %}
+
+将宏调用展开后等效的表达式是
+
+{% codeblock lang:Lisp 展开等效 %}
+(SETF (MY-CAR (PUSH 1 LST)) (+ (MY-CAR (PUSH 1 LST)) 1))
+{% endcodeblock %}
+
+为了弄清内在的执行逻辑，这里的展开形式稍微做下修改
+
+{% codeblock lang:Lisp 修改后的展开 %}
+(SETF (MY-CAR (PUSH 1 LST)) (+ (MY-CAR (PUSH 2 LST)) 1))
+{% endcodeblock %}
+
+
+执行的结果是
+
+{% codeblock lang:bash 结果及输出 %}
+CL-USER> (SETF (MY-CAR (PUSH 1 LST)) (+ (MY-CAR (PUSH 2 LST)) 1))
+lst=(2 1)
+val=3, lst=(1)
+3
+CL-USER> lst
+(2 3)
+{% endcodeblock %}
+
+从结果可以推测代码的执行顺序
+
+1. 执行 _2_ 个 _push_ 操作，可以等效成 _(push 2 (push 1 lst))_
+2. 执行加法操作，这里看到的 _lst_ 是 _(2 1)_ ，并返回结果 _3_
+3. 执行 _(my-car (push 1 lst))_ ，由于闭包作用这里看到的 _lst_ 是 (1) ，所以取得的地址是 _lst_ 第 _2_ 个元素——值为 _1_ ——的地址
+4. 将 _3_ 赋值给对应的地址，最终得到 _(2 3)_
+
+
+这也就解释了最开始那个宏为什么是错误的:
+
+__宏展开后参数表达式会出现两次，由于执行有先后顺序导致闭包获得的数据版本并不一致__

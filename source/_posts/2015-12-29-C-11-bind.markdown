@@ -1,0 +1,199 @@
+---
+layout: post
+title: C++11 bind
+comments: false
+date: 2015-12-29 21:27:08
+tags: 
+  - C++ Primer
+categories:
+  - C/C++
+---
+
+_lambda_  比较适用于只在一两个地方使用的场景，如果在多个地方使用还是函数更合适。到目前为止，已经了解的函数对象有函数指针、 _std::function_ 和 仿函数，但都有不方便的地方
+
+* 无法取代有捕获的 _lambda_
+* 函数的参数个数或者顺序不满足配接器（如标准库算法）的谓词要求
+
+_bind_ 可以很好的应对这些问题，同时 _C++11_ 优化了 _bind_ 的设计，让它变得更好用
+
+<!--more-->
+
+在 {% post_link lambda C++ 的 lambda %} 中，为了找出 _vector\<string\>_ 中 {% raw %}$长度 \le N${% endraw %} 的字符串， _lambda_ 捕捉了一个局部变量——如果在同一函数中 _N_ 的值是多变的，代码就会变得非常难看
+
+* 类似的 _lambda_ 代码要写多次
+* 要定义多个表示不同长度的局部变量以供捕捉
+
+## _std::bind_ 的一般形式
+
+{% codeblock lang:cpp bind 的一般形式 %}
+auto newCallable = bind(callable, arg_list);
+{% endcodeblock %}
+
+* _callable_ 是代加工的原始函数
+* _arg_list_ 是原始函数的参数列表，按原函数定义的顺序排列
+* _newCallable_ 是得到的新可调用对象
+
+## 占位符（_placeholders_）
+
+_std::placeholders_ 名字空间下定义一系列如 __1_ __2_ 这样的占位符
+
+占位符用来处理不做值绑定的参数在新、老函数的对应关系
+
+* 占位符在 _arg_list_ 的中的顺序位置用于表示原函数的参数位置
+* 占位符的字面数字值用于表示新函数的参数位置
+
+{% codeblock lang:cpp 占位符示例 %}
+#include <functional>
+#include <iostream>
+#include <string>
+
+using namespace std;
+using namespace std::placeholders;
+
+void original_fn (string a, string b, string c)
+{
+  cout << "1st parameter = " << a << endl;
+  cout << "2nd parameter = " << b << endl;
+  cout << "3rd parameter = " << c << endl;
+}
+
+int main (int argc, char **argv)
+{
+  auto bd = bind(original_fn, "hello", _2, _1);
+  bd("word", "!");
+  return 0;
+}
+{% endcodeblock %}
+
+{% codeblock 执行结果 %}
+1st parameter = hello
+2nd parameter = !
+3rd parameter = word
+{% endcodeblock %}
+
+* _hello_ 被值绑定给了 _original_fn_ ，所以是第一个参数的值
+* 占位符 __2_ 位于 _arg_list_ 第 _2_ 个位置，表示新函数的第 _2_ 个参数对应原函数的第 _2_ 个参数
+* 占位符 __1_ 位于 _arg_list_ 第 _3_ 个位置，表示新函数的第 _1_ 个参数对应原函数的第 _3_ 个参数
+
+## 重写示例
+
+前面提到有一个 _lambda_ 实现的查找特定长度字符串的程序，用 _bind_ 实现会更优雅
+
+{% codeblock lang:cpp bind 版本 %}
+#include <functional>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <random>
+#include <algorithm>
+
+using namespace std;
+using namespace std::placeholders;
+
+void filter_N (const string s, const int N)
+{
+  if (s.length () <= N)
+    cout << s << endl;
+}
+
+int main (int argc, char **argv)
+{
+  std::random_device rd;
+  vector<string> svec;
+  for (int i = 0; i < 20; ++i)
+    svec.push_back (string (rd () % 15 + 1, 'x'));
+
+  auto filter_5 = bind (filter_N, _1, 5);
+  auto filter_10 = bind (filter_N, _1, 10);
+
+  for_each (svec.begin (), svec.end (), filter_5);
+  for_each (svec.begin (), svec.end (), filter_10);
+  return 0;
+}
+{% endcodeblock %}
+
+## 绑定引用
+
+前面一直提到 `值绑定`，这是 _bind_ 的一个默认特性——总会复制被绑定的值
+
+{% codeblock  lang:cpp 复制示例 %}
+#include <functional>
+#include <iostream>
+
+using namespace std;
+using namespace std::placeholders;
+
+struct Test
+{
+    int _v;
+
+    Test (int v) : _v (v)
+    { }
+
+    Test (const Test & c)
+    {
+      cout << "in copy" << endl;
+      _v = c._v;
+    }
+};
+
+void modify (Test & t, int m)
+{
+  t._v += m;
+}
+
+int main (int argc, char **argv)
+{
+  Test ins (5);
+  auto bdm = bind (modify, ins, _1);
+
+  cout << "shall we go" << endl;
+  bdm (3);
+  cout << ins._v << endl;
+  return 0;
+}
+{% endcodeblock %}
+
+{% codeblock 结果 %}
+in copy
+shall we go
+5
+{% endcodeblock %}
+
+代码尝试将一个 _Test_ 对象绑定到 _modify_ 函数，并修改对象的数据成员。虽然 _modify_ 的参数已经考虑到了以引用作为参数，却没有得到预期的结果
+
+为了能绑定一个对象的引用，需要使用 _std::ref_ 或 _std::cref_ 函数——同样在 _functional_ 头文件中——代码稍作修改即可
+
+{% codeblock lang:cpp patch %}
+auto bdm = bind (modify, std::ref(ins), _1);
+{% endcodeblock %}
+
+{% codeblock 结果 %}
+shall we go
+8
+{% endcodeblock %}
+
+
+## 右值引用
+
+上面没有使用 _std::ref_ 代码的结果还有个有意思的地方
+
+* 复制发生在 _bind_ 调用时
+* _modify_ 函数接受引用类型的参数
+
+直观上来看，复制出来的 _Test_ 对象只生存在 ___bind_ 完成对象复制__ 到 __这个对象的引用传递到函数内部__ 这个短暂的夹缝中。函数得到的引用指向了一个临时变量——这似乎有违常识
+
+实际上这是一个非常重要的概念——{% post_link 右值引用 右值引用 %}
+
+{% codeblock lang:cpp bind 原型 %}
+template <class Fn, class... Args>
+  /* unspecified */ bind (Fn&& fn, Args&&... args);
+  
+template <class Ret, class Fn, class... Args>
+  /* unspecified */ bind (Fn&& fn, Args&&... args);
+{% endcodeblock %}
+
+这里出现的一个没见过的符号：_&&_ 就是专用于右值引用的
+
+
+

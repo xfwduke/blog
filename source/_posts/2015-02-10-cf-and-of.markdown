@@ -1,0 +1,52 @@
+---
+layout: post
+title: "CF and OF"
+date: 2015-02-10 18:58:56 +0800
+comments: false
+categories:
+  - 汇编
+tags: 
+  - Professional Assembly Language
+---
+
+[The CARRY flag and OVERFLOW flag in binary arithmetic](http://teaching.idallen.com/dat2343/10f/notes/040_overflow.txt)
+
+刚开始学汇编接触到 _CF_ 和 _OF_ 时陷入了一个误区 —— 想只使用 _CF_ 和 _OF_ 的状态来判断运算结果是否正确 —— 这实际上是不可行的
+
+<!--more-->
+
+## 何时置位 ( _turned on_ )
+
+_CPU_ 做数值运算时不会也不能关心数值的具体含义, 它只会根据固定的规则在合适的时候将 _CF_ 和 _OF turned on_
+
+### _CF_
+
+最高位 ( _leftmost_ ) 处发生进位/借位时 _CF turned on_
+
+
+### _OF_
+
+溢出位的规则相对复杂 —— 先只考虑加法
+
+* 源操作数的符号位 ( _sign bit_ ) 相同
+* 结果数的符号位与源操作数的符号位不同
+
+当满足上面两个条件时 _OF turned on_
+
+翻译成更容易理解的规则即是 : 两个正数相加结果为负或者两个负数相加结果为正时 _OF turned on_ —— _APU_ 做数值运算时并没有正负的概念, 只看 _sign bit_ 的值. 但是人阅读代码时, 可以代入正负的概念易于理解
+
+对于减法的情况, 可以取反第二个操作转化为加法套用上面的规则
+
+## 以 _CF OF_ 作为判据
+
+{% codeblock %}
+In unsigned arithmetic, watch the carry flag to detect errors.
+In unsigned arithmetic, the overflow flag tells you nothing interesting.
+
+In signed arithmetic, watch the overflow flag to detect errors.
+In signed arithmetic, the carry flag tells you nothing interesting.
+{% endcodeblock %}
+
+这是开头处参考引文给出的明确定义
+
+所以 _APU_ 无法直接使用 _CF OF_ 作为结果判据 —— 只有在阅读代码的时候人主观的设定操作是无符号数还是有符号数, 或者在代码中加入类似的逻辑

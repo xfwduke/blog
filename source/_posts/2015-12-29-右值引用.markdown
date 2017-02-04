@@ -1,0 +1,284 @@
+---
+layout: post
+title: 右值引用
+comments: false
+date: 2015-12-29 23:16:01
+tags: 
+  - C++ Primer
+categories:
+  - C/C++
+---
+
+`右值引用`（_rvalue reference_）是 _C++ 11_ 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是[^1]
+
+* 实现移动语义（_move semantics_）——主要是为了性能
+* 完美转发（_perfect forwarding_）——主要用于参数传递
+
+[^1]:[https://zh.wikipedia.org/wiki/右值引用](https://zh.wikipedia.org/wiki/右值引用)
+
+<!--more-->
+
+目前接触到的使用了右值引用的代码大多是和类、模板有关，很少用在普通函数，但以普通函数为起点来了解右值引用会让问题变得更简单。同时，右值引用的定义更多的出现在函数的参数定义中，很少有在代码中直接定义出一个右值引用对象的
+
+## 重载普通函数
+
+{% codeblock lang:cpp 没什么意义的示例 %}
+#include <iostream>
+
+using namespace std;
+
+int fn (int & a)
+{
+  return ++a;
+}
+
+int main (int argc, char **argv)
+{
+  int a = 1;
+  cout << fn (a) << endl;
+  return 0;
+}
+{% endcodeblock %}
+
+函数 _fn_ 是 _C++_ 常用的一类范式——传入一个引用，在函数内修改对象的值。但换一种调用方式
+
+{% codeblock lang:cpp 无法编译的调用方式 %}
+fn(1);
+{% endcodeblock %}
+
+就无法正常编译，因为 _1_ 是个右值，不能以引用方式传入函数，为了通过编译就需要把函数形参改为 _const int &_，这样又不能修改对象的值了
+
+为了解决这个问题，可以重载 _fn_
+
+{% codeblock lang:cpp 右值引用重载 %}
+int fn (int && a)
+{
+  return ++a;
+}
+{% endcodeblock %}
+
+这样两种调用情况都正常了。函数有形参是右值引用和左值引用两个版本，分别对应实参是左值和右值的场景，少重载一个，都会造成无法编译——这一点和后面会提到的用于模板函数的情况不同
+
+## 移动语义
+
+在最开始要强调的是
+
+* _std::move_ 在实现移动语义是会用到，但这个函数只是返回一个左值对象的右值引用
+* 最终的 __移动__ ，是要自己写代码实现的
+
+首先提出这两点是因为在看书的时候被 _std::move_ 这个名字迷惑了很长时间
+
+通过一个例子来直观的看下什么叫移动[^2]
+
+{% codeblock lang:cpp 复制构造 %}
+X foo();
+X x;
+x = foo();
+{% endcodeblock %}
+
+参考文档[^2]中，这一小段代码是结合 _swap_ 来解释的。但感觉换一种理解方式能让移动语义更加清晰
+
+关键是第 _3_ 行——函数 _foo_ 返回一个 _X_ 类型对象赋值给实例 _x_
+
+* _foo_ 返回一个临时对象
+* 在传统的（没有移动语义）的类中，赋值给 _x_ 实际会调用复制构造，将临时对象复制给 _x_
+
+这里的重点是： _foo_ 返回的临时对象仅仅用于复制构造，然后就被析构了。既然这个临时对象在以后的代码中不可能被用到，那么如果能在赋值操作中直接窃取这个临时对象的所有资源给实例 _x_ ，就能省掉复制构造过程
+
+这就是移动语义——将一个对象（通常是临时对象）的资源移动给另一个对象（通常是左值）
+
+[^2]:[Rvalue References Explained - Move Semantics @Thomas Becker](http://thbecker.net/articles/rvalue_references/section_02.html)
+
+### 实现移动
+
+实现移动的关键就是资源窃取，如何窃取有很多种方法。参考文档[^3]中使用了 _swap_，这并不是太好，所以准备用另一种方式实现[^4]
+
+[^3]:[Rvalue References Explained - Forcing Move Semantics @Thomas Becker](http://thbecker.net/articles/rvalue_references/section_04.html)
+[^4]:《C++ Primer 5th》- 13.6.2
+
+{% codeblock lang:cpp 实现移动 %}
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+struct Test
+{
+    Test (int size, int va) : _size (size)
+    {
+      ptr = new int[_size];
+      for_each (ptr, ptr + _size, [=] (int & v)
+      {
+          v = va;
+      });
+    }
+
+    Test (Test && t)
+    {
+      if (this != &t)
+      {
+        free ();
+        ptr = t.ptr;
+        _size = t._size;
+        t._size = 0;
+        t.ptr = nullptr;
+      }
+    }
+
+    Test & operator = (Test && t)
+    {
+      if (this != &t)
+      {
+        free ();
+        ptr = t.ptr;
+        _size = t._size;
+        t._size = 0;
+        t.ptr = nullptr;
+      }
+      return *this;
+    }
+
+    ~Test ()
+    {
+      free ();
+    }
+
+    void free ()
+    {
+      _size = 0;
+      delete[] ptr;
+    }
+
+    int *ptr;
+    int _size;
+};
+{% endcodeblock %}
+
+* 窃取前，先将目标对象（等号右边）的资源回收
+* 通过修改指针 _Test::ptr_ 的值来实现资源窃取
+* 窃取后，将源对象（等号右边）的指针置空。这一步是必须的，因为临时对象马上会被析构，若不修改指针的值，则资源依然会被回收
+* 移动构造必须判断源和目标对象是否相同，否则会错误的将资源回收
+
+
+### 强制移动
+
+上面的代码没有实现普通的复制构造函数，所以将一个左值对象赋值给另一个对象是无法编译的
+
+{% codeblock lang:cpp 无法编译 %}
+Test ins_a (10, 4);
+Test ins_b (12, 7);
+ins_a = ins_b;
+{% endcodeblock %}
+
+{% codeblock clang++ 编译报错 %}
+error: object of type 'Test' cannot be assigned because its copy assignment operator is implicitly deleted
+note: copy assignment operator is implicitly deleted because 'Test' has a user-declared move constructor
+{% endcodeblock %}
+
+幸运的是，_C++_ 提供了实现的办法——用 _std::move_ 获得左值对象的右值引用
+
+{% codeblock lang:cpp 用 std::move 实现强制移动 %}
+void pprint (const Test & ins)
+{
+  for_each (ins.ptr, ins.ptr + ins._size, [] (const int & v)
+  {
+      cout << v << " ";
+  });
+  cout << " @ " << ins.ptr << " [" << ins._size << "]" << endl;
+}
+
+int main (int argc, char **argv)
+{
+  Test ins_a (10, 4);
+  Test ins_b (12, 7);
+
+  cout<<"before move ins_a: ";
+  pprint (ins_a);
+  cout<<"before move ins_b: ";
+  pprint (ins_b);
+
+  ins_a = std::move (ins_b);
+
+  cout<<"after move ins_a: ";
+  pprint (ins_a);
+  cout<<"after move ins_b: ";
+  pprint (ins_b);
+  return 0;
+}
+{% endcodeblock %}
+
+{% codeblock 结果 %}
+before move ins_a: 4 4 4 4 4 4 4 4 4 4  @ 0x7f9351403280 [10]
+before move ins_b: 7 7 7 7 7 7 7 7 7 7 7 7  @ 0x7f93514032b0 [12]
+after move ins_a: 7 7 7 7 7 7 7 7 7 7 7 7  @ 0x7f93514032b0 [12]
+after move ins_b:  @ 0x0 [0]
+{% endcodeblock %}
+
+强制移动后源对象（_ins_b_）因为是左值，所以依然可以访问，但其资源已经无效。所以在强制移动后，除了对 _ins_b_ 赋值或销毁它外，不应该再使用它。[^5]
+
+### 编译器合成
+
+编译器可以自动合成移动构造函数和移动构造操作符。但具体到哪些情况下会合成，哪些不会；哪些情况下合成的是 _= delete_ 的，有一套非常复杂的规则，可以参考书中[^4]`合成移动操作`的内容
+
+需要单独列出的[^4]
+* 如果类同时定义了移动构造和复制构造，则遵循 __移动右值，拷贝左值__ 的原则
+* 如果类没有实现移动构造函数，则无论是左值还是右值都会匹配复制构造，即便使用 _std::move_ 做强制移动——在这种情况下，前面提到的强制移动后的风险当然也就不存在了
+
+[^5]:《C++ Primer 5th》- 13.6.1
+
+### 移动继承
+
+在有基类和派生类的情况下，如何正确处理移动语义是一个很有意思的问题。关键在于
+
+___Is an Rvalue Reference an Rvalue?___
+
+直接引用文中的结论[^6]
+
+一个对象是一个右值引用
+
+* 如果它有一个名字，对象本身是左值
+* 否则对象本身是右值 
+
+从上面的规则可以联想到，_std::move(ins)_ 这个表达式返回的对象是一个右值引用，而这个对象没有名字，所以这个对象本身是右值
+
+回到继承关系上来，考虑基类 _Base_ 和派生类 _Derived_ ，它们都实现了复制构造函数和移动构造函数，改怎么实现？
+
+{% codeblock lang:cpp 移动继承 %}
+class Base
+{
+    Base (const Base & rhs);
+    Base (Base && rhs);
+};
+class Derived:Base {
+    Derived(const Derived &rhs):Base(rhs){
+      //派生类特有代码
+    }
+    Derived(Derived &&rhs):Base(???){
+      //派生类特有代码
+    }
+};
+{% endcodeblock %}
+
+第 _10_ 行的 _???_ 部分怎么写
+
+从前面的讨论可以知道，_rhs_ 是一个有名字的右值引用，所以它是一个左值。
+
+如果第 _10_ 行写成
+
+{% codeblock lang:cpp 错误的写法 %}
+Derived(Derived &&rhs):Base(rhs){
+{% endcodeblock %}
+
+则会调用基类的复制构造函数，这无法实现正确的派生类移动。所以正确的写法应该是
+
+{% codeblock lang:cpp 正确的写法 %}
+Derived(Derived &&rhs):Base(std::move(rhs)){
+{% endcodeblock %}
+
+用 _std::move_ 构造出一个匿名右值引用，它本身也是一个右值。所以能匹配到基类的移动构造函数
+
+## 完美转发
+
+完美转发牵涉到 _std::forward_ ，这个目前还看不太懂，后面再补完这部分
+
+[^6]:[Rvalue References Explained - Is an Rvalue Reference an Rvalue? @Thomas Becker](http://thbecker.net/articles/rvalue_references/section_05.html)

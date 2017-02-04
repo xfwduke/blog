@@ -1,0 +1,109 @@
+---
+layout: post
+title: "加法"
+date: 2015-06-14 20:29:49 +0800
+comments: false
+categories:
+  - 汇编
+---
+
+有两个加法指令 `add` 和 `inc`
+
+`inc` 比较简单, 只有一个操作数, 作用是将操作数的值加 _1_, 并且不影响标志位 ( _rflags_ )
+
+`add` 是普通的加法操作, 带有两个操作数
+
+* 源操作数( _source operand_ ) 可以是 _32 bit_ 立即数, 内存地址 (变量) 或者寄存器
+* 目的操作数( _destination operand_ ) 可以是内存地址或者寄存器
+* 两个操作数中, 只能有一个是内存地址
+
+主要相关标志位 _OF CF SF ZF_
+
+<!--more-->
+
+## _32 bit_ 限制
+
+上面提到操作数是立即数时, 最大只能 _32 bit_
+
+当立即数超过 _32 bit_ 时, 必须先将立即数传送到寄存器中再做运算, 否则汇编器会报错
+
+这个限制并非仅仅针对 `add` —— 在 _64 bit_ 汇编中, 立即数作为操作数时, 很多时候都只支持最大 _32 bit_, 超过的时候必须使用寄存器做中转
+
+## 标志位
+
+_SF ZF_ 看下原始定义就好, 比较简单
+
+_OF CF_ 可以参考 {% post_link cf-and-of CF and OF %}
+
+需要再次强调的是, _OF CF_ 只是用来判断 `add` 后各相关位状态如何变化的, 并不能直接给出结果是否正确
+
+### _OF_ 示例
+
+{% codeblock %}
+segment .data
+
+segment .bss
+
+segment .text
+
+global _start
+
+_start:
+    mov al, 0x11
+    mov bl, 0x7E
+    add al, bl
+
+_exit:
+    mov rax, 60
+    mov rdi, 0
+    syscall
+{% endcodeblock %}
+
+执行 `add` 前
+
+* _al_ 为 _0x11 ( 0001 0001 )_
+* _bl_ 为 _0x7E ( 0111 1110 )_
+
+执行 `add` 后
+
+* _al_ 为 _0x8F ( 1000 1111 )_
+* _OF SF_ 被置位
+
+结果无疑是对的 ( 虽然在 _GDB_ 中 _print $al_ 会得到 _-113_ )
+
+### _CF_ 示例
+
+{% codeblock %}
+.section .data
+
+.section .bss
+
+.section .text
+
+.globl _start
+
+_start:
+    movb $0x11, %al
+    movb $0xFE, %bl
+    addb %bl, %al
+
+_exit:
+    movq $60, %rax
+    movq $0, %rdi
+    syscall
+{% endcodeblock %}
+	
+执行 `add` 前
+
+* _al_ 为 _0x11 ( 0001 0001 )_
+* _bl_ 为 _0xFE ( 1111 1110 )_
+
+执行 `add` 后
+
+* _al_ 为 _0x0F ( 0000 1111 )_
+* _CF_ 被置位
+
+以不同的方式来看待源操作数, 决定如何使用执行后的信息
+
+* 将源操作数 _0x11 0xFE_ 看做无符号数即 _17_ 和 _254_ , 则需要把 _CF_ 位添加到计算结果之前来构成最重结果 _0x10F ( 1 0000 1111 )_ 即 _271_
+* 将源操作数看做带符号数, 则 _0xFE_ 实际上是 _-2_ , _CF_ 不参与构成结果, $al = 15$ 就是最终结果

@@ -1,0 +1,97 @@
+---
+layout: post
+title: Lisp 闭包在 REPL 环境中的坑
+comments: false
+date: 2016-12-30 11:30:05
+tags:
+    - COMMON LISP - A Gentle Introduction to Symbolic Computation
+    - ANSI Common Lisp
+categories:
+	- Lisp
+---
+
+在 _sbcl_ 这样的 _REPL_ 环境中学习 _Lisp_ 非常的方便，但调试用到闭包的函数时 _REPL_ 也会带来些麻烦。
+
+<!--more-->
+
+
+{% codeblock lang:Lisp 尾递归碱基计数 %}
+(defun occurrences-helper (lst res)
+  (cond
+    ((null lst) res)
+    (t
+     (let ((obj (car lst)))
+       (if (assoc obj res)
+           (setf
+            (cdr (assoc obj res))
+            (1+ (cdr (assoc obj res))))
+           (push (cons obj 1) res))
+       (occurrences-helper (rest lst) res)))))
+
+(defun occurrences-r (lst)
+  (let ((res '((a . 0) (c . 0) (g . 0) (t . 0))))
+    (occurrences-helper lst res)))
+{% endcodeblock %}
+
+这段代码怎么看都是没有问题的，但在 _REPL_ 环境中测试的时候，前后多次的结果会累加。
+
+
+{% codeblock lang:bash REPL 环境执行结果 %}
+CL-USER> (occurrences-r '(a c g t c c g a t))
+((A . 2) (C . 3) (G . 2) (T . 2))
+CL-USER> (occurrences-r '(a c g t c c g a t))
+((A . 4) (C . 6) (G . 4) (T . 4))
+CL-USER> (occurrences-r '(a c g t c c g a t))
+((A . 6) (C . 9) (G . 6) (T . 6))
+CL-USER> (occurrences-r '(a c g t c c g a t))
+((A . 8) (C . 12) (G . 8) (T . 8))
+CL-USER> (occurrences-r '(a c g t c c g a t))
+((A . 10) (C . 15) (G . 10) (T . 10))
+{% endcodeblock %}
+
+看到这样的结果很容易想到 _occurrences-r_ 中定义的 _res_ 作为闭包引入了 _occurrences-helper_。但从代码来看，函数执行完一次后就结束了，没有让 _occurrences-helper_ 一直存在的逻辑。
+
+
+{% blockquote Paul Graham, ANS Common Lisp - 6.5 %}
+When a function refers to a variable defined outside it, it's called a free variable. A function that refers to a free lexical variable is called a closure? The variable must persist as long as the function does.
+{% endblockquote %}
+
+<br>
+
+书中对闭包的定义是这样的，有两个重点
+
+* 函数引用在外部定义的变量，成为闭包
+* 闭包的生命周期和函数相同
+
+造成前面结果累加的原因，重点就是这个生命周期相同以及 _REPL_ 的特性:
+
+__在 _Emacs + Slime_ 环境临时编译 ( _Ctrl+c+c_ ) 的函数，只要 ___REPL___ 不结束就会一直存在，所以对应的闭包也一直有效__
+
+这个问题也很容易验证，将源码文件编译成独立的可执行文件来执行多次
+
+
+{% codeblock lang:Lisp 添加一句 %}
+(format t "~&~{~S ~}" (occurrences-r '(a c g t c c g a t)))
+{% endcodeblock %}
+
+代码中添加一句函数调用然后编译为可执行文件
+
+
+{% codeblock lang:bash shell中的执行结果 %}
+└> ./chapter-3.fasl
+(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    
+└> ./chapter-3.fasl
+(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    
+└> ./chapter-3.fasl
+(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    
+└> ./chapter-3.fasl
+(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    
+└> ./chapter-3.fasl
+(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    
+└> ./chapter-3.fasl
+(A . 2) (C . 3) (G . 2) (T . 2) %
+{% endcodeblock %}
+
+<br>
+
+可以看到，脱离 _REPL_ 环境后执行结果正常了。

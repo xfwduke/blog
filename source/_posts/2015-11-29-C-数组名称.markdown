@@ -1,0 +1,56 @@
+title: C++ 数组名称
+comments: false
+date: 2015-11-29 14:27:03
+categories: 
+  - C/C++
+tags:
+  - C++ Primer
+---
+
+_C / C++_ 的数组和指针纠缠在一起, 一些概念如果不是经常使用真的是很难理清
+
+__数组名称__ 就是其中之一
+
+<!--more-->
+
+__数组名称就是指向数组首元素的指针__ 这一经常被挂在嘴边, 但在不同的场景下, 实际情况并非如此
+
+{% codeblock 代码分别输出 值 , 类型 , 长度 lang:cpp %}
+#include <iostream>
+
+using namespace std;
+
+int main (int argc, char **argv)
+{
+  int ar[] {1, 2, 3};
+  cout << ar << ":" << typeid (ar).name () << ":" << sizeof (ar) << endl;
+  cout << &ar << ":" << typeid (&ar).name () << ":" << sizeof (&ar) << endl;
+  cout << &ar[0] << ":" << typeid (&ar[0]).name () << ":" << sizeof (&ar[0]) << endl;
+  return 0;
+}
+{% endcodeblock %}
+
+{% codeblock 结果 %}
+0x7fff556286ec:A3_i:12
+0x7fff556286ec:PA3_i:8
+0x7fff556286ec:Pi:8
+{% endcodeblock %}
+
+
+
+可以看到 _ar_ 和 _&ar_ 的值是一样的, 但是类型和长度不同
+
+* _ar_ : 类型为 _int[3]_ , 长度为 _12_ , 即整个数组的长度
+* _&ar_ : 类型为 _(*)int[3]_ , 长度为 _8_ , 实际是个指向 _int[3]_ 的指针 
+
+所以在不同场景下使用数组名称的规则是这样的 (以 _int_ 数组为例)
+
+* 数组名称的类型是 _int[]_ , 其长度是数组的长度
+* 对数组名称取地址返回的结果的类型是 _(*)int[]_ , 是指向这个数组的指针
+* 对数组名称做运算(取地址操作除外) , 则数组名称返回首元素地址, 此时的类型是 _int *_
+
+
+由上面的结论还可以知道
+
+* _ar + 1_ 是将地址增加 _4_ (整型的长度)
+* _&ar + 1_ 则会将地址增加 _4 * sizeof(ar)_

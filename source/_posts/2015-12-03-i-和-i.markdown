@@ -1,0 +1,79 @@
+title: ++i 和 i++
+comments: false
+date: 2015-12-03 22:20:51
+tags:
+categories:
+  - C/C++
+---
+
+
+* 为什么 _++i_ 比 _i++_ 效率高?
+* 为什么 _++i_ 是左值而 _i++ 是右值?[^1]
+
+[^1]:[Value categories](http://en.cppreference.com/w/cpp/language/value_category)
+
+<!--more-->
+
+{% codeblock C示例 lang:c %}
+#include <stdio.h>
+int main() {
+    int i = 11;
+    printf("%d\n", ++i /*i++*/);
+    return 0;
+}
+{% endcodeblock %}
+
+## _++i_
+
+{% codeblock ++i 汇编代码 %}
+movl    $11, -4(%rbp)
+addl    $1, -4(%rbp)
+movl    -4(%rbp), %eax
+movl    %eax, %esi
+movl    $.LC0, %edi
+movl    $0, %eax
+call    printf
+{% endcodeblock %}
+
+从汇编代码看, 操作非常直接而且符合想象
+
+* 第 _1_ 行获取一块栈内存, 并赋值为 _11_——初始化 _i_
+* 第 _2_ 行直接在 _i_ 的内存处加 _1_
+* 之后处理 _printf_
+    
+## _i++_
+
+{% codeblock i++ 汇编代码 %}
+movl    $11, -4(%rbp)
+movl    -4(%rbp), %eax
+leal    1(%rax), %edx
+movl    %edx, -4(%rbp)
+movl    %eax, %esi
+movl    $.LC0, %edi
+movl    $0, %eax
+call    printf
+{% endcodeblock %}
+
+_i++_ 版本的第 _1_ 行还是初始化 _i_ , 但这之后就不一样了
+
+* 第 _2_ 行将 _i_ 的初值 _11_ 读入 _%eax_
+* 第 _3_ 行计算自增并将结果 _12_ 送往 _%edx_
+* 第 _4_ 行持久化计算结果, 写入 _i_ 所在的栈地址
+* 在做完这些后 _i_ 的初值 _11_ 并没有消失, 只是无法持久化——仅存在于寄存器中, 不再拥有内存
+* 第 _5_ 行打印 _i_ 的原初值 _11_ ——位于 _%eax_ 中
+
+## 关于效率
+
+从汇编代码的差别很容易看出 _i++_ 用了 _3_ 行代码才实现了自增操作并持久化结果, 而 _++i_ 只用了 _1_ 行
+
+说的更文艺一些的话, _i++_ 需要构造一个临时整型对象
+
+## 关于左值和右值
+
+要强调一点, 左/右值是针对表达式来说的, 不是变量——表达式的范围比变量要宽很多
+
+在上面的代码中, 表达式 _++i_ 的值是 _12_ 而 _i++_ 是 _11_
+
+从汇编代码可以看到, _i++_ 的值 _11_ 是位于寄存器中的, 当程序离开表达式的作用范围——_printf_ 语句后, _11_ 就不存在了
+
+所以 _i++_ 是右值

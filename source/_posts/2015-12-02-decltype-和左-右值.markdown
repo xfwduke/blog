@@ -1,0 +1,265 @@
+title: decltype 的规则
+comments: false
+date: 2015-12-02 22:06:01
+tags: 
+  - C++ Primer
+categories:
+  - C/C++
+---
+
+{% blockquote Stanley B.Lippman; Josée Lajoie; Barbara E. Moo, C++ Primer 4.1.1%}
+使用关键字 _decltype_ 的时候，左值和右值也有所不同。如果表达式的求值结果是左值，_decltype_ 作用于该表达式（不是变量）得到一个引用类型。举个例子，假定 _p_ 的类型是 _int*_ ，因为解引用运算符生成左值，所以 _decltype(*p)_ 的结果是 _int&_ 。另一方面，因为取地址运算符生成右值，所以 _decltype(&p)_ 的结果是 _int**_ ，也就是说，结果是一个指向整型指针的指针。
+{% endblockquote %}      
+
+
+     
+<br>
+这一段话隐藏了太多的细节, 看起来反而更加迷惑
+
+* _decltype_ 和左值/右值紧密纠缠, 同时还会和 _auto_ 一起用于 `函数返回值后置`
+* 为了验证 _decltype_ 的工作方式, 又需要能获取表达式的类型信息
+
+所以还是有蛮多东西需要扩展学习的
+
+<!--more-->
+
+## 获取类型名称
+
+在学习和验证 _decltype_ 前, 首先得学一下怎么获取类型名称. 这对后面直观的感受 _decltype_ 的工作方式非常有好处
+
+
+
+### 使用 _C++_ 内置方法
+使用 _std::type_info_ 类和 _typeid_ 操作符可以获取表达式的类型信息
+
+{% codeblock 获取类型名称 lang:cpp %}
+#include <iostream>
+#include <typeinfo>
+
+using namespace std;
+
+class Test
+{
+
+};
+
+int main (int argc, char **argv)
+{
+  cout << "type_name[Test]: " << typeid (Test).name () << endl;
+  cout << "type_name[Test *]: " << typeid (Test *).name () << endl;
+  cout << "type_name[Test &]: " << typeid (Test &).name () << endl;
+
+  cout << "type_name[int]: " << typeid (int).name () << endl;
+  cout << "type_name[int *]: " << typeid (int *).name () << endl;
+  cout << "type_name[int &]: " << typeid (int &).name () << endl;
+  return 0;
+}
+{% endcodeblock %}
+
+{% codeblock 执行结果 %}
+type_name[Test]: 4Test
+type_name[Test *]: 4Test
+type_name[Test &]: P4Test
+type_name[int]: i
+type_name[int *]: Pi
+type_name[int &]: i
+{% endcodeblock %}
+
+从结果可以看到, 能够勉强获得表达式的类型, 虽然不够直观但至少有
+
+但还是存在问题——获取 _reference_ 类型名称的输出还是原始的类型名称, 从结果无法分辨表达的类型到底是一个引用还是一个对象——这其实是 _C++_ 的问题[^1]
+[^1]:[Stack Overflow : typeid doesn't return correct type](http://stackoverflow.com/questions/5151875/typeid-doesnt-return-correct-type)
+
+{% blockquote ISO/IEC 14882:2003 - 5.2.8 / 4%}
+When typeid is applied to a type-id, the result refers to a type_info object representing the type of the type-id
+{% endblockquote %}
+
+### 使用 _Boost::type_index_ 类
+
+_Boost_ 提供了一套更好的模板来获得表达式的类型名称[^1]
+
+{% codeblock 使用 Boost::type_index lang:cpp %}
+#include <iostream>
+#include <boost/type_index.hpp>
+
+using namespace std;
+namespace bt = boost::typeindex;
+
+class Test
+{
+
+};
+
+int main (int argc, char **argv)
+{
+
+  cout << "type name[Test]: " << bt::type_id_with_cvr<Test> ().pretty_name () << endl;
+  cout << "type name[Test *]: " << bt::type_id_with_cvr<Test *> ().pretty_name () << endl;
+  cout << "type name[Test &]: " << bt::type_id_with_cvr<Test &> ().pretty_name () << endl;
+  cout << "type name[int]: " << bt::type_id_with_cvr<int> ().pretty_name () << endl;
+  cout << "type name[int *]: " << bt::type_id_with_cvr<int &> ().pretty_name () << endl;
+  cout << "type name[int &]: " << bt::type_id_with_cvr<int &> ().pretty_name () << endl;
+  return 0;
+}
+{% endcodeblock %}
+
+{% codeblock 执行结果 %}
+type name[Test]: Test
+type name[Test *]: Test*
+type name[Test &]: Test&
+type name[int]: int
+type name[int *]: int&
+type name[int &]: int&
+{% endcodeblock %}
+
+可以看到, 使用 _Boost_ 的输出不仅准确而且可读性更高
+
+## 左值/右值
+
+左值与右值都是针对表达式
+
+简单来说[^2]
+[^2]:[Lvalues and Rvalues (Visual C++)](https://msdn.microsoft.com/en-us/library/f90831hc.aspx)
+
+* 左值在表达式执行后还能持久存在
+* 右值在表达式执行后不能持久存在
+
+这样的定义是非常不严谨的, 虽然大部分时间够用. 更详细的定义可以参考 [Value categories](http://en.cppreference.com/w/cpp/language/value_category) 和 [值 (计算机科学)](https://zh.wikipedia.org/wiki/值_(電腦科學))
+
+### 字面字符串 _(string literal)_
+
+{% codeblock 字面字符串 lang:cpp %}
+const char *str = "hello";
+{% endcodeblock %}
+
+上面代码中的 _hello_ 就是一个字面字符串, 又叫做 `字面字符串常量`
+
+`字面值都是右值, 但字面字符串除外——它是左值`
+
+从 `表达式是否拥有自己的内存` 来看就比较好理解
+
+{% codeblock 字面值左/右值 lang:c %}
+#include <stdio.h>
+int main() {
+    int a = 10;
+    char *str = "hello";
+    return 0;
+}
+{% endcodeblock %}
+
+{% codeblock 汇编代码 %}
+        .file   "test.c"
+        .section        .rodata
+.LC0:
+        .string "hello"
+        .text
+        .globl  main
+        .type   main, @function
+main:
+.LFB0:
+        .cfi_startproc
+        pushq   %rbp
+        .cfi_def_cfa_offset 16
+        .cfi_offset 6, -16
+        movq    %rsp, %rbp
+        .cfi_def_cfa_register 6
+        movl    $10, -12(%rbp)
+        movq    $.LC0, -8(%rbp)
+        movl    $0, %eax
+        popq    %rbp
+        .cfi_def_cfa 7, 8
+        ret
+        .cfi_endproc
+.LFE0:
+        .size   main, .-main
+        .ident  "GCC: (Ubuntu 4.9.2-10ubuntu13) 4.9.2"
+        .section        .note.GNU-stack,"",@progbits
+{% endcodeblock %}
+
+汇编代码的第 _16, 17_ 行分别是给 _int a_ 和 _char *str_ 赋值, 有明显的差别
+
+* 整型字面值 _10_ 是一个立即数, 执行完这一行就不存在了——不要和数值 _10_ 搞混了——这里是指 _C_ 代码第 _3_ 行中的 _10_ 这个整型字面值表达式
+* _char *str_ 的初始化用到了 _.LC0_ 标签, 在汇编语言中标签指向了一块内存地址——在程序加载时会做内存映射构造出来, 所以这块内存是持久存在的——_hello_ 这个字符串字面值就在这里
+
+
+
+
+## _decltype_ 的规则
+
+_decltype_ 不对表达式求值而是推导表达式的类型, 规则如下[^3]
+[^3]:[https://zh.wikipedia.org/wiki/Decltype](https://zh.wikipedia.org/wiki/Decltype)
+
+对于 _decltype(e)_
+
+* 若表达式 _e_ 为一个无括号的变量、函数参数、类成员访问, 那么返回类型即为该变量或参数或类成员在源程序中的 "声明类型"
+* 否则的话, 根据表达式的值分类 _(value categories)_ , 设 _T_ 为 _e_ 的类型
+    * 若 _e_ 是一个左值 ( _lvalue_ , 即 "可寻址值") , 则 _decltype(e)_ 将返回 _T&_
+    * 若 _e_ 是一个临终值 _(xvalue)_ , 则返回值为 _T&&_
+    * 若 _e_ 是一个纯右值 _(prvalue)_ , 则返回值为 _T_
+
+### 简单验证下
+
+要完全验证 _decltype_ 的结果非常的麻烦, 所以这里随便弄几个例子看看
+
+{% codeblock 简单验证 lang:cpp %}
+#include <iostream>
+#include <boost/type_index.hpp>
+
+using namespace std;
+namespace bt = boost::typeindex;
+
+class Test
+{
+  public:
+    int _ival;
+    static int sival;
+
+    Test (int ival) : _ival (ival)
+    { }
+
+    int get_ival () const;
+    static int get_sival ();
+};
+int Test::sival {10};
+
+int Test::get_ival () const
+{
+  return _ival;
+}
+
+int Test::get_sival ()
+{
+  return sival;
+}
+
+int main (int argc, char **argv)
+{
+  Test ins (1);
+
+  int i {0};
+
+  cout << "type name[ins]: " << bt::type_id_with_cvr<decltype (ins)> ().pretty_name () << endl;
+  cout << "type name[&ins]: " << bt::type_id_with_cvr<decltype (&ins)> ().pretty_name () << endl;
+  cout << "type name[ins._ival]: " << bt::type_id_with_cvr<decltype (ins._ival)> ().pretty_name () << endl;
+  cout << "type name[ins.get_ival()]: " << bt::type_id_with_cvr<decltype (ins.get_ival ())> ().pretty_name () << endl;
+  cout << "type name[Test::get_sival()]: " << bt::type_id_with_cvr<decltype (Test::get_sival ())> ().pretty_name () << endl;
+
+  cout << "type name[i++]: " << bt::type_id_with_cvr<decltype (i++)> ().pretty_name () << endl;
+  cout << "type name[++i]: " << bt::type_id_with_cvr<decltype (++i)> ().pretty_name () << endl;
+
+  return 0;
+}
+{% endcodeblock %}
+
+{% codeblock 结果 %}
+type name[ins]: Test
+type name[&ins]: Test*
+type name[ins._ival]: int
+type name[ins.get_ival()]: int
+type name[Test::get_sival()]: int
+type name[i++]: int
+type name[++i]: int&
+{% endcodeblock %}
+
+
+

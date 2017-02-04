@@ -1,0 +1,119 @@
+---
+layout: post
+title: "整数乘法"
+date: 2015-03-12 19:38:34 +0800
+comments: false
+categories:
+  - 汇编
+tags:
+  - Professional Assembly Language
+---
+
+无符号和带符号整数乘法需要不同的指令 
+
+* _mul_ 系列 : 无符号整数乘法
+* _imul_ 系列 : 带符号整数乘法
+
+上面两个系列的命令都用不同的后缀表示不同字长的操作数  
+
+* _b_ : _1_ 字节 ( _8 bit_ )
+* _w_ : _2_ 字节 ( _16 bit_ )
+* _l_ : _4_ 字节 ( _32 bit_ )
+
+<!--more-->
+
+## 无符号整数乘法
+
+_mul_ 的指令格式是
+
+```
+mul source
+```
+
+* _source_ 可以是 _8 bit , 16 bit , 32 bit_ 的寄存器或内存值
+* 目标操作数是隐含操作数, 对应不同字长的 _source_ 可以是 _al, ax, eax_
+* 结果操作数也是隐含的, 对应不同字长的 _source_ 可以是 _ax, eax, edx:eax_
+
+$$
+Result = Source \times Secondary\ source
+$$
+
+源操作数( _source_ )长度|目标操作数( _secondary source_ )|结果操作数( _result_ )
+:----:|:----:|:----:
+_8 bit_|_al_|_ax_
+_16 bit_|_ax_|_eax_
+_32 bit_|_eax_|_edx:eax_
+
+### 错误判定
+
+由于无符号整数乘法的结果操作数字长总是源操作字长的两倍, 所以结果总是正确的
+
+上面这句转换为数学表达式即是
+
+{% raw %}
+$$
+\mbox{当}
+\begin{cases}
+a \ge 1\\
+b \ge 1\\
+n \gt 0\\
+a, b, n 均为整数
+\end{cases}\\
+\\\mbox{有}\ 
+(2^{n} - a)\times(2^{n} - b) < 2^{2n} - 1\ \mbox{成立}
+$$
+{% endraw %}
+
+证明过程很简单, 做一个不等式运算即可
+
+{% raw %}
+$$
+\begin{alignat}{5}
+\left(2^{2n}-1\right)-\left[(2^{n} - a)\times(2^{n} - b)\right]\\\
+& \ge
+\left(2^{2n}-1\right)-\left[(2^{n} - 1)\times(2^{n} - 1)\right]\\\
+& =
+\left(2^{2n}-1\right)-(2^{n} - 1)^{2}\\
+& =
+2^{2n}-1-2^{2n}-2^{n+1}+1\\
+& =
+2^{n+1}-2=2^{n}\\
+& \gt1
+\end{alignat}
+$$
+{% endraw %}
+
+## 带符号整数乘法
+
+_imul_ 指令有 _3_ 种格式
+
+{% codeblock %}
+imul source
+imul source, destination
+imul multiplier, source, destination
+{% endcodeblock %}
+
+* 第一种格式的含义和 _mul_ 一样
+* 第二种格式的含义是 $destination = source \times destination$ —— _source_ 可以是 _16bit_ 或 _32bit_ 寄存器或内存中的值, _destination_ 必须是 _16bit_ 或 _32bit_ 通用寄存器
+* 第三种格式的含义是 $destination = source \times multiplier$ —— _multiplier_ 是立即数, _source_ 可以是 _16bit_ 或 _32bit_ 寄存器或内存中的值, _destination_ 必须是 _16bit_ 或 _32bit_ 通用寄存器
+
+## 进位与溢出
+
+乘法如何影响 _CF_ 和 _OF_ 比加法要复杂
+
+> __符号扩展__  
+> 将一个低精度数转换为一个高精度数, 如 : 将 _8bit_ 数转换为 _16bit_ , 扩展出来的位的值保持与原数的符号位相同
+### 单操作数乘法
+_mul_ 指令和 _imul_ 的单操作数格式, 有隐含的位扩展动作 —— 结果字长是源的两倍
+
+* 当结果未使用到扩展位时, _CF_ 和 _OF_ 均为 _0_
+* 当结果使用到扩展位时, 若不是一个符号扩展 —— 其实在单操作数乘法中一但使用到扩展位, 不可能是符号扩展 —— _CF_ 和 _OF_ 均为 _1_
+
+所以对于单操作数乘法, _CF_ 和 _OF_ 并不能用来判断结果是否正确 —— 其实结果肯定是正确的 —— 这两个标志位有同样的意义, 即用来判断结果是否用到扩展位
+
+### _imul_ 多操作数乘法
+
+结果超出 _destination_ 的表达范围时 _OF_ 为 _1_
+
+
+

@@ -1,0 +1,57 @@
+---
+layout: post
+title: "O_APPEND 的一次犯二测试"
+date: 2014-11-22 17:16:31 +0800
+comments: false
+categories: 
+  - C/C++
+tags:
+  - Advanced Programming in the UNIX Environment
+---
+
+在看 _APUE_ 的时候, 顺手写了个程序试试 _O_APPEND_ 在多进程时候的效果, 发现在 _FreeBSD_ 和 _Debian_ 上得到的文件不是 _2000000_ 行
+
+研究了半天还以为是 _O_APPEND_ 不能保证原子性, 还专门跑到 _StackOverFlow_ 上发了个问题. 从别人的回答里面才发现是 _open_ 文件的时候多加了个 _O_TRUNC_ 标志, 纯属犯二啊
+
+<!--more-->
+
+
+```c
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#define BUFSIZE 1024*1024*100
+#define FILE_MODE       (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
+int main()
+{
+    pid_t pid;
+    int pfd = open("data.txt", O_CREAT|O_RDWR|O_TRUNC|O_APPEND, FILE_MODE);
+    if ((pid = fork()) < 0)
+    {
+        printf("errr fork\n");
+        exit(0);
+    } else if (pid == 0)
+    {
+        int cfd = open("data.txt", O_CREAT|O_RDWR|O_TRUNC|O_APPEND, FILE_MODE);
+        for (int i = 0; i < 1000000; ++i)
+            if (write(cfd, "child\n", 6) == -1)
+            {
+                printf("err in child\n");
+                exit(0);
+            }
+
+        exit(0);
+    }
+    for (int i = 0; i < 1000000; ++i)
+        if (write(pfd, "parent\n", 7) == -1)
+        {
+            printf("error in parent\n");
+            exit(0);
+        }
+    return 0;
+}
+```
+
