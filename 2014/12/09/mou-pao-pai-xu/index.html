@@ -1,0 +1,719 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Professional Assembly Language," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="已经学了数据传送, 对比, 跳转, 交换 等指令, 用学过的来实现一个冒泡排序 代码写的和书上的有些不同, 但是参考了书上的一些东西, 如  把 %esi 用作指向元素的指针 xchg 的用法 用 _skip_xchg_ 标签来实现控制是否执行交换元素的值的操作">
+<meta name="keywords" content="Professional Assembly Language">
+<meta property="og:type" content="article">
+<meta property="og:title" content="冒泡排序">
+<meta property="og:url" content="http://blog.xfwduke.com/2014/12/09/mou-pao-pai-xu/index.html">
+<meta property="og:site_name" content="向日葵和小葵">
+<meta property="og:description" content="已经学了数据传送, 对比, 跳转, 交换 等指令, 用学过的来实现一个冒泡排序 代码写的和书上的有些不同, 但是参考了书上的一些东西, 如  把 %esi 用作指向元素的指针 xchg 的用法 用 _skip_xchg_ 标签来实现控制是否执行交换元素的值的操作">
+<meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="冒泡排序">
+<meta name="twitter:description" content="已经学了数据传送, 对比, 跳转, 交换 等指令, 用学过的来实现一个冒泡排序 代码写的和书上的有些不同, 但是参考了书上的一些东西, 如  把 %esi 用作指向元素的指针 xchg 的用法 用 _skip_xchg_ 标签来实现控制是否执行交换元素的值的操作">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> 冒泡排序 | 向日葵和小葵 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向日葵和小葵</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'U3Lc1WNac4Nz2D1EV6Sm','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                冒泡排序
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-12-09T21:38:17+08:00" content="2014-12-09">
+              2014-12-09
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/汇编/" itemprop="url" rel="index">
+                    <span itemprop="name">汇编</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>已经学了数据传送, 对比, 跳转, 交换 等指令, 用学过的来实现一个冒泡排序</p>
+<p>代码写的和书上的有些不同, 但是参考了书上的一些东西, 如</p>
+<ol>
+<li>把 <em>%esi</em> 用作指向元素的指针</li>
+<li><em>xchg</em> 的用法</li>
+<li>用 _skip_xchg_ 标签来实现控制是否执行交换元素的值的操作</li>
+</ol>
+<a id="more"></a>
+<h3 id="算法分析"><a href="#算法分析" class="headerlink" title="算法分析"></a>算法分析</h3><p>从冒泡排序的算法可以知道它包含两层循环</p>
+<ul>
+<li>内层循环负责把最大值下沉到序列末端</li>
+<li>外层循环负责在未下沉序列中迭代调用内层循环</li>
+</ul>
+<p>所以算法的大体结构是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">迭代循环</div><div class="line">	下沉逻辑</div></pre></td></tr></table></figure>
+<h3 id="单次下沉"><a href="#单次下沉" class="headerlink" title="单次下沉"></a>单次下沉</h3><p>把序列想象成一个从左到右的序列, 每次循环都是从左向右处理每个元素</p>
+<p>排序最核心的, 就是把最大值下沉到序列末端</p>
+<p>对于包含 <em>N</em> 个数的序列, 依次比较相邻两个数的大小, 如果右边的值比左边的大则交换其值, 这样遍历整个序列后最大值就在序列最右端 ( 末端 )</p>
+<figure class="highlight plain"><figcaption><span>单次下沉</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">list:</div><div class="line">    .long 22, 17, 5, 8, 93, 145, 62, 555, 908, 0, 7</div><div class="line">CNT:</div><div class="line">    .long 11</div><div class="line"></div><div class="line">.section .text</div><div class="line">.globl _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    movl $list, %edi</div><div class="line">    movl $1, %ebx</div><div class="line">_single_bubble:</div><div class="line">    movl (%edi), %eax</div><div class="line">    cmpl %eax, 4(%edi)</div><div class="line">    jge _skip_xchg</div><div class="line">    xchg %eax, 4(%edi)</div><div class="line">    movl %eax, (%edi)</div><div class="line">_skip_xchg:</div><div class="line">    addl $4, %edi</div><div class="line">    incl %ebx</div><div class="line">    cmpl CNT, %ebx</div><div class="line">    jl _single_bubble</div><div class="line"></div><div class="line">_exit:</div><div class="line">    movl $1, %eax</div><div class="line">    movl $0, %ebx</div><div class="line">    int $0x80</div></pre></td></tr></table></figure>
+<ul>
+<li>一个有 <em>N</em> 个元素的序列</li>
+<li><em>%edi</em> 是指向序列中元素的指针 —— 当前元素</li>
+<li><em>%ebx</em> 是当前处理的元素 ( <em>%edi</em> 指向 ) 的下标</li>
+<li>比较 <em>%edi</em> 指向的元素和下一个元素的值 : <em>line 14 ~ 15</em><ul>
+<li>如果左边 ( 当前元素 ) 的值大于等于右边边的值大于等于右边ine 16 ~ 18</li>
+</ul>
+</li>
+<li>当 <em>%ebx</em><ul>
+<li><em>== N - 1</em> 时, 所有的元素都参与过比较了, 退出循环</li>
+<li><em>&lt; N - 1</em> 时, 向右移动 <em>%edi</em> 并将 <em>%ebx</em> 自曾 <em>1</em> , 继续循环</li>
+</ul>
+</li>
+</ul>
+<h3 id="外层迭代"><a href="#外层迭代" class="headerlink" title="外层迭代"></a>外层迭代</h3><p>对于包含 <em>N</em> 个元素的序列, 执行完一次下沉操作后, 最右边是序列的最大值, 左边的 <em>1 ~ N - 1</em> 个元素依旧是无序的, 需要在其上再次做下沉操作 —— 外层迭代主要就是负责这个工作</p>
+<p>补全前面的代码, 加入迭代逻辑</p>
+<figure class="highlight plain"><figcaption><span>外层迭代</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">list:</div><div class="line">    .long 22, 17, 5, 8, 93, 145, 62, 555, 908, 0, 7</div><div class="line">CNT:</div><div class="line">    .long 11</div><div class="line"></div><div class="line">.section .text</div><div class="line">.globl _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    movl CNT, %ecx</div><div class="line">_outer:</div><div class="line">    movl $list, %edi</div><div class="line">    movl $1, %ebx</div><div class="line">_single_bubble:</div><div class="line">    movl (%edi), %eax</div><div class="line">    cmpl %eax, 4(%edi)</div><div class="line">    jge _skip_xchg</div><div class="line">    xchg %eax, 4(%edi)</div><div class="line">    movl %eax, (%edi)</div><div class="line">_skip_xchg:</div><div class="line">    addl $4, %edi</div><div class="line">    incl %ebx</div><div class="line">    cmpl %ecx, %ebx</div><div class="line">    jl _single_bubble</div><div class="line">    dec %ecx</div><div class="line">    cmpl $1, %ecx</div><div class="line">    jg _outer</div><div class="line"></div><div class="line">_exit:</div><div class="line">    movl $1, %eax</div><div class="line">    movl $0, %ebx</div><div class="line">    int $0x80</div></pre></td></tr></table></figure>
+<ul>
+<li><em>%ecx</em> 表示需要做下沉操作的序列的最大下标, 对应的序列是 <em>1 ~ %ecx</em></li>
+<li>每完成一次下沉 ( <em>line 15 ~ 25</em> ), 就把 <em>%ecx</em> 自减 <em>1</em><ul>
+<li>如果 <em>%ecx &gt; 1</em>, 则继续在 <em>1~ %ecx</em> 上做下沉操作 : <em>line 26 ~ 27</em></li>
+<li>如果 <em>%exc == 1</em>, 则下沉序列中只有 <em>1</em> 个元素, 排序完成, 退出循环 : <em>line 28</em></li>
+</ul>
+</li>
+</ul>
+<p>程序中的下标是从 <em>1</em> 开始, 所以有 <em>N</em> 个元素的序列, 下标是 <em>[ 1, N ]</em> —— 不同于 <em>c</em> 常用的 <em>[ 0, N )</em> —— 这样做写程序比较方便</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Professional-Assembly-Language/" rel="tag">#Professional Assembly Language</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/12/16/fu-dian-shu-fan-wei/" rel="prev" title="浮点数范围">
+                <i class="fa fa-chevron-left"></i> 浮点数范围
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/12/08/biao-qian-he-li-ji-shu-he-gdb/" rel="next" title="标签和立即数和 GDB">
+                标签和立即数和 GDB <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="xfwduke" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">xfwduke</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">🌻天上掉下个向日葵🌻</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">64</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.flickr.com/xfwduke" target="_blank">
+                  
+                    <i class="fa fa-flickr"></i> 我的相册
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#算法分析"><span class="nav-number">1.</span> <span class="nav-text">算法分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#单次下沉"><span class="nav-number">2.</span> <span class="nav-text">单次下沉</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#外层迭代"><span class="nav-number">3.</span> <span class="nav-text">外层迭代</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xfwduke</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

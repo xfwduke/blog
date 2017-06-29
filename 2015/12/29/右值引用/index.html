@@ -1,0 +1,748 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="C++ Primer," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="右值引用（rvalue reference）是 C++ 11 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是^1  实现移动语义（move semantics）——主要是为了性能 完美转发（perfect forwarding）——主要用于参数传递">
+<meta name="keywords" content="C++ Primer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="右值引用">
+<meta property="og:url" content="http://blog.xfwduke.com/2015/12/29/右值引用/index.html">
+<meta property="og:site_name" content="向日葵和小葵">
+<meta property="og:description" content="右值引用（rvalue reference）是 C++ 11 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是^1  实现移动语义（move semantics）——主要是为了性能 完美转发（perfect forwarding）——主要用于参数传递">
+<meta property="og:updated_time" content="2017-06-29T12:13:31.699Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="右值引用">
+<meta name="twitter:description" content="右值引用（rvalue reference）是 C++ 11 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是^1  实现移动语义（move semantics）——主要是为了性能 完美转发（perfect forwarding）——主要用于参数传递">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> 右值引用 | 向日葵和小葵 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向日葵和小葵</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'U3Lc1WNac4Nz2D1EV6Sm','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                右值引用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-12-29T23:16:01+08:00" content="2015-12-29">
+              2015-12-29
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/C-C/" itemprop="url" rel="index">
+                    <span itemprop="name">C/C++</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p><code>右值引用</code>（<em>rvalue reference</em>）是 <em>C++ 11</em> 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是<a href="[https://zh.wikipedia.org/wiki/右值引用](https://zh.wikipedia.org/wiki/右值引用)">^1</a></p>
+<ul>
+<li>实现移动语义（<em>move semantics</em>）——主要是为了性能</li>
+<li>完美转发（<em>perfect forwarding</em>）——主要用于参数传递</li>
+</ul>
+<a id="more"></a>
+<p>目前接触到的使用了右值引用的代码大多是和类、模板有关，很少用在普通函数，但以普通函数为起点来了解右值引用会让问题变得更简单。同时，右值引用的定义更多的出现在函数的参数定义中，很少有在代码中直接定义出一个右值引用对象的</p>
+<h2 id="重载普通函数"><a href="#重载普通函数" class="headerlink" title="重载普通函数"></a>重载普通函数</h2><figure class="highlight cpp"><figcaption><span>没什么意义的示例</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">fn</span> <span class="params">(<span class="keyword">int</span> &amp; a)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">return</span> ++a;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">int</span> a = <span class="number">1</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; fn (a) &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>函数 <em>fn</em> 是 <em>C++</em> 常用的一类范式——传入一个引用，在函数内修改对象的值。但换一种调用方式</p>
+<figure class="highlight cpp"><figcaption><span>无法编译的调用方式</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">fn(<span class="number">1</span>);</div></pre></td></tr></table></figure>
+<p>就无法正常编译，因为 <em>1</em> 是个右值，不能以引用方式传入函数，为了通过编译就需要把函数形参改为 <em>const int &amp;</em>，这样又不能修改对象的值了</p>
+<p>为了解决这个问题，可以重载 <em>fn</em></p>
+<figure class="highlight cpp"><figcaption><span>右值引用重载</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">fn</span> <span class="params">(<span class="keyword">int</span> &amp;&amp; a)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">return</span> ++a;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样两种调用情况都正常了。函数有形参是右值引用和左值引用两个版本，分别对应实参是左值和右值的场景，少重载一个，都会造成无法编译——这一点和后面会提到的用于模板函数的情况不同</p>
+<h2 id="移动语义"><a href="#移动语义" class="headerlink" title="移动语义"></a>移动语义</h2><p>在最开始要强调的是</p>
+<ul>
+<li><em>std::move</em> 在实现移动语义是会用到，但这个函数只是返回一个左值对象的右值引用</li>
+<li>最终的 <strong>移动</strong> ，是要自己写代码实现的</li>
+</ul>
+<p>首先提出这两点是因为在看书的时候被 <em>std::move</em> 这个名字迷惑了很长时间</p>
+<p>通过一个例子来直观的看下什么叫移动[^2]</p>
+<figure class="highlight cpp"><figcaption><span>复制构造</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function">X <span class="title">foo</span><span class="params">()</span></span>;</div><div class="line">X x;</div><div class="line">x = foo();</div></pre></td></tr></table></figure>
+<p>参考文档[^2]中，这一小段代码是结合 <em>swap</em> 来解释的。但感觉换一种理解方式能让移动语义更加清晰</p>
+<p>关键是第 <em>3</em> 行——函数 <em>foo</em> 返回一个 <em>X</em> 类型对象赋值给实例 <em>x</em></p>
+<ul>
+<li><em>foo</em> 返回一个临时对象</li>
+<li>在传统的（没有移动语义）的类中，赋值给 <em>x</em> 实际会调用复制构造，将临时对象复制给 <em>x</em></li>
+</ul>
+<p>这里的重点是： <em>foo</em> 返回的临时对象仅仅用于复制构造，然后就被析构了。既然这个临时对象在以后的代码中不可能被用到，那么如果能在赋值操作中直接窃取这个临时对象的所有资源给实例 <em>x</em> ，就能省掉复制构造过程</p>
+<p>这就是移动语义——将一个对象（通常是临时对象）的资源移动给另一个对象（通常是左值）</p>
+<p>[^2]:<a href="http://thbecker.net/articles/rvalue_references/section_02.html" target="_blank" rel="external">Rvalue References Explained - Move Semantics @Thomas Becker</a></p>
+<h3 id="实现移动"><a href="#实现移动" class="headerlink" title="实现移动"></a>实现移动</h3><p>实现移动的关键就是资源窃取，如何窃取有很多种方法。参考文档[^3]中使用了 <em>swap</em>，这并不是太好，所以准备用另一种方式实现[^4]</p>
+<p>[^3]:<a href="http://thbecker.net/articles/rvalue_references/section_04.html" target="_blank" rel="external">Rvalue References Explained - Forcing Move Semantics @Thomas Becker</a><br>[^4]:《C++ Primer 5th》- 13.6.2</p>
+<figure class="highlight cpp"><figcaption><span>实现移动</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Test</span></span></div><div class="line">&#123;</div><div class="line">    Test (<span class="keyword">int</span> size, <span class="keyword">int</span> va) : _size (size)</div><div class="line">    &#123;</div><div class="line">      ptr = <span class="keyword">new</span> <span class="keyword">int</span>[_size];</div><div class="line">      for_each (ptr, ptr + _size, [=] (<span class="keyword">int</span> &amp; v)</div><div class="line">      &#123;</div><div class="line">          v = va;</div><div class="line">      &#125;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Test (Test &amp;&amp; t)</div><div class="line">    &#123;</div><div class="line">      <span class="keyword">if</span> (<span class="keyword">this</span> != &amp;t)</div><div class="line">      &#123;</div><div class="line">        <span class="built_in">free</span> ();</div><div class="line">        ptr = t.ptr;</div><div class="line">        _size = t._size;</div><div class="line">        t._size = <span class="number">0</span>;</div><div class="line">        t.ptr = <span class="literal">nullptr</span>;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Test &amp; <span class="keyword">operator</span> = (Test &amp;&amp; t)</div><div class="line">    &#123;</div><div class="line">      <span class="keyword">if</span> (<span class="keyword">this</span> != &amp;t)</div><div class="line">      &#123;</div><div class="line">        <span class="built_in">free</span> ();</div><div class="line">        ptr = t.ptr;</div><div class="line">        _size = t._size;</div><div class="line">        t._size = <span class="number">0</span>;</div><div class="line">        t.ptr = <span class="literal">nullptr</span>;</div><div class="line">      &#125;</div><div class="line">      <span class="keyword">return</span> *<span class="keyword">this</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ~Test ()</div><div class="line">    &#123;</div><div class="line">      <span class="built_in">free</span> ();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">free</span> <span class="params">()</span></span></div><div class="line">    &#123;</div><div class="line">      _size = <span class="number">0</span>;</div><div class="line">      <span class="keyword">delete</span>[] ptr;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">int</span> *ptr;</div><div class="line">    <span class="keyword">int</span> _size;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<ul>
+<li>窃取前，先将目标对象（等号右边）的资源回收</li>
+<li>通过修改指针 <em>Test::ptr</em> 的值来实现资源窃取</li>
+<li>窃取后，将源对象（等号右边）的指针置空。这一步是必须的，因为临时对象马上会被析构，若不修改指针的值，则资源依然会被回收</li>
+<li>移动构造必须判断源和目标对象是否相同，否则会错误的将资源回收</li>
+</ul>
+<h3 id="强制移动"><a href="#强制移动" class="headerlink" title="强制移动"></a>强制移动</h3><p>上面的代码没有实现普通的复制构造函数，所以将一个左值对象赋值给另一个对象是无法编译的</p>
+<figure class="highlight cpp"><figcaption><span>无法编译</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function">Test <span class="title">ins_a</span> <span class="params">(<span class="number">10</span>, <span class="number">4</span>)</span></span>;</div><div class="line"><span class="function">Test <span class="title">ins_b</span> <span class="params">(<span class="number">12</span>, <span class="number">7</span>)</span></span>;</div><div class="line">ins_a = ins_b;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><figcaption><span>clang++ 编译报错</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">error: object of type &apos;Test&apos; cannot be assigned because its copy assignment operator is implicitly deleted</div><div class="line">note: copy assignment operator is implicitly deleted because &apos;Test&apos; has a user-declared move constructor</div></pre></td></tr></table></figure>
+<p>幸运的是，<em>C++</em> 提供了实现的办法——用 <em>std::move</em> 获得左值对象的右值引用</p>
+<figure class="highlight cpp"><figcaption><span>用 std::move 实现强制移动</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">pprint</span> <span class="params">(<span class="keyword">const</span> Test &amp; ins)</span></span></div><div class="line">&#123;</div><div class="line">  for_each (ins.ptr, ins.ptr + ins._size, [] (<span class="keyword">const</span> <span class="keyword">int</span> &amp; v)</div><div class="line">  &#123;</div><div class="line">      <span class="built_in">cout</span> &lt;&lt; v &lt;&lt; <span class="string">" "</span>;</div><div class="line">  &#125;);</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">" @ "</span> &lt;&lt; ins.ptr &lt;&lt; <span class="string">" ["</span> &lt;&lt; ins._size &lt;&lt; <span class="string">"]"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="function">Test <span class="title">ins_a</span> <span class="params">(<span class="number">10</span>, <span class="number">4</span>)</span></span>;</div><div class="line">  <span class="function">Test <span class="title">ins_b</span> <span class="params">(<span class="number">12</span>, <span class="number">7</span>)</span></span>;</div><div class="line"></div><div class="line">  <span class="built_in">cout</span>&lt;&lt;<span class="string">"before move ins_a: "</span>;</div><div class="line">  pprint (ins_a);</div><div class="line">  <span class="built_in">cout</span>&lt;&lt;<span class="string">"before move ins_b: "</span>;</div><div class="line">  pprint (ins_b);</div><div class="line"></div><div class="line">  ins_a = <span class="built_in">std</span>::move (ins_b);</div><div class="line"></div><div class="line">  <span class="built_in">cout</span>&lt;&lt;<span class="string">"after move ins_a: "</span>;</div><div class="line">  pprint (ins_a);</div><div class="line">  <span class="built_in">cout</span>&lt;&lt;<span class="string">"after move ins_b: "</span>;</div><div class="line">  pprint (ins_b);</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><figcaption><span>结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">before move ins_a: 4 4 4 4 4 4 4 4 4 4  @ 0x7f9351403280 [10]</div><div class="line">before move ins_b: 7 7 7 7 7 7 7 7 7 7 7 7  @ 0x7f93514032b0 [12]</div><div class="line">after move ins_a: 7 7 7 7 7 7 7 7 7 7 7 7  @ 0x7f93514032b0 [12]</div><div class="line">after move ins_b:  @ 0x0 [0]</div></pre></td></tr></table></figure>
+<p>强制移动后源对象（_ins<em>b</em>）因为是左值，所以依然可以访问，但其资源已经无效。所以在强制移动后，除了对 _ins<em>b</em> 赋值或销毁它外，不应该再使用它。[^5]</p>
+<h3 id="编译器合成"><a href="#编译器合成" class="headerlink" title="编译器合成"></a>编译器合成</h3><p>编译器可以自动合成移动构造函数和移动构造操作符。但具体到哪些情况下会合成，哪些不会；哪些情况下合成的是 <em>= delete</em> 的，有一套非常复杂的规则，可以参考书中[^4]<code>合成移动操作</code>的内容</p>
+<p>需要单独列出的[^4]</p>
+<ul>
+<li>如果类同时定义了移动构造和复制构造，则遵循 <strong>移动右值，拷贝左值</strong> 的原则</li>
+<li>如果类没有实现移动构造函数，则无论是左值还是右值都会匹配复制构造，即便使用 <em>std::move</em> 做强制移动——在这种情况下，前面提到的强制移动后的风险当然也就不存在了</li>
+</ul>
+<p>[^5]:《C++ Primer 5th》- 13.6.1</p>
+<h3 id="移动继承"><a href="#移动继承" class="headerlink" title="移动继承"></a>移动继承</h3><p>在有基类和派生类的情况下，如何正确处理移动语义是一个很有意思的问题。关键在于</p>
+<p><strong><em>Is an Rvalue Reference an Rvalue?</em></strong></p>
+<p>直接引用文中的结论[^6]</p>
+<p>一个对象是一个右值引用</p>
+<ul>
+<li>如果它有一个名字，对象本身是左值</li>
+<li>否则对象本身是右值 </li>
+</ul>
+<p>从上面的规则可以联想到，<em>std::move(ins)</em> 这个表达式返回的对象是一个右值引用，而这个对象没有名字，所以这个对象本身是右值</p>
+<p>回到继承关系上来，考虑基类 <em>Base</em> 和派生类 <em>Derived</em> ，它们都实现了复制构造函数和移动构造函数，改怎么实现？</p>
+<figure class="highlight cpp"><figcaption><span>移动继承</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span></span></div><div class="line">&#123;</div><div class="line">    Base (<span class="keyword">const</span> Base &amp; rhs);</div><div class="line">    Base (Base &amp;&amp; rhs);</div><div class="line">&#125;;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derived</span>:</span>Base &#123;</div><div class="line">    Derived(<span class="keyword">const</span> Derived &amp;rhs):Base(rhs)&#123;</div><div class="line">      <span class="comment">//派生类特有代码</span></div><div class="line">    &#125;</div><div class="line">    Derived(Derived &amp;&amp;rhs):Base(???)&#123;</div><div class="line">      <span class="comment">//派生类特有代码</span></div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>第 <em>10</em> 行的 <em>???</em> 部分怎么写</p>
+<p>从前面的讨论可以知道，<em>rhs</em> 是一个有名字的右值引用，所以它是一个左值。</p>
+<p>如果第 <em>10</em> 行写成</p>
+<figure class="highlight cpp"><figcaption><span>错误的写法</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Derived(Derived &amp;&amp;rhs):Base(rhs)&#123;</div></pre></td></tr></table></figure>
+<p>则会调用基类的复制构造函数，这无法实现正确的派生类移动。所以正确的写法应该是</p>
+<figure class="highlight cpp"><figcaption><span>正确的写法</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Derived(Derived &amp;&amp;rhs):Base(<span class="built_in">std</span>::move(rhs))&#123;</div></pre></td></tr></table></figure>
+<p>用 <em>std::move</em> 构造出一个匿名右值引用，它本身也是一个右值。所以能匹配到基类的移动构造函数</p>
+<h2 id="完美转发"><a href="#完美转发" class="headerlink" title="完美转发"></a>完美转发</h2><p>完美转发牵涉到 <em>std::forward</em> ，这个目前还看不太懂，后面再补完这部分</p>
+<p>[^6]:<a href="http://thbecker.net/articles/rvalue_references/section_05.html" target="_blank" rel="external">Rvalue References Explained - Is an Rvalue Reference an Rvalue? @Thomas Becker</a></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C-Primer/" rel="tag">#C++ Primer</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/23/引用限定符/" rel="prev" title="引用限定符">
+                <i class="fa fa-chevron-left"></i> 引用限定符
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/12/29/C-11-bind/" rel="next" title="C++11 bind">
+                C++11 bind <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="xfwduke" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">xfwduke</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">🌻天上掉下个向日葵🌻</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">64</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.flickr.com/xfwduke" target="_blank">
+                  
+                    <i class="fa fa-flickr"></i> 我的相册
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#重载普通函数"><span class="nav-number">1.</span> <span class="nav-text">重载普通函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#移动语义"><span class="nav-number">2.</span> <span class="nav-text">移动语义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现移动"><span class="nav-number">2.1.</span> <span class="nav-text">实现移动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#强制移动"><span class="nav-number">2.2.</span> <span class="nav-text">强制移动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译器合成"><span class="nav-number">2.3.</span> <span class="nav-text">编译器合成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#移动继承"><span class="nav-number">2.4.</span> <span class="nav-text">移动继承</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#完美转发"><span class="nav-number">3.</span> <span class="nav-text">完美转发</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xfwduke</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

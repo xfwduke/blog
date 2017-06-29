@@ -1,0 +1,698 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="COMMON LISP - A Gentle Introduction to Symbolic Computation,ANSI Common Lisp," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="在 sbcl 这样的 REPL 环境中学习 Lisp 非常的方便，但调试用到闭包的函数时 REPL 也会带来些麻烦。">
+<meta name="keywords" content="COMMON LISP - A Gentle Introduction to Symbolic Computation,ANSI Common Lisp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lisp 闭包在 REPL 环境中的坑">
+<meta property="og:url" content="http://blog.xfwduke.com/2016/12/30/Lisp-闭包在-REPL-环境中的坑/index.html">
+<meta property="og:site_name" content="向日葵和小葵">
+<meta property="og:description" content="在 sbcl 这样的 REPL 环境中学习 Lisp 非常的方便，但调试用到闭包的函数时 REPL 也会带来些麻烦。">
+<meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Lisp 闭包在 REPL 环境中的坑">
+<meta name="twitter:description" content="在 sbcl 这样的 REPL 环境中学习 Lisp 非常的方便，但调试用到闭包的函数时 REPL 也会带来些麻烦。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> Lisp 闭包在 REPL 环境中的坑 | 向日葵和小葵 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向日葵和小葵</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'U3Lc1WNac4Nz2D1EV6Sm','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Lisp 闭包在 REPL 环境中的坑
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-12-30T11:30:05+08:00" content="2016-12-30">
+              2016-12-30
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Lisp/" itemprop="url" rel="index">
+                    <span itemprop="name">Lisp</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>在 <em>sbcl</em> 这样的 <em>REPL</em> 环境中学习 <em>Lisp</em> 非常的方便，但调试用到闭包的函数时 <em>REPL</em> 也会带来些麻烦。</p>
+<a id="more"></a>
+<figure class="highlight lisp"><figcaption><span>尾递归碱基计数</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">(<span class="name">defun</span> occurrences-helper (<span class="name">lst</span> res)</div><div class="line">  (<span class="name">cond</span></div><div class="line">    ((<span class="name">null</span> lst) res)</div><div class="line">    (<span class="name">t</span></div><div class="line">     (<span class="name">let</span> ((<span class="name">obj</span> (<span class="name">car</span> lst)))</div><div class="line">       (<span class="name">if</span> (<span class="name">assoc</span> obj res)</div><div class="line">           (<span class="name">setf</span></div><div class="line">            (<span class="name">cdr</span> (<span class="name">assoc</span> obj res))</div><div class="line">            (<span class="number">1</span>+ (<span class="name">cdr</span> (<span class="name">assoc</span> obj res))))</div><div class="line">           (<span class="name">push</span> (<span class="name">cons</span> obj <span class="number">1</span>) res))</div><div class="line">       (<span class="name">occurrences-helper</span> (<span class="name">rest</span> lst) res)))))</div><div class="line"></div><div class="line">(<span class="name">defun</span> occurrences-r (<span class="name">lst</span>)</div><div class="line">  (<span class="name">let</span> ((<span class="name">res</span> '((a . <span class="number">0</span>) (c . <span class="number">0</span>) (g . <span class="number">0</span>) (<span class="literal">t</span> . <span class="number">0</span>))))</div><div class="line">    (<span class="name">occurrences-helper</span> lst res)))</div></pre></td></tr></table></figure>
+<p>这段代码怎么看都是没有问题的，但在 <em>REPL</em> 环境中测试的时候，前后多次的结果会累加。</p>
+<figure class="highlight bash"><figcaption><span>REPL 环境执行结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">CL-USER&gt; (occurrences-r <span class="string">'(a c g t c c g a t))</span></div><div class="line">((A . 2) (C . 3) (G . 2) (T . 2))</div><div class="line">CL-USER&gt; (occurrences-r '(a c g t c c g a t))</div><div class="line">((A . 4) (C . 6) (G . 4) (T . 4))</div><div class="line">CL-USER&gt; (occurrences-r <span class="string">'(a c g t c c g a t))</span></div><div class="line">((A . 6) (C . 9) (G . 6) (T . 6))</div><div class="line">CL-USER&gt; (occurrences-r '(a c g t c c g a t))</div><div class="line">((A . 8) (C . 12) (G . 8) (T . 8))</div><div class="line">CL-USER&gt; (occurrences-r <span class="string">'(a c g t c c g a t))</span></div><div class="line">((A . 10) (C . 15) (G . 10) (T . 10))</div></pre></td></tr></table></figure>
+<p>看到这样的结果很容易想到 <em>occurrences-r</em> 中定义的 <em>res</em> 作为闭包引入了 <em>occurrences-helper</em>。但从代码来看，函数执行完一次后就结束了，没有让 <em>occurrences-helper</em> 一直存在的逻辑。</p>
+<blockquote><p>When a function refers to a variable defined outside it, it’s called a free variable. A function that refers to a free lexical variable is called a closure? The variable must persist as long as the function does.</p>
+<footer><strong>Paul Graham</strong><cite>ANS Common Lisp - 6.5</cite></footer></blockquote>
+<p><br></p>
+<p>书中对闭包的定义是这样的，有两个重点</p>
+<ul>
+<li>函数引用在外部定义的变量，成为闭包</li>
+<li>闭包的生命周期和函数相同</li>
+</ul>
+<p>造成前面结果累加的原因，重点就是这个生命周期相同以及 <em>REPL</em> 的特性:</p>
+<p><strong>在 <em>Emacs + Slime</em> 环境临时编译 ( <em>Ctrl+c+c</em> ) 的函数，只要 _</strong>REPL<strong>_ 不结束就会一直存在，所以对应的闭包也一直有效</strong></p>
+<p>这个问题也很容易验证，将源码文件编译成独立的可执行文件来执行多次</p>
+<figure class="highlight lisp"><figcaption><span>添加一句</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(<span class="name">format</span> <span class="literal">t</span> <span class="string">"~&amp;~&#123;~S ~&#125;"</span> (<span class="name">occurrences-r</span> '(a c g t c c g a t)))</div></pre></td></tr></table></figure>
+<p>代码中添加一句函数调用然后编译为可执行文件</p>
+<figure class="highlight bash"><figcaption><span>shell中的执行结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">└&gt; ./chapter-3.fasl</div><div class="line">(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    </div><div class="line">└&gt; ./chapter-3.fasl</div><div class="line">(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    </div><div class="line">└&gt; ./chapter-3.fasl</div><div class="line">(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    </div><div class="line">└&gt; ./chapter-3.fasl</div><div class="line">(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    </div><div class="line">└&gt; ./chapter-3.fasl</div><div class="line">(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    </div><div class="line">└&gt; ./chapter-3.fasl</div><div class="line">(A . 2) (C . 3) (G . 2) (T . 2) %</div></pre></td></tr></table></figure>
+<p><br></p>
+<p>可以看到，脱离 <em>REPL</em> 环境后执行结果正常了。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/COMMON-LISP-A-Gentle-Introduction-to-Symbolic-Computation/" rel="tag">#COMMON LISP - A Gentle Introduction to Symbolic Computation</a>
+          
+            <a href="/tags/ANSI-Common-Lisp/" rel="tag">#ANSI Common Lisp</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/18/一个错误的Lisp-incf-宏定义/" rel="prev" title="一个错误的Lisp incf 宏定义">
+                <i class="fa fa-chevron-left"></i> 一个错误的Lisp incf 宏定义
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/12/type-conversions/" rel="next" title="type conversions">
+                type conversions <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="xfwduke" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">xfwduke</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">🌻天上掉下个向日葵🌻</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">64</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.flickr.com/xfwduke" target="_blank">
+                  
+                    <i class="fa fa-flickr"></i> 我的相册
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xfwduke</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

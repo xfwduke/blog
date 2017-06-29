@@ -1,0 +1,715 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="C++ Primer,C++ 标准库第二版," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="共享指针的 aliasing constructor 是其构造函数中比较特殊的一个, 因为它的参数和其他的构造函数都不同 aliasing constructor1template &amp;lt;class U&amp;gt; shared_ptr (const shared_ptr&amp;lt;U&amp;gt;&amp;amp; x, element_type* p) noexpect; 这个形式的构造函数适用于 某对象拥有另一">
+<meta name="keywords" content="C++ Primer,C++ 标准库第二版">
+<meta property="og:type" content="article">
+<meta property="og:title" content="shared_ptr 的 aliasing constructor">
+<meta property="og:url" content="http://blog.xfwduke.com/2015/12/13/shared-ptr-的-aliasing-constructor/index.html">
+<meta property="og:site_name" content="向日葵和小葵">
+<meta property="og:description" content="共享指针的 aliasing constructor 是其构造函数中比较特殊的一个, 因为它的参数和其他的构造函数都不同 aliasing constructor1template &amp;lt;class U&amp;gt; shared_ptr (const shared_ptr&amp;lt;U&amp;gt;&amp;amp; x, element_type* p) noexpect; 这个形式的构造函数适用于 某对象拥有另一">
+<meta property="og:updated_time" content="2017-06-29T12:13:31.699Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="shared_ptr 的 aliasing constructor">
+<meta name="twitter:description" content="共享指针的 aliasing constructor 是其构造函数中比较特殊的一个, 因为它的参数和其他的构造函数都不同 aliasing constructor1template &amp;lt;class U&amp;gt; shared_ptr (const shared_ptr&amp;lt;U&amp;gt;&amp;amp; x, element_type* p) noexpect; 这个形式的构造函数适用于 某对象拥有另一">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> shared_ptr 的 aliasing constructor | 向日葵和小葵 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向日葵和小葵</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'U3Lc1WNac4Nz2D1EV6Sm','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                shared_ptr 的 aliasing constructor
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-12-13T15:12:36+08:00" content="2015-12-13">
+              2015-12-13
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/C-C/" itemprop="url" rel="index">
+                    <span itemprop="name">C/C++</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>共享指针的 <em>aliasing constructor</em> 是其构造函数中比较特殊的一个, 因为它的参数和其他的构造函数都不同</p>
+<figure class="highlight cpp"><figcaption><span>aliasing constructor</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">U</span>&gt; <span class="title">shared_ptr</span> (<span class="title">const</span> <span class="title">shared_ptr</span>&lt;U&gt;&amp; <span class="title">x</span>, <span class="title">element_type</span>* <span class="title">p</span>) <span class="title">noexpect</span>;</span></div></pre></td></tr></table></figure>
+<p>这个形式的构造函数适用于</p>
+<blockquote><p>某对象拥有另一个对象</p>
+<footer><strong>Nicolai M.Josuttis 侯捷</strong><cite>C++标准库第二版-5.2.4</cite></footer></blockquote>
+<a id="more"></a>
+<figure class="highlight cpp"><figcaption><span>具有包含关系的类</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Inner</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> _v;</div><div class="line"></div><div class="line">    Inner (<span class="keyword">int</span> v) : _v (v)</div><div class="line">    &#123; &#125;</div><div class="line"></div><div class="line">    ~Inner ()</div><div class="line">    &#123;</div><div class="line">      <span class="built_in">cout</span> &lt;&lt; <span class="string">"Destory inner"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Outter</span></span></div><div class="line">&#123;</div><div class="line">    Inner _in;</div><div class="line"></div><div class="line">    Outter (<span class="keyword">int</span> v) : _in (v)</div><div class="line">    &#123; &#125;</div><div class="line"></div><div class="line">    ~Outter ()</div><div class="line">    &#123;</div><div class="line">      <span class="built_in">cout</span> &lt;&lt; <span class="string">"Destroy outter"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p><em>Outter</em> 和 <em>Inner</em> 类存在包含关系——一个 <em>Outter</em> 类型的对象包含一个 <em>Inner</em> 类型的子对象 ( <em>subobject</em> )</p>
+<p>当[^1]</p>
+<ul>
+<li>通过动态分配( <em>dynamically allocted</em> ) 构造了一个 <em>Outter</em> 类型的共享指针</li>
+<li>希望把子对象 ( <em>Inner</em> 类型) 以共享指针的形式用于其他地方</li>
+</ul>
+<p>需要保证子对象使用结束前, 其外围对象能一直有效—— <em>aliasing constructor</em> 就是为了达到这个目的</p>
+<h2 id="错误的示例"><a href="#错误的示例" class="headerlink" title="错误的示例"></a>错误的示例</h2><p>先来看看不使用 <em>aliasing constructor</em> 会怎样</p>
+<figure class="highlight cpp"><figcaption><span>类定义沿用前面的</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">null_deleter</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">operator</span> <span class="params">()</span> <span class="params">(T *)</span></span></div><div class="line">    &#123; &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="built_in">shared_ptr</span>&lt;Inner&gt; fun ()</div><div class="line">&#123;</div><div class="line">  <span class="built_in">shared_ptr</span>&lt;Outter&gt; spo (<span class="keyword">new</span> Outter (<span class="number">5</span>));</div><div class="line">  <span class="built_in">shared_ptr</span>&lt;Inner&gt; spi (&amp;spo-&gt;_in, null_deleter ());</div><div class="line">  <span class="keyword">return</span> spi;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">auto</span> spi = fun ();</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"returned from fun"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; ++(spi-&gt;_v) &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><figcaption><span>执行结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Destroy outter</div><div class="line">Destory inner</div><div class="line">returned from fun</div><div class="line">1</div></pre></td></tr></table></figure>
+<p>从结果可以看到</p>
+<ul>
+<li>离开函数 <em>fun</em> 时, <em>Outter</em> 对象被析构, 同时导致 <em>Inner</em> 对象也被析构</li>
+<li>最后的整型计算结果输出 <em>1</em> 而不是预期的 <em>5</em>——虽然最后计算没有报错, 但保不齐以后执行会不会出什么错误——因为修改了一个被回收了的内存地址</li>
+</ul>
+<h2 id="正确的示例"><a href="#正确的示例" class="headerlink" title="正确的示例"></a>正确的示例</h2><p>将上面代码的第 <em>16</em> 行替换成下面这样</p>
+<figure class="highlight cpp"><figcaption><span>替换代码</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">shared_ptr</span>&lt;Inner&gt; spi (spo, &amp;spo-&gt;_in);</div></pre></td></tr></table></figure>
+<p>则执行结果符合预期, 并且对象都是在使用结束后 ( <em>main</em> 函数返回 ) 时才析构</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">returned from fun</div><div class="line">6</div><div class="line">Destroy outter</div><div class="line">Destory inner</div></pre></td></tr></table></figure>
+<p>所以 <em>aliasing constructor</em> 参数的含义是</p>
+<ul>
+<li>第 <em>2</em> 个参数是要共享的子对象指针</li>
+<li>第 <em>1</em> 个参数是拥有这个子对象的上级对象的共享指针</li>
+</ul>
+<h2 id="不明白的地方"><a href="#不明白的地方" class="headerlink" title="不明白的地方"></a>不明白的地方</h2><p>有两个不明白的地方</p>
+<ul>
+<li><a href="#错误的示例">错误的示例</a> 中的代码, 编译器没有报错, 而且也还没想到用什么办法来让程序崩溃掉</li>
+<li>将代码的第 <em>15</em> 行替换成</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">shared_ptr</span>&lt;Outter&gt; spo (make_shared&lt;Outter&gt; (<span class="number">5</span>));</div></pre></td></tr></table></figure>
+<p>即使不使用 <em>aliasing constructor</em> , 对象在从 <em>fun</em> 返回时被析构, 也可以让整型计算的结果是正确的</p>
+<p>[^1]:<a href="https://www.justsoftwaresolutions.co.uk/cplusplus/shared-ptr-secret-constructor.html" target="_blank" rel="external">std::shared_ptr’s secret constructor</a></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C-Primer/" rel="tag">#C++ Primer</a>
+          
+            <a href="/tags/C-标准库第二版/" rel="tag">#C++ 标准库第二版</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/27/lambda/" rel="prev" title="C++ 的 lambda">
+                <i class="fa fa-chevron-left"></i> C++ 的 lambda
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/12/05/容器的-emplace-操作/" rel="next" title="容器的 emplace 操作">
+                容器的 emplace 操作 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="xfwduke" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">xfwduke</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">🌻天上掉下个向日葵🌻</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">64</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.flickr.com/xfwduke" target="_blank">
+                  
+                    <i class="fa fa-flickr"></i> 我的相册
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#错误的示例"><span class="nav-number">1.</span> <span class="nav-text">错误的示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正确的示例"><span class="nav-number">2.</span> <span class="nav-text">正确的示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不明白的地方"><span class="nav-number">3.</span> <span class="nav-text">不明白的地方</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xfwduke</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

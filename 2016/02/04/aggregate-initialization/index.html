@@ -1,0 +1,704 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="The C++ Programming Language 4th," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="aggregate initialization 是 list initialization 的一种形式，而 list initialization 是 C++ 11 中新增的的初始化对象的方法 list initialization12int a &amp;#123;10&amp;#125;;vector&amp;lt;string&amp;gt; svec &amp;#123;&quot;hello&quot;, &quot;world&quot;&amp;#125;;">
+<meta name="keywords" content="The C++ Programming Language 4th">
+<meta property="og:type" content="article">
+<meta property="og:title" content="aggregate initialization">
+<meta property="og:url" content="http://blog.xfwduke.com/2016/02/04/aggregate-initialization/index.html">
+<meta property="og:site_name" content="向日葵和小葵">
+<meta property="og:description" content="aggregate initialization 是 list initialization 的一种形式，而 list initialization 是 C++ 11 中新增的的初始化对象的方法 list initialization12int a &amp;#123;10&amp;#125;;vector&amp;lt;string&amp;gt; svec &amp;#123;&quot;hello&quot;, &quot;world&quot;&amp;#125;;">
+<meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="aggregate initialization">
+<meta name="twitter:description" content="aggregate initialization 是 list initialization 的一种形式，而 list initialization 是 C++ 11 中新增的的初始化对象的方法 list initialization12int a &amp;#123;10&amp;#125;;vector&amp;lt;string&amp;gt; svec &amp;#123;&quot;hello&quot;, &quot;world&quot;&amp;#125;;">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> aggregate initialization | 向日葵和小葵 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向日葵和小葵</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'U3Lc1WNac4Nz2D1EV6Sm','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                aggregate initialization
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-02-04T17:06:38+08:00" content="2016-02-04">
+              2016-02-04
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/C-C/" itemprop="url" rel="index">
+                    <span itemprop="name">C/C++</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p><em>aggregate initialization</em> 是 <em>list initialization</em> 的一种形式，而 <em>list initialization</em> 是 <em>C++ 11</em> 中新增的的初始化对象的方法</p>
+<figure class="highlight cpp"><figcaption><span>list initialization</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> a &#123;<span class="number">10</span>&#125;;</div><div class="line"><span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; svec &#123;<span class="string">"hello"</span>, <span class="string">"world"</span>&#125;;</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="list-initialization"><a href="#list-initialization" class="headerlink" title="list initialization"></a><em>list initialization</em></h2><p>首先来简单看下 <em>list initialization</em></p>
+<figure class="highlight cpp"><figcaption><span>示例</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span></div><div class="line">&#123;</div><div class="line"> <span class="keyword">private</span>:</div><div class="line">  <span class="keyword">int</span> val1;</div><div class="line">  <span class="keyword">double</span> val2;</div><div class="line"></div><div class="line"> <span class="keyword">public</span>:</div><div class="line">  Test (<span class="keyword">int</span> a, <span class="keyword">double</span> b) : val1 (a), val2 (b)</div><div class="line">  &#123;&#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> ** argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="function">Test <span class="title">ins1</span> <span class="params">(<span class="number">1</span>, <span class="number">1.2</span>)</span></span>;</div><div class="line">  Test ins2 &#123;<span class="number">3</span>, <span class="number">7.8</span>&#125;;   <span class="comment">// list initialization</span></div><div class="line">  Test * ptr1 = <span class="keyword">new</span> Test (<span class="number">7</span>, <span class="number">5.1</span>);</div><div class="line">  Test * ptr2 = <span class="keyword">new</span> Test &#123;<span class="number">3</span>, <span class="number">9.9</span>&#125;;  <span class="comment">// list initialization</span></div><div class="line"></div><div class="line">  <span class="function">Test <span class="title">narrow1</span> <span class="params">(<span class="number">2.2</span>, <span class="number">1.0</span>)</span></span>;  <span class="comment">// narrow 2.2 to 2 is ok</span></div><div class="line">  Test narrow2 &#123;<span class="number">5.2</span>, <span class="number">7</span>&#125;;    <span class="comment">// can't narrow 5.2 to 5, compile error</span></div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>代码的第 <em>15, 17 20</em> 行就是 <em>list initialization</em> ，最大的好处就是不允许隐式转换导致精度丢失（ <em>narrow</em> ）</p>
+<h2 id="aggregate-initialization"><a href="#aggregate-initialization" class="headerlink" title="aggregate initialization"></a><em>aggregate initialization</em></h2><p><em>aggregate initialization</em> 的形式也是用 <em>{}</em> 来初始化对象，但对于能适用的类有明确的要求，同时也提供了附加的特性</p>
+<h3 id="aggregate-type"><a href="#aggregate-type" class="headerlink" title="aggregate type"></a><em>aggregate type</em></h3><p>只有 <em>aggregate type</em> 才能使用 <em>aggregate initialization</em> ，具体是<a href="[http://en.cppreference.com/w/cpp/language/aggregate_initialization](http://en.cppreference.com/w/cpp/language/aggregate_initialization)">^1</a></p>
+<ul>
+<li>数组——任何类型的数组</li>
+<li>满足下列要求的类（ <em>class, struct, union</em> ）<ul>
+<li>没有非静态（ <em>non-static</em> ）的 <em>private</em> 和 <em>protect</em> 数据成员</li>
+<li>没有用户定义的构造函数（ <em>defaulted</em> 和 <em>deleted</em> 是允许的）</li>
+<li>没有基类</li>
+<li>没有数据成员默认初始化</li>
+</ul>
+</li>
+</ul>
+<h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><p>特性有一大版，结合例子看还是比较容易理解的<a href="[http://en.cppreference.com/w/cpp/language/aggregate_initialization](http://en.cppreference.com/w/cpp/language/aggregate_initialization)">^1</a></p>
+<ul>
+<li>Each array element or non-static class member, in order of array subscript/appearance in the class definition, is copy-initialized from the corresponding clause of the initializer list.</li>
+<li>If the initializer clause is an expression, implicit conversions are allowed as per copy-initialization, except if they are narrowing (as in list-initialization) (since C++11).</li>
+<li>If the initializer clause is a nested braced-init-list (which is not an expression), the corresponding class member is list-initialized from that clause: aggregate initialization is recursive.</li>
+<li>If the object is an array of unknown size, and the supplied brace-enclosed initializer list has n clauses, the size of the array is n</li>
+<li>Static data members and anonymous bit-fields are skipped during aggregate initialization.</li>
+<li>If the number of initializer clauses exceeds the number of members to initialize, the program is ill-formed (compiler error)</li>
+<li>If the number of initializer clauses is less than the number of members or initializer list is completely empty, the remaining members are initialized by their default initializers, if provided in the class definition, and otherwise (since C++14) by empty lists, which performs value-initialization. If a member of a reference type is one of these remaining members, the program is ill-formed (references cannot be value-initialized)</li>
+<li>If the aggregate initialization uses the form with the equal sign (T a = {args..}), (until C++14) the braces around the nested initializer lists may be elided (omitted), in which case as many initializer clauses as necessary are used to initialize every member or element of the corresponding subaggregate, and the subsequent initializer clauses are used to initialize the following members of the object. However, if the object has a sub-aggregate without any members (an empty struct, or a struct holding only static members), brace elision is not allowed, and an empty nested list {} must be used.</li>
+<li>When a union is initialized by aggregate initialization, only its first non-static data member is initialized.</li>
+</ul>
+<figure class="highlight cpp"><figcaption><span>例子</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;array&gt;</span></span></div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">S</span> &#123;</span></div><div class="line">    <span class="keyword">int</span> x;</div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Foo</span> &#123;</span></div><div class="line">        <span class="keyword">int</span> i;</div><div class="line">        <span class="keyword">int</span> j;</div><div class="line">        <span class="keyword">int</span> a[<span class="number">3</span>];</div><div class="line">    &#125; b;</div><div class="line">&#125;;</div><div class="line"> </div><div class="line"><span class="keyword">union</span> U &#123;</div><div class="line">    <span class="keyword">int</span> a;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* b;</div><div class="line">&#125;;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    S s1 = &#123; <span class="number">1</span>, &#123; <span class="number">2</span>, <span class="number">3</span>, &#123;<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125; &#125; &#125;;</div><div class="line">    S s2 = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;; <span class="comment">// same, but with brace elision</span></div><div class="line">    S s3&#123;<span class="number">1</span>, &#123;<span class="number">2</span>, <span class="number">3</span>, &#123;<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125; &#125; &#125;; <span class="comment">// same, using direct-list-initialization syntax</span></div><div class="line">    S s4&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;; <span class="comment">// error in C++11: brace-elision only allowed with equals sign</span></div><div class="line">                            <span class="comment">// okay in C++14</span></div><div class="line"> </div><div class="line">    <span class="keyword">int</span> ar[] = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;; <span class="comment">// ar is int[3]</span></div><div class="line"><span class="comment">//  char cr[3] = &#123;'a', 'b', 'c', 'd'&#125;; // too many initializer clauses</span></div><div class="line">    <span class="keyword">char</span> cr[<span class="number">3</span>] = &#123;<span class="string">'a'</span>&#125;; <span class="comment">// array initialized as &#123;'a', '\0', '\0'&#125;</span></div><div class="line"> </div><div class="line">    <span class="keyword">int</span> ar2d1[<span class="number">2</span>][<span class="number">2</span>] = &#123;&#123;<span class="number">1</span>, <span class="number">2</span>&#125;, &#123;<span class="number">3</span>, <span class="number">4</span>&#125;&#125;; <span class="comment">// fully-braced 2D array: &#123;1, 2&#125;</span></div><div class="line">                                        <span class="comment">//                        &#123;3, 4&#125;</span></div><div class="line">    <span class="keyword">int</span> ar2d2[<span class="number">2</span>][<span class="number">2</span>] = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;; <span class="comment">// brace elision: &#123;1, 2&#125;</span></div><div class="line">                                    <span class="comment">//                &#123;3, 4&#125;</span></div><div class="line">    <span class="keyword">int</span> ar2d3[<span class="number">2</span>][<span class="number">2</span>] = &#123;&#123;<span class="number">1</span>&#125;, &#123;<span class="number">2</span>&#125;&#125;;   <span class="comment">// only first column: &#123;1, 0&#125;</span></div><div class="line">                                    <span class="comment">//                    &#123;2, 0&#125;</span></div><div class="line">    <span class="built_in">std</span>::<span class="built_in">array</span>&lt;<span class="keyword">int</span>, 3&gt; std_ar2&#123; &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125; &#125;;    <span class="comment">// std::array is an aggregate</span></div><div class="line">    <span class="built_in">std</span>::<span class="built_in">array</span>&lt;<span class="keyword">int</span>, 3&gt; std_ar1 = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;; <span class="comment">// brace-elision okay</span></div><div class="line"> </div><div class="line">    <span class="keyword">int</span> ai[] = &#123; <span class="number">1</span>, <span class="number">2.0</span> &#125;; <span class="comment">// narrowing conversion from double to int:</span></div><div class="line">                           <span class="comment">// error in C++11, okay in C++03</span></div><div class="line"> </div><div class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> ars[] = &#123;<span class="built_in">std</span>::<span class="built_in">string</span>(<span class="string">"one"</span>), <span class="comment">// copy-initialization</span></div><div class="line">                         <span class="string">"two"</span>,              <span class="comment">// conversion, then copy-initialization</span></div><div class="line">                         &#123;<span class="string">'t'</span>, <span class="string">'h'</span>, <span class="string">'r'</span>, <span class="string">'e'</span>, <span class="string">'e'</span>&#125; &#125;; <span class="comment">// list-initialization</span></div><div class="line"> </div><div class="line">    U u1 = &#123;<span class="number">1</span>&#125;; <span class="comment">// OK, first member of the union</span></div><div class="line"><span class="comment">//    U u2 = &#123; 0, "asdf" &#125;; // error: too many initializers for union</span></div><div class="line"><span class="comment">//    U u3 = &#123; "asdf" &#125;; // error: invalid conversion to int</span></div><div class="line"> </div><div class="line">&#125;</div><div class="line"></div></pre></td></tr></table></figure></span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/The-C-Programming-Language-4th/" rel="tag">#The C++ Programming Language 4th</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/04/literal-type/" rel="prev" title="literal type">
+                <i class="fa fa-chevron-left"></i> literal type
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/03/trivial-type/" rel="next" title="trivial type">
+                trivial type <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="xfwduke" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">xfwduke</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">🌻天上掉下个向日葵🌻</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">64</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.flickr.com/xfwduke" target="_blank">
+                  
+                    <i class="fa fa-flickr"></i> 我的相册
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#list-initialization"><span class="nav-number">1.</span> <span class="nav-text">list initialization</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#aggregate-initialization"><span class="nav-number">2.</span> <span class="nav-text">aggregate initialization</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#aggregate-type"><span class="nav-number">2.1.</span> <span class="nav-text">aggregate type</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特性"><span class="nav-number">2.2.</span> <span class="nav-text">特性</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xfwduke</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

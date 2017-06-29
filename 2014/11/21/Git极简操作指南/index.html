@@ -1,0 +1,768 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="环境配置 协议 : SSH   在Client机器上配置了 /etc/hosts10.211.55.10        nono纯粹是为了使用方便">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git极简操作指南">
+<meta property="og:url" content="http://blog.xfwduke.com/2014/11/21/Git极简操作指南/index.html">
+<meta property="og:site_name" content="向日葵和小葵">
+<meta property="og:description" content="环境配置 协议 : SSH   在Client机器上配置了 /etc/hosts10.211.55.10        nono纯粹是为了使用方便">
+<meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git极简操作指南">
+<meta name="twitter:description" content="环境配置 协议 : SSH   在Client机器上配置了 /etc/hosts10.211.55.10        nono纯粹是为了使用方便">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> Git极简操作指南 | 向日葵和小葵 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向日葵和小葵</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'U3Lc1WNac4Nz2D1EV6Sm','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Git极简操作指南
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-11-21T21:03:00+08:00" content="2014-11-21">
+              2014-11-21
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/momo/" itemprop="url" rel="index">
+                    <span itemprop="name">momo</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><ul>
+<li>协议 : <em>SSH</em></li>
+</ul>
+<blockquote>
+<p>在Client机器上配置了 <em>/etc/hosts</em><br><em>10.211.55.10        nono</em><br>纯粹是为了使用方便</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="以下各步骤只操作本地仓库"><a href="#以下各步骤只操作本地仓库" class="headerlink" title="以下各步骤只操作本地仓库"></a>以下各步骤只操作本地仓库</h2><h3 id="第一步-获取代码"><a href="#第一步-获取代码" class="headerlink" title="第一步 : 获取代码"></a>第一步 : 获取代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">└&gt; git clone ssh://xfwduke@nono:/home/xfwduke/test_project</div></pre></td></tr></table></figure>
+<p><em>clone</em> 操作会从指定的仓库获取代码<br>用上面的命令获取到的代码会放到 _test<em>project</em> 目录下, 称为 <code>本地仓库</code></p>
+<h3 id="第二步-新建分支"><a href="#第二步-新建分支" class="headerlink" title="第二步 : 新建分支"></a>第二步 : 新建分支</h3><p><strong>_尽可能在其他分支中做新特性开发, 保证 <em>master</em> 分支是可以发布的稳定版本_</strong></p>
+<p>由于 <em>Git</em> 新建分支的代价很小, 所以 <em>Git</em> 本身也是鼓励尽可能的多新建分支的</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">└&gt; git branch </div><div class="line">* master</div></pre></td></tr></table></figure>
+<p>初始的时候, 本地仓库只有一个叫做 <em>master</em> 的分支, 并且当前分支就是 <em>master</em> —— <em>master</em> 前有个 <em>‘*’</em><br>使用 <em>git branch</em> 命令可以查看  </p>
+<ul>
+<li>仓库有哪些分支  </li>
+<li>当前工作在哪个分支</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">└&gt; git branch test_branch_1</div></pre></td></tr></table></figure>
+<p>这条命令可以在当前分支上新建一个分支(<strong>特性分支</strong>)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">└&gt; git branch </div><div class="line">* master</div><div class="line">  test_branch_1</div></pre></td></tr></table></figure>
+<p>马上来看看仓库的分支, 发现确实多一个叫做 _test_brach<em>1</em> 的分支, 但当前工作分支依然是 <em>master</em></p>
+<h3 id="第三步-切换分支"><a href="#第三步-切换分支" class="headerlink" title="第三步 : 切换分支"></a>第三步 : 切换分支</h3><p>上面新建一个特性分支 _test_branch<em>1</em> , 为了在这个分支开发, 需要执行下面这条命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">└&gt; git checkout test_branch_1 </div><div class="line">Switched to branch <span class="string">'test_branch_1'</span></div></pre></td></tr></table></figure>
+<p>再来看看仓库的分支状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">└&gt; git branch </div><div class="line">  master</div><div class="line">* test_branch_1</div></pre></td></tr></table></figure>
+<p>已经切换到 _test_branch<em>1</em> 了</p>
+<h3 id="第四步-blablabla"><a href="#第四步-blablabla" class="headerlink" title="第四步 : blablabla"></a>第四步 : blablabla</h3><p>到这里, 已经可以在特性分支上做开发了<br><em>add</em> , <em>commit</em> 操作不说了, 体验 <em>Git</em> 玩的最多的应该就是这两个命令</p>
+<h3 id="第五步-分支合并"><a href="#第五步-分支合并" class="headerlink" title="第五步 : 分支合并"></a>第五步 : 分支合并</h3><p>在特性分支上完成的开发, 最终需要合并到稳定分支 (如 <em>master</em> ) 对外发布</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git merge some_branch</div></pre></td></tr></table></figure>
+<p>这个命令的具体含义是<br><strong>把 _some<em>branch</em> 合并到当前工作分支</strong>  </p>
+<p>所以为了把 _test_branch<em>1</em> 合并到 <em>master</em>, 需要切换到 <em>master</em>去</p>
+<h2 id="以下各步需要和远程仓库交互"><a href="#以下各步需要和远程仓库交互" class="headerlink" title="以下各步需要和远程仓库交互"></a>以下各步需要和远程仓库交互</h2><p><em>Git</em> 常用在分布式多人协同的开发环境. 当完成了本地新特性开发, 需要把代码同步到远程仓库时, 团队的协同开发者可能已经提交了其他的新特性, 而这些新特性在本地仓库并不存在  </p>
+<p>假设这样一个场景</p>
+<ul>
+<li>开发者 <em>A</em> 和 <em>B</em> 同时从远程仓库获取代码得到了各自的本地仓库</li>
+<li><em>A</em> 完成了自己的特性开发, 并把修改提交到了远程仓库 —— 添加了一个文件 _add_by<em>A</em></li>
+<li><em>B</em> 在 <em>A</em> 提交了代码后, 也完成了自己的开发 —— 添加了一个文件 _add_by<em>B</em> , 现在要把代码提交到远程仓库</li>
+</ul>
+<h3 id="第六步-抓取新增修改"><a href="#第六步-抓取新增修改" class="headerlink" title="第六步 : 抓取新增修改"></a>第六步 : 抓取新增修改</h3><p>此时 <em>B</em> 的本地仓库并不包含 <em>A</em> 新提交的代码, 所以首先要做的就是把新增的部分抓取下来</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">└&gt; git fetch origin</div><div class="line">warning: no common commits</div><div class="line">remote: Counting objects: 3, <span class="keyword">done</span>.</div><div class="line">remote: Total 3 (delta 0), reused 0 (delta 0)</div><div class="line">Unpacking objects: 100% (3/3), <span class="keyword">done</span>.</div><div class="line">From ssh://nono:/home/xfwduke/test_project</div><div class="line"> * [new branch]      master     -&gt; origin/master</div></pre></td></tr></table></figure>
+<p>在使用 <em>fetch</em> 命令抓取后, 看一下本地仓库的状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">└&gt; ls -l</div><div class="line">total 0</div><div class="line">-rw-r--r-- 1 xfwduke staff 0  5 20 23:16 add_by_B</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">└&gt; git status</div><div class="line">On branch master</div><div class="line">Your branch and <span class="string">'origin/master'</span> have diverged,</div><div class="line">and have 1 and 1 different commit each, respectively.</div><div class="line">  (use <span class="string">"git pull"</span> to merge the remote branch into yours)</div><div class="line"></div><div class="line">nothing to commit, working directory clean</div></pre></td></tr></table></figure>
+<p>可以看到, _add_by<em>A</em> 文件并没有如期出现</p>
+<h3 id="第七步-分支合并"><a href="#第七步-分支合并" class="headerlink" title="第七步 : 分支合并"></a>第七步 : 分支合并</h3><p>远程仓库的新增修改在抓取后存放在一个临时区域, 是不可见的. 需要做远程分支和本地分支的合并, 才能更新本地分支的状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">└&gt; git merge origin/master </div><div class="line">Merge made by the <span class="string">'recursive'</span> strategy.</div><div class="line"> add_by_A | 0</div><div class="line"> 1 file changed, 0 insertions(+), 0 deletions(-)</div><div class="line"> create mode 100644 add_by_A</div></pre></td></tr></table></figure>
+<p><em>merge</em> 操作会输出详细的合并日志. 但最直观的(在这个例子中)还是直接看下本地仓库的状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">└&gt; ls -l</div><div class="line">total 0</div><div class="line">-rw-r--r-- 1 xfwduke staff 0  5 20 23:19 add_by_A</div><div class="line">-rw-r--r-- 1 xfwduke staff 0  5 20 23:16 add_by_B</div></pre></td></tr></table></figure>
+<p>可以看到, _add_by<em>A</em> 文件出现了</p>
+<h3 id="第八步-发布变更"><a href="#第八步-发布变更" class="headerlink" title="第八步 : 发布变更"></a>第八步 : 发布变更</h3><p>完成了合并操作后, 就可以向远程仓库推送(发布)所做的变更</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">└&gt; git push origin master</div><div class="line">Counting objects: 4, <span class="keyword">done</span>.</div><div class="line">Delta compression using up to 8 threads.</div><div class="line">Compressing objects: 100% (3/3), <span class="keyword">done</span>.</div><div class="line">Writing objects: 100% (4/4), 485 bytes | 0 bytes/s, <span class="keyword">done</span>.</div><div class="line">Total 4 (delta 0), reused 0 (delta 0)</div><div class="line">To ssh://xfwduke@nono:/home/xfwduke/test_project</div><div class="line">   3b2d0ff..584f608  master -&gt; master</div></pre></td></tr></table></figure>
+<p>此时, 以新开发者 <em>C</em> 的视角来验证下所做的操作 —— 新加入的开发者 <em>C</em> 从获取一份代码到本地仓库, 并查看仓库状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">└&gt; git <span class="built_in">clone</span> ssh://xfwduke@nono:/home/xfwduke/test_project</div><div class="line">Cloning into <span class="string">'test_project'</span>...</div><div class="line">remote: Counting objects: 7, <span class="keyword">done</span>.</div><div class="line">remote: Compressing objects: 100% (4/4), <span class="keyword">done</span>.</div><div class="line">remote: Total 7 (delta 0), reused 0 (delta 0)</div><div class="line">Receiving objects: 100% (7/7), <span class="keyword">done</span>.</div><div class="line">Checking connectivity... <span class="keyword">done</span>.</div><div class="line"></div><div class="line">└&gt; ls -l</div><div class="line">total 0</div><div class="line">-rw-r--r-- 1 xfwduke staff 0  5 20 23:29 add_by_A</div><div class="line">-rw-r--r-- 1 xfwduke staff 0  5 20 23:29 add_by_B</div></pre></td></tr></table></figure>
+<p>可以看到, <em>C</em> 能正确的获取其他开发者提交的代码</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>到此为止, 一个完整的 <em>Git</em> 分布协同开发流程就算结束了<br>在这个设计场景中, 所有开发者都有权限向远程仓库提交变更 —— 这也是 <em>GCS</em> 开发使用的模型, 这种模型的特点是</p>
+<ul>
+<li>不存在仲裁角色来决定哪些提交申请需要合并到仓库</li>
+<li>所有开发者对远程仓库拥有同样的权限</li>
+<li>提交的代码质量, 掌握在开发者手中</li>
+</ul>
+<p>因此, 在 <em>GCS</em> 的开发中, 对开发者的建议是</p>
+<ul>
+<li>执行最终的 <em>push</em> 操作前, 需要尽可能的周密测试</li>
+<li>代码要有较强的容错性 —— 可以不工作, 但是别崩溃</li>
+<li>尽可能降低和其他模块的耦合性</li>
+</ul>
+<h3 id="冲突"><a href="#冲突" class="headerlink" title="冲突"></a>冲突</h3><p>这个场景中的例子, 完全没有涉及到冲突及冲突解决. 冲突发生在 <em>merge</em> 环节, 可以自己故意制造冲突试试看</p>
+<h3 id="分支管理"><a href="#分支管理" class="headerlink" title="分支管理"></a>分支管理</h3><p>在本地仓库新建特性分支, 完成开发并提交代码后, 最好删除已完成的特性分支</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch -d some_branch</div></pre></td></tr></table></figure>
+<blockquote>
+<p>这里的代码提交可以指代两种情况  </p>
+<ol>
+<li>特性分支的代码提交到远程分支  </li>
+<li>特性分支合并到了其父级分支</li>
+</ol>
+</blockquote>
+<p>对于不再有开发价值的特性分支, 可以强制删除</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch -D crazy-idea</div></pre></td></tr></table></figure>
+<h3 id="懒"><a href="#懒" class="headerlink" title="懒"></a>懒</h3><p>前面提到, 即使在本地仓库做开发, 也尽可能新建特性分支, 并保证 <em>master</em> 分支的正确性. 这并不是一个强制性要求, 如果实在不喜欢, 可以跳过第二, 第四, 第五步</p>
+<h3 id="懒的代价"><a href="#懒的代价" class="headerlink" title="懒的代价"></a>懒的代价</h3><p><em>Git</em> 的分支管理, 让开发者能随时切换代码的状态, 投入到特定特性的开发中. 如果抛弃分支特性, 完全在 <em>master</em> 中开发, 遇到下面的场景会非常的头疼</p>
+<ul>
+<li>完全不新建任何分支, 只在 <em>master</em> 中开发</li>
+<li>开发进行中, <em>master</em> 分支处于不可用(不能发布或者不能正常运行)的状态</li>
+<li>代码的其他地方突然发现严重 <em>BUG</em>, 需要紧急修复</li>
+</ul>
+<p>在这样的情况下, 开发者只能凭记忆(不一定是脑子, 可以是 <em>cp</em> 出来的原始代码文件或者一个小本子)回退已经做的修改, 投入到 <em>BUG</em> 的修复中; 等到 <em>BUG</em> 解决, 又需要再一次逐行恢复之前的代码状态  </p>
+<p>充分利用 <em>Git</em> 的分支特性, 应付这样的场景, 只需要少数几次的新建分支和合并操作</p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p><em>Git</em> 还有很多其他的命令和特性没有在这篇文章中提到, 熟悉文中涉及到的命令就可以在 <em>Git</em> 环境下做开发了, 但是如果想用的舒服, 想在碰到异常情况的时候不会心惊胆战, 还有很多其他的内容需要进一步学习, 如</p>
+<ul>
+<li><em>git reset, git rebase</em> 的使用场景</li>
+<li><em>git log</em> 的阅读</li>
+<li><em>.git/info/exclude</em> 的配置</li>
+</ul>
+<p>等等</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p><em>Git</em> 我会用的命令其实也是一只手就数的过来, 那些看起来很高档的命令, 比如 <em>reset, rebase</em> 什么的只能仰望, 哪位大哥有心得, 可以分享下啊</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/11/21/Xcode debug sleep in parent/" rel="prev" title="Xcode debug sleep in parent">
+                <i class="fa fa-chevron-left"></i> Xcode debug sleep in parent
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/11/21/更方便的构造字典/" rel="next" title="更方便的构造字典">
+                更方便的构造字典 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="xfwduke" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">xfwduke</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">🌻天上掉下个向日葵🌻</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">64</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.flickr.com/xfwduke" target="_blank">
+                  
+                    <i class="fa fa-flickr"></i> 我的相册
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境配置"><span class="nav-number">1.</span> <span class="nav-text">环境配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#以下各步骤只操作本地仓库"><span class="nav-number">2.</span> <span class="nav-text">以下各步骤只操作本地仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一步-获取代码"><span class="nav-number">2.1.</span> <span class="nav-text">第一步 : 获取代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二步-新建分支"><span class="nav-number">2.2.</span> <span class="nav-text">第二步 : 新建分支</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三步-切换分支"><span class="nav-number">2.3.</span> <span class="nav-text">第三步 : 切换分支</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四步-blablabla"><span class="nav-number">2.4.</span> <span class="nav-text">第四步 : blablabla</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第五步-分支合并"><span class="nav-number">2.5.</span> <span class="nav-text">第五步 : 分支合并</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#以下各步需要和远程仓库交互"><span class="nav-number">3.</span> <span class="nav-text">以下各步需要和远程仓库交互</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第六步-抓取新增修改"><span class="nav-number">3.1.</span> <span class="nav-text">第六步 : 抓取新增修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第七步-分支合并"><span class="nav-number">3.2.</span> <span class="nav-text">第七步 : 分支合并</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第八步-发布变更"><span class="nav-number">3.3.</span> <span class="nav-text">第八步 : 发布变更</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#冲突"><span class="nav-number">4.1.</span> <span class="nav-text">冲突</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分支管理"><span class="nav-number">4.2.</span> <span class="nav-text">分支管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#懒"><span class="nav-number">4.3.</span> <span class="nav-text">懒</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#懒的代价"><span class="nav-number">4.4.</span> <span class="nav-text">懒的代价</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他"><span class="nav-number">4.5.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最后"><span class="nav-number">5.</span> <span class="nav-text">最后</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xfwduke</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

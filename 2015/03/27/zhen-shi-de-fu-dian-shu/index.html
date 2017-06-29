@@ -1,0 +1,687 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Professional Assembly Language," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="在认真学习浮点操作之前, 手欠的去看了下 C 语义汇编出来的代码, 想看看真实情况下编译器是怎么把高级语言的浮点操作翻译成汇编语言的">
+<meta name="keywords" content="Professional Assembly Language">
+<meta property="og:type" content="article">
+<meta property="og:title" content="真实的浮点数">
+<meta property="og:url" content="http://blog.xfwduke.com/2015/03/27/zhen-shi-de-fu-dian-shu/index.html">
+<meta property="og:site_name" content="向日葵和小葵">
+<meta property="og:description" content="在认真学习浮点操作之前, 手欠的去看了下 C 语义汇编出来的代码, 想看看真实情况下编译器是怎么把高级语言的浮点操作翻译成汇编语言的">
+<meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="真实的浮点数">
+<meta name="twitter:description" content="在认真学习浮点操作之前, 手欠的去看了下 C 语义汇编出来的代码, 想看看真实情况下编译器是怎么把高级语言的浮点操作翻译成汇编语言的">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> 真实的浮点数 | 向日葵和小葵 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向日葵和小葵</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'U3Lc1WNac4Nz2D1EV6Sm','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                真实的浮点数
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-03-27T21:26:36+08:00" content="2015-03-27">
+              2015-03-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/汇编/" itemprop="url" rel="index">
+                    <span itemprop="name">汇编</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>在认真学习浮点操作之前, 手欠的去看了下 <em>C</em> 语义汇编出来的代码, 想看看真实情况下编译器是怎么把高级语言的浮点操作翻译成汇编语言的</p>
+<a id="more"></a>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">float</span> a = <span class="number">123.7</span>;</div><div class="line">    <span class="keyword">float</span> b = <span class="number">332.16</span>;</div><div class="line">    <span class="keyword">float</span> c = a + b;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"%f\n"</span>, c);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="追踪浮点在哪里"><a href="#追踪浮点在哪里" class="headerlink" title="追踪浮点在哪里"></a>追踪浮点在哪里</h2><p>上面这段代码用 <em>gcc</em> 编译成汇编, 是这个样子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">        .file   &quot;test.c&quot;</div><div class="line">        .section        .rodata</div><div class="line">.LC2:</div><div class="line">        .string &quot;%f\n&quot;</div><div class="line">        .text</div><div class="line">        .globl  main</div><div class="line">        .type   main, @function</div><div class="line">main:</div><div class="line">.LFB0:</div><div class="line">        .cfi_startproc</div><div class="line">        pushl   %ebp</div><div class="line">        .cfi_def_cfa_offset 8</div><div class="line">        .cfi_offset 5, -8</div><div class="line">        movl    %esp, %ebp</div><div class="line">        .cfi_def_cfa_register 5</div><div class="line">        andl    $-16, %esp</div><div class="line">        subl    $32, %esp</div><div class="line">        movl    .LC0, %eax</div><div class="line">        movl    %eax, 28(%esp)</div><div class="line">        movl    .LC1, %eax</div><div class="line">        movl    %eax, 24(%esp)</div><div class="line">        flds    28(%esp)</div><div class="line">        fadds   24(%esp)</div><div class="line">        fstps   20(%esp)</div><div class="line">        flds    20(%esp)</div><div class="line">        fstpl   4(%esp)</div><div class="line">        movl    $.LC2, (%esp)</div><div class="line">        call    printf</div><div class="line">        movl    $0, %eax</div><div class="line">        leave</div><div class="line">        .cfi_restore 5</div><div class="line">        .cfi_def_cfa 4, 4</div><div class="line">        ret</div><div class="line">        .cfi_endproc</div><div class="line">.LFE0:</div><div class="line">        .size   main, .-main</div><div class="line">        .section        .rodata</div><div class="line">        .align 4</div><div class="line">.LC0:</div><div class="line">        .long   1123509862</div><div class="line">        .align 4</div><div class="line">.LC1:</div><div class="line">        .long   1134957691</div><div class="line">        .ident  &quot;GCC: (Debian 4.7.2-5) 4.7.2&quot;</div><div class="line">        .section        .note.GNU-stack,&quot;&quot;,@progbits	</div></pre></td></tr></table></figure>
+<p>第一次看到这段汇编, 完全崩溃了, 因为在代码里面根本找不到 <em>C</em> 代码中定义的浮点数值</p>
+<p>尝试在 <em>gdb</em> 中反编译单步</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">(gdb) b 4</div><div class="line">Breakpoint 1 at 0x8048425: file test.c, line 4.</div><div class="line">(gdb) r</div><div class="line">Starting program: /home/xfwduke/ASM/<span class="built_in">test</span></div><div class="line"></div><div class="line">Breakpoint 1, main () at test.c:4</div><div class="line">4	    <span class="built_in">float</span> a = 123.7;</div><div class="line">(gdb) disassemble</div><div class="line">Dump of assembler code <span class="keyword">for</span> <span class="keyword">function</span> main:</div><div class="line">   0x0804841c &lt;+0&gt;:	push   %ebp</div><div class="line">   0x0804841d &lt;+1&gt;:	mov    %esp,%ebp</div><div class="line">   0x0804841f &lt;+3&gt;:	and    <span class="variable">$0xfffffff0</span>,%esp</div><div class="line">   0x08048422 &lt;+6&gt;:	sub    <span class="variable">$0x20</span>,%esp</div><div class="line">=&gt; 0x08048425 &lt;+9&gt;:	mov    0x80484f4,%eax</div><div class="line">   0x0804842a &lt;+14&gt;:	mov    %eax,0x1c(%esp)</div><div class="line">   0x0804842e &lt;+18&gt;:	mov    0x80484f8,%eax</div><div class="line">   0x08048433 &lt;+23&gt;:	mov    %eax,0x18(%esp)</div><div class="line">   0x08048437 &lt;+27&gt;:	flds   0x1c(%esp)</div><div class="line">   0x0804843b &lt;+31&gt;:	fadds  0x18(%esp)</div><div class="line">   0x0804843f &lt;+35&gt;:	fstps  0x14(%esp)</div><div class="line">   0x08048443 &lt;+39&gt;:	flds   0x14(%esp)</div><div class="line">   0x08048447 &lt;+43&gt;:	fstpl  0x4(%esp)</div><div class="line">   0x0804844b &lt;+47&gt;:	movl   <span class="variable">$0x80484f0</span>,(%esp)</div><div class="line">   0x08048452 &lt;+54&gt;:	call   0x8048300 &lt;<span class="built_in">printf</span>@plt&gt;</div><div class="line">   0x08048457 &lt;+59&gt;:	mov    <span class="variable">$0x0</span>,%eax</div><div class="line">   0x0804845c &lt;+64&gt;:	leave</div><div class="line">   0x0804845d &lt;+65&gt;:	ret</div><div class="line">End of assembler dump.</div><div class="line">(gdb) x 0x80484f4</div><div class="line">0x80484f4:	0x42f76666</div><div class="line">(gdb) x /f 0x80484f4</div><div class="line">0x80484f4:	123.699997</div><div class="line">(gdb) x /d 0x80484f4</div><div class="line">0x80484f4:	1123509862</div></pre></td></tr></table></figure>
+<p>从 <em>gdb pc</em> 所指的位置, 可以看到 <em>C</em> 代码第 <em>4</em> 行和汇编代码 第 <em>18</em> 行是对应的</p>
+<p>汇编第 <em>18</em> 行把标签 <em>.LC0</em> 的值 <em>1123509862</em> 载入 <em>%eax</em> , 而程序执行时 <em>.LC0</em> 的内存地址是 <em>0x80484f4</em> , 用 <em>gdb x</em> 命令查看对应内存地址的值, 可以看到按单精度浮点解释的话值是 <em>123.699997</em> , 按整数解释的话是 <em>1123509862</em> —— 参考 <a href="/2014/12/16/fu-dian-shu-fan-wei/" title="浮点数范围">浮点数范围</a> 把对应二进制转换为单精度浮点, 确实是这个值</p>
+<h2 id="整型是什么样"><a href="#整型是什么样" class="headerlink" title="整型是什么样"></a>整型是什么样</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> a = <span class="number">13</span>;</div><div class="line">    <span class="keyword">int</span> b = <span class="number">29</span>;</div><div class="line">    <span class="keyword">int</span> c = a + b;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">        .file   &quot;test.c&quot;</div><div class="line">        .text</div><div class="line">        .globl  main</div><div class="line">        .type   main, @function</div><div class="line">main:</div><div class="line">.LFB0:</div><div class="line">        .cfi_startproc</div><div class="line">        pushl   %ebp</div><div class="line">        .cfi_def_cfa_offset 8</div><div class="line">        .cfi_offset 5, -8</div><div class="line">        movl    %esp, %ebp</div><div class="line">        .cfi_def_cfa_register 5</div><div class="line">        subl    $16, %esp</div><div class="line">        movl    $13, -4(%ebp)</div><div class="line">        movl    $29, -8(%ebp)</div><div class="line">        movl    -8(%ebp), %eax</div><div class="line">        movl    -4(%ebp), %edx</div><div class="line">        addl    %edx, %eax</div><div class="line">        movl    %eax, -12(%ebp)</div><div class="line">        movl    $0, %eax</div><div class="line">        leave</div><div class="line">        .cfi_restore 5</div><div class="line">        .cfi_def_cfa 4, 4</div><div class="line">        ret</div><div class="line">        .cfi_endproc</div><div class="line">.LFE0:</div><div class="line">        .size   main, .-main</div><div class="line">        .ident  &quot;GCC: (Debian 4.7.2-5) 4.7.2&quot;</div><div class="line">        .section        .note.GNU-stack,&quot;&quot;,@progbits</div></pre></td></tr></table></figure>
+<h2 id="不一样"><a href="#不一样" class="headerlink" title="不一样"></a>不一样</h2><p>从上面的分析可以看到, <em>gcc</em> 在处理浮点数和整数的初始化时方法是不一样的. 这样做的原因现在还不了解, 等到后面明白了再来补全吧</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Professional-Assembly-Language/" rel="tag">#Professional Assembly Language</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/03/27/trans-string/" rel="prev" title="传送字符串">
+                <i class="fa fa-chevron-left"></i> 传送字符串
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/03/27/int-div/" rel="next" title="整数除法">
+                整数除法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="xfwduke" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">xfwduke</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">🌻天上掉下个向日葵🌻</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">64</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.flickr.com/xfwduke" target="_blank">
+                  
+                    <i class="fa fa-flickr"></i> 我的相册
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#追踪浮点在哪里"><span class="nav-number">1.</span> <span class="nav-text">追踪浮点在哪里</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#整型是什么样"><span class="nav-number">2.</span> <span class="nav-text">整型是什么样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不一样"><span class="nav-number">3.</span> <span class="nav-text">不一样</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xfwduke</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

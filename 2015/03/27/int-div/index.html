@@ -1,0 +1,792 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Professional Assembly Language," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="无符号整数除法和带符号整数除法分别对应 div 和 idiv 指令, 这两个指令都只有一个操作数, 格式是 12div divisoridiv divisor 针对不同字长的操作数, 有下列不同的组合    指令后缀 除数( divisor )字长 被除数 (dividend ) 被除数字长 商( quotient ) 余数( remainder )     b 8bit AX 16bit AL">
+<meta name="keywords" content="Professional Assembly Language">
+<meta property="og:type" content="article">
+<meta property="og:title" content="整数除法">
+<meta property="og:url" content="http://blog.xfwduke.com/2015/03/27/int-div/index.html">
+<meta property="og:site_name" content="向日葵和小葵">
+<meta property="og:description" content="无符号整数除法和带符号整数除法分别对应 div 和 idiv 指令, 这两个指令都只有一个操作数, 格式是 12div divisoridiv divisor 针对不同字长的操作数, 有下列不同的组合    指令后缀 除数( divisor )字长 被除数 (dividend ) 被除数字长 商( quotient ) 余数( remainder )     b 8bit AX 16bit AL">
+<meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="整数除法">
+<meta name="twitter:description" content="无符号整数除法和带符号整数除法分别对应 div 和 idiv 指令, 这两个指令都只有一个操作数, 格式是 12div divisoridiv divisor 针对不同字长的操作数, 有下列不同的组合    指令后缀 除数( divisor )字长 被除数 (dividend ) 被除数字长 商( quotient ) 余数( remainder )     b 8bit AX 16bit AL">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> 整数除法 | 向日葵和小葵 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向日葵和小葵</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'U3Lc1WNac4Nz2D1EV6Sm','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                整数除法
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-03-27T14:55:53+08:00" content="2015-03-27">
+              2015-03-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/汇编/" itemprop="url" rel="index">
+                    <span itemprop="name">汇编</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>无符号整数除法和带符号整数除法分别对应 <em>div</em> 和 <em>idiv</em> 指令, 这两个指令都只有一个操作数, 格式是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">div divisor</div><div class="line">idiv divisor</div></pre></td></tr></table></figure>
+<p>针对不同字长的操作数, 有下列不同的组合</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">指令后缀</th>
+<th style="text-align:center">除数( <em>divisor</em> )字长</th>
+<th style="text-align:center">被除数 (<em>dividend</em> )</th>
+<th style="text-align:center">被除数字长</th>
+<th style="text-align:center">商( <em>quotient</em> )</th>
+<th style="text-align:center">余数( <em>remainder</em> )</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>b</em></td>
+<td style="text-align:center"><em>8bit</em></td>
+<td style="text-align:center"><em>AX</em></td>
+<td style="text-align:center"><em>16bit</em></td>
+<td style="text-align:center"><em>AL</em></td>
+<td style="text-align:center"><em>AH</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>w</em></td>
+<td style="text-align:center"><em>16bit</em></td>
+<td style="text-align:center"><em>DX:AX</em></td>
+<td style="text-align:center"><em>32bit</em></td>
+<td style="text-align:center"><em>AX</em></td>
+<td style="text-align:center"><em>DX</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>l</em></td>
+<td style="text-align:center"><em>32bit</em></td>
+<td style="text-align:center"><em>EDX:EAX</em></td>
+<td style="text-align:center"><em>64bit</em></td>
+<td style="text-align:center"><em>EAX</em></td>
+<td style="text-align:center"><em>EDX</em></td>
+</tr>
+</tbody>
+</table>
+<p><em>divisor</em> 可以是寄存器或内存中的值</p>
+<h2 id="异常"><a href="#异常" class="headerlink" title="异常"></a>异常</h2><p>整数除法的异常有两类</p>
+<ul>
+<li>除 <em>0</em> 异常</li>
+<li>商溢出异常</li>
+</ul>
+<a id="more"></a>
+<h3 id="除-0-异常"><a href="#除-0-异常" class="headerlink" title="除 0 异常"></a>除 <em>0</em> 异常</h3><p>当除数( <em>divisor</em> )为 <em>0</em> 时, 执行除法指令会抛出系统异常</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line"></div><div class="line">.section .bss</div><div class="line"></div><div class="line">.section .text</div><div class="line"></div><div class="line">.globl _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    xor %eax, %eax</div><div class="line">    xor %ebx, %ebx</div><div class="line">    movw $10, %ax</div><div class="line">    divb %bl</div><div class="line"></div><div class="line">_exit:</div><div class="line">    pushl $0</div><div class="line">    call exit</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ ./test</div><div class="line">Floating point exception</div></pre></td></tr></table></figure>
+<p>这种错误在代码中很容易写逻辑检查</p>
+<h3 id="商溢出异常"><a href="#商溢出异常" class="headerlink" title="商溢出异常"></a>商溢出异常</h3><p>当商结果字长大于商寄存器时, 会引发商溢出异常</p>
+<h4 id="无符号除法-以-divb-为例"><a href="#无符号除法-以-divb-为例" class="headerlink" title="无符号除法( 以 divb 为例 )"></a>无符号除法( 以 <em>divb</em> 为例 )</h4><p>当 <em>dividend</em> 高 <em>8bit</em> 的值大于 <em>divisor</em> 时, <em>quotient</em> 的字长必定大于 <em>8bit</em>, 无法存入 <em>AL</em> 导致商溢出</p>
+<p>当除法会导致商溢出时并不是不能计算, 而是需要对操作数做一些处理, 把原始的除法拆分</p>
+
+$$
+\begin{equation}
+\left.\begin{alignedat}{1}
+dividend\ & = quotient \times divisor + remainder,\\
+dividend \div divisor \ & = dividend_{H} \div divisor \times 2^{8} + dividend_{L} \div divisor
+\end{alignedat}
+\right\}
+\Longrightarrow\\
+\begin{alignedat}{1}
+dividend \div divisor \ & = (quotient_{H} \times divisor + remainder_{H}) \div divisor \times 2^{8} + dividend_{L} \div divisor\\
+& = quotient_{H} \times 2^{8} + (remainder_{H} \times 2^{8} + dividend_{L}) \div divisor
+\end{alignedat}\\
+\text{令}\\
+remainder_{H} \times 2^{8} + dividend_{L} = dividend'_{L}\\
+\text{则有}\\
+dividend \div divisor = quotient_{H} \times 2^{8} + dividend'_{L} \div divisor\\
+\text{令}\\
+dividend'_{L} = quotient'_{L} \times divisor + remainder'_{L}\\
+\text{取}\\
+\begin{cases}
+\begin{alignedat}{1}
+quotient_{final} \ & = quotient_{H} \times 2^{8} + quotient'_{L},\\
+remainder_{final} \ & = remainder'_{L}
+\end{alignedat}
+\end{cases}\\
+\text{最终}\\ 
+divident = quotient_{final} \times divisor + remainder_{final}
+\end{equation}
+$$
+
+<p>上面的推导看起来很复杂, 其实整个算法非常简单</p>
+<ol>
+<li>将被除数拆分成高 <em>8bit</em> 和 低 <em>8bit</em> 两个数 —— 分别是高位被除数和低位被除数</li>
+<li>将高位被除数和除数做除法运算, 得到高位商和高位余数</li>
+<li>取 $新被除数=高位余数 \times 2^{8} + 低位被除数$</li>
+<li>将新被除数和除数做除法运算, 得到低位商和低位余数</li>
+<li>$结果商=高位商 \times 2^{8} + 低位商$</li>
+<li>$余数=低位余数$</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">output_str:</div><div class="line">    .asciz &quot;%d / %d, quot = %d, remain = %d\n&quot;</div><div class="line"></div><div class="line">.section .bss</div><div class="line"></div><div class="line">.section .text</div><div class="line"></div><div class="line">.globl _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    xor %eax, %eax  #dividend %ax</div><div class="line">    xor %ebx, %ebx  #divisor %bl</div><div class="line">    movw $0xdd93, %ax</div><div class="line">    movb $0x71, %bl</div><div class="line"></div><div class="line">    cmp %bl, %ah</div><div class="line">    jge _extend_div</div><div class="line"></div><div class="line">_extend_div:</div><div class="line">    xor %edx, %edx  #to store quotient</div><div class="line">    pushl %eax	#store original dividend</div><div class="line"></div><div class="line">    #hight bit div</div><div class="line">    shrl  $8, %eax #right shift 8bit</div><div class="line">    movb $0, %ah</div><div class="line">    divb %bl</div><div class="line">    movb %al, %dh   #store hight bit quotient</div><div class="line"></div><div class="line">    #comprise new dividend</div><div class="line">    popl %ecx</div><div class="line">    #hight bit remaind already in %ah</div><div class="line">    movb %cl, %al</div><div class="line">    divb %bl</div><div class="line">    movb %al, %dl   #store low bit quotient and comprise %dx to finall quotient</div><div class="line"></div><div class="line"></div><div class="line">    shrl $8, %eax   #push finall remainder</div><div class="line">    movzx %al, %eax</div><div class="line">    pushl %eax</div><div class="line"></div><div class="line">    movzx %dx, %edx #push finall quotient</div><div class="line">    pushl %edx</div><div class="line"></div><div class="line">    movzx %bx, %ebx #push divisor</div><div class="line">    pushl %ebx</div><div class="line"></div><div class="line">    pushl %ecx	#push divitiend</div><div class="line"></div><div class="line">    push $output_str</div><div class="line">    call printf</div><div class="line"></div><div class="line">_output:</div><div class="line">_exit:</div><div class="line">    pushl $0</div><div class="line">    call exit</div></pre></td></tr></table></figure>
+<p>这段代码即是前面算法的实现, 尝试做 $56723(0xdd93) \div {113}(0x71)$ , 不做任何处理的话肯定会出现商溢出, 因为被除数高位 <em>0xdd</em> 比除数 <em>0x71</em> 要大</p>
+<ul>
+<li><em>17</em> 行比较被除数高位与除数, 判断是否需要做扩展除法</li>
+<li><em>24 ~ 28</em> 行做高位除法<ul>
+<li><em>25</em> 行将 <em>%eax</em> 右移 <em>8bit</em>, 即将 <em>%ah</em> 移动到 <em>%al</em></li>
+<li><em>26</em> 行将 <em>%ah</em> 清零, 此时 <em>%ax</em> 即为原被除数的高 <em>8bit</em></li>
+<li><em>28</em> 行将高位商暂存到 <em>%dh</em>, 因为最终需要 $\times 2^{8}$ , 所以直接存入 <em>%dh</em>, 后面和低位商(将会存入 <em>%dl</em> )组合时, 可以省掉一次左位移 <em>8bit</em></li>
+<li>余数在 <em>%ah</em> 中</li>
+</ul>
+</li>
+<li><em>31 ~ 35</em> 行做低位除法<ul>
+<li><em>31, 32</em> 行将原被除数低 <em>8bit</em> 存入 <em>%al</em>, 和 <em>%ah</em> 的高位余数组合, 刚好构成新被除数</li>
+<li><em>35</em> 行将低位商存入 <em>%dl</em></li>
+<li>低位余数在 <em>%ah</em> 中</li>
+</ul>
+</li>
+<li><em>38 ~ 40</em> 行处理最终余数, 由于最终余数(即低位余数)在 <em>%ah</em> 中, 所以先将值右移到 <em>%al</em>, 同时扩展到 <em>%eax</em> 存入 <em>stack</em> —— 无法把 <em>8bit</em> 值放入 <em>stack</em>, 所以必须做无符号扩展</li>
+<li><em>42, 43</em> 行处理商, 同样 <em>%dx</em> 扩展为 <em>%edx</em></li>
+</ul>
+<h4 id="带符号除法"><a href="#带符号除法" class="headerlink" title="带符号除法"></a>带符号除法</h4><p>对于带符号除法, 前面提到的溢出判据 <code>当 dividend 高 8bit 的值大于 divisor 时, quotient 的字长必定大于 8bit, 无法存入 AL 导致商溢出</code> 只需要修改为比较绝对值即可</p>
+<p>所以对于整数除法是否会发生商溢出的判据是</p>
+<p><strong>当 <em>dividend</em> 高半部分的绝对值大于 <em>divisor</em> 时, 会发生商溢出</strong></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Professional-Assembly-Language/" rel="tag">#Professional Assembly Language</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/03/27/zhen-shi-de-fu-dian-shu/" rel="prev" title="真实的浮点数">
+                <i class="fa fa-chevron-left"></i> 真实的浮点数
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/03/12/int-mul/" rel="next" title="整数乘法">
+                整数乘法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="xfwduke" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">xfwduke</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">🌻天上掉下个向日葵🌻</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">64</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.flickr.com/xfwduke" target="_blank">
+                  
+                    <i class="fa fa-flickr"></i> 我的相册
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#异常"><span class="nav-number">1.</span> <span class="nav-text">异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#除-0-异常"><span class="nav-number">1.1.</span> <span class="nav-text">除 0 异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#商溢出异常"><span class="nav-number">1.2.</span> <span class="nav-text">商溢出异常</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#无符号除法-以-divb-为例"><span class="nav-number">1.2.1.</span> <span class="nav-text">无符号除法( 以 divb 为例 )</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#带符号除法"><span class="nav-number">1.2.2.</span> <span class="nav-text">带符号除法</span></a></li></ol></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xfwduke</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

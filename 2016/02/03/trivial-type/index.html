@@ -1,0 +1,726 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="The C++ Programming Language 4th," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="trivial type 表示结构相对简单的数据类型 A trivial type is a type whose storage is contiguous (trivially copyable) and which only supports static default initialization (trivially default constructible), either cv-">
+<meta name="keywords" content="The C++ Programming Language 4th">
+<meta property="og:type" content="article">
+<meta property="og:title" content="trivial type">
+<meta property="og:url" content="http://blog.xfwduke.com/2016/02/03/trivial-type/index.html">
+<meta property="og:site_name" content="向日葵和小葵">
+<meta property="og:description" content="trivial type 表示结构相对简单的数据类型 A trivial type is a type whose storage is contiguous (trivially copyable) and which only supports static default initialization (trivially default constructible), either cv-">
+<meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="trivial type">
+<meta name="twitter:description" content="trivial type 表示结构相对简单的数据类型 A trivial type is a type whose storage is contiguous (trivially copyable) and which only supports static default initialization (trivially default constructible), either cv-">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> trivial type | 向日葵和小葵 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向日葵和小葵</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'U3Lc1WNac4Nz2D1EV6Sm','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                trivial type
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-02-03T20:38:32+08:00" content="2016-02-03">
+              2016-02-03
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/C-C/" itemprop="url" rel="index">
+                    <span itemprop="name">C/C++</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p><em>trivial type</em> 表示结构相对简单的数据类型</p>
+<blockquote><p>A trivial type is a type whose storage is contiguous (trivially copyable) and which only supports static default initialization (trivially default constructible), either cv-qualified or not. It includes scalar types, trivial classes and arrays of any such types.</p>
+<footer><strong>@C++ Reference</strong><cite><a href="http://www.cplusplus.com/reference/type_traits/is_trivial/" target="_blank" rel="external">www.cplusplus.com/reference/type_traits/is_trivial</a></cite></footer></blockquote>
+<p><br></p>
+<p>这段话很精简的描述了什么是 <em>trivial type</em> ，但要完全看懂却很不容易</p>
+<a id="more"></a>
+<h2 id="cv-qualified"><a href="#cv-qualified" class="headerlink" title="cv-qualified"></a><em>cv-qualified</em></h2><p><em>cv-qualified</em> 即是用 <em>const / volatile</em> 修饰的类型<a href="[http://stackoverflow.com/questions/15413037/what-does-cv-unqualified-mean-in-c](http://stackoverflow.com/questions/15413037/what-does-cv-unqualified-mean-in-c)">^1</a></p>
+<ul>
+<li><em>const-qualified——with the <code>const</code> cv-qualifier</em></li>
+<li><em>volatile-qualified——with the <code>volatile</code> cv-qualifier</em></li>
+<li><em>const-volatile-qualified——with both the <code>const</code> and <code>volatile</code> cv-qualifiers</em></li>
+</ul>
+<h2 id="scalar-types"><a href="#scalar-types" class="headerlink" title="scalar types"></a><em>scalar types</em></h2><blockquote><p>A scalar type is a type that has built-in functionality for the addition operator without overloads (arithmetic, pointer, member pointer, enum and std::nullptr_t).</p>
+<footer><strong>@C++ Reference</strong><cite><a href="http://www.cplusplus.com/reference/type_traits/is_scalar/" target="_blank" rel="external">www.cplusplus.com/reference/type_traits/is_scalar</a></cite></footer></blockquote>
+<p><br></p>
+<p>有内建加法操作的类型都属于 <em>scalar type</em> ，包括<code>算术类型</code>、<code>指针</code>、<code>枚举</code>和<code>nullptr</code></p>
+<p>_type_trait::is<em>scalar</em> 可以用来判断类型是不是 <em>scalar type</em></p>
+<figure class="highlight cpp"><figcaption><span>is_scalar 原型</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></div><div class="line"><span class="title">struct</span> <span class="title">is_scalar</span> : <span class="built_in">std</span>::integral_constant &lt; <span class="keyword">bool</span>,</div><div class="line">         is_arithmetic&lt;T&gt;::value || is_pointer&lt;T&gt;::value ||</div><div class="line">         is_member_pointer&lt;T&gt;::value || is_enum&lt;T&gt;::value ||</div><div class="line">         is_same&lt;<span class="keyword">nullptr_t</span>, <span class="keyword">typename</span> remove_cv&lt;T&gt;::type&gt;::value&gt; &#123;&#125;;</div></pre></td></tr></table></figure>
+<h2 id="contiguous-trivial-copyable"><a href="#contiguous-trivial-copyable" class="headerlink" title="contiguous ( trivial copyable )"></a><em>contiguous ( trivial copyable )</em></h2><blockquote><p>A trivially copyable type is a type whose storage is contiguous (and thus its copy implies a trivial memory block copy, as if performed with memcpy), either cv-qualified or not. …… for scalar types, trivially copyable classes and arrays of any such types.</p>
+<p>A trivially copyable class is a class (defined with class, struct or union) that:</p>
+<ul>
+<li>uses the implicitly defined copy and move constructors, copy and move assignments, and destructor.</li>
+<li>has no virtual members.</li>
+<li>its base class and non-static data members (if any) are themselves also trivially copyable types.</li>
+</ul>
+<footer><strong>@C++ Reference</strong><cite><a href="http://www.cplusplus.com/reference/type_traits/is_trivially_copyable/" target="_blank" rel="external">www.cplusplus.com/reference/type_traits/is_trivially_copyable</a></cite></footer></blockquote>
+<p><br></p>
+<p>从定义来看， <em>trivially copyable type</em> 在存储上是连续的，可以用 <em>memcpy</em> 复制对象；当一个类是 <em>trivially copyable class</em> 时，就肯定是 <em>trivially copyable type</em></p>
+<h3 id="存在指针成员"><a href="#存在指针成员" class="headerlink" title="存在指针成员"></a>存在指针成员</h3><figure class="highlight cpp"><figcaption><span>反例</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span></div><div class="line">&#123;</div><div class="line"> <span class="keyword">public</span>:</div><div class="line">  Test () = <span class="keyword">default</span>;</div><div class="line"></div><div class="line">  Test (<span class="keyword">int</span> len, <span class="keyword">int</span> start) : _len (len), _ptr (<span class="keyword">new</span> <span class="keyword">int</span> (_len))</div><div class="line">  &#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; _len; ++i)</div><div class="line">    &#123;</div><div class="line">      _ptr[i] = start++;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">void</span> <span class="title">disp</span> <span class="params">()</span></span></div><div class="line">  &#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; _len; ++i)</div><div class="line">    &#123;</div><div class="line">      <span class="built_in">cout</span> &lt;&lt; _ptr[i] &lt;&lt; <span class="string">" "</span>;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  ~Test ()</div><div class="line">  &#123;</div><div class="line">    <span class="keyword">delete</span>[] _ptr;</div><div class="line">  &#125;</div><div class="line"></div><div class="line"> <span class="keyword">private</span>:</div><div class="line">  <span class="keyword">int</span> _len;</div><div class="line">  <span class="keyword">int</span> * _ptr;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> ** argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="function">Test <span class="title">ins1</span><span class="params">(<span class="number">10</span>, <span class="number">4</span>)</span></span>;</div><div class="line">  Test ins2;</div><div class="line">  <span class="built_in">memcpy</span> (&amp;ins2, &amp;ins1, <span class="keyword">sizeof</span> (Test));</div><div class="line">  ins2.disp ();</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><em>Test</em> 类违背了 <em>trivially copyable class</em> 定义的第一条。执行的结果会遇到 <em>runtime error</em> —— <em>memcpy</em> 无法正确深复制指针成员，导致 _<em>ptr</em> 指向的内存被释放两次</p>
+<h3 id="存在虚成员"><a href="#存在虚成员" class="headerlink" title="存在虚成员"></a>存在虚成员</h3><p>有虚成员的类用 <em>memcpy</em> 复制对象结果是未定义的，在某些编译器上结果可能是正确的，但不保证会一直正确下去——这是目前能查到的东西，试了半天也没找到什么反例</p>
+<h2 id="trivial-class"><a href="#trivial-class" class="headerlink" title="trivial class"></a><em>trivial class</em></h2><p>上面 <em>trivially copyable</em> 展示了 <em>trivially</em> 到底是个什么东西，说起来也很简单</p>
+<ul>
+<li>只能存在默认复制构造函数，不允许自定义</li>
+<li>不存在虚成员</li>
+<li>基类和非静态成员也满足上面两条</li>
+</ul>
+<p>而 <em>trivial class</em> 就是满足一系列 <em>trivially XXX</em> 的类，包括</p>
+<ul>
+<li><em>trivially copyable</em></li>
+<li><em>trivially constructible</em></li>
+<li><em>trivially move</em></li>
+<li><em>trivially assignment</em></li>
+<li><em>trivially destructor</em></li>
+</ul>
+<p>同时还必须</p>
+<ul>
+<li>没有虚成员</li>
+<li>非静态成员不能在类定义中初始化—— <em>C++ 11</em> 的新特性，实际就相当于用户自定义构造函数了</li>
+<li>基类和非静态成员也满足前面的条件</li>
+</ul>
+<p>看起来定义很长，但看过每一个 <em>trivially XXX</em> 定义后会发现， <em>trivially class</em> 实际是不能存在任何用户自定义的资源管理函数——构造、复制、移动和析构</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/The-C-Programming-Language-4th/" rel="tag">#The C++ Programming Language 4th</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/04/aggregate-initialization/" rel="prev" title="aggregate initialization">
+                <i class="fa fa-chevron-left"></i> aggregate initialization
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/02/enum-class-和-plain-enum/" rel="next" title="enum class 和 plain enum">
+                enum class 和 plain enum <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="xfwduke" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">xfwduke</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">🌻天上掉下个向日葵🌻</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">64</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.flickr.com/xfwduke" target="_blank">
+                  
+                    <i class="fa fa-flickr"></i> 我的相册
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#cv-qualified"><span class="nav-number">1.</span> <span class="nav-text">cv-qualified</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#scalar-types"><span class="nav-number">2.</span> <span class="nav-text">scalar types</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#contiguous-trivial-copyable"><span class="nav-number">3.</span> <span class="nav-text">contiguous ( trivial copyable )</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#存在指针成员"><span class="nav-number">3.1.</span> <span class="nav-text">存在指针成员</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#存在虚成员"><span class="nav-number">3.2.</span> <span class="nav-text">存在虚成员</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#trivial-class"><span class="nav-number">4.</span> <span class="nav-text">trivial class</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xfwduke</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

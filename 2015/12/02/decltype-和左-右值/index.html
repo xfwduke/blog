@@ -1,0 +1,727 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="C++ Primer," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="使用关键字 decltype 的时候，左值和右值也有所不同。如果表达式的求值结果是左值，decltype 作用于该表达式（不是变量）得到一个引用类型。举个例子，假定 p 的类型是 int* ，因为解引用运算符生成左值，所以 decltype(*p) 的结果是 int&amp;amp; 。另一方面，因为取地址运算符生成右值，所以 decltype(&amp;amp;p) 的结果是 int** ，也就是说，结果是一个">
+<meta name="keywords" content="C++ Primer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="decltype 的规则">
+<meta property="og:url" content="http://blog.xfwduke.com/2015/12/02/decltype-和左-右值/index.html">
+<meta property="og:site_name" content="向日葵和小葵">
+<meta property="og:description" content="使用关键字 decltype 的时候，左值和右值也有所不同。如果表达式的求值结果是左值，decltype 作用于该表达式（不是变量）得到一个引用类型。举个例子，假定 p 的类型是 int* ，因为解引用运算符生成左值，所以 decltype(*p) 的结果是 int&amp;amp; 。另一方面，因为取地址运算符生成右值，所以 decltype(&amp;amp;p) 的结果是 int** ，也就是说，结果是一个">
+<meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="decltype 的规则">
+<meta name="twitter:description" content="使用关键字 decltype 的时候，左值和右值也有所不同。如果表达式的求值结果是左值，decltype 作用于该表达式（不是变量）得到一个引用类型。举个例子，假定 p 的类型是 int* ，因为解引用运算符生成左值，所以 decltype(*p) 的结果是 int&amp;amp; 。另一方面，因为取地址运算符生成右值，所以 decltype(&amp;amp;p) 的结果是 int** ，也就是说，结果是一个">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> decltype 的规则 | 向日葵和小葵 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向日葵和小葵</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'U3Lc1WNac4Nz2D1EV6Sm','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                decltype 的规则
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-12-02T22:06:01+08:00" content="2015-12-02">
+              2015-12-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/C-C/" itemprop="url" rel="index">
+                    <span itemprop="name">C/C++</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><blockquote><p>使用关键字 <em>decltype</em> 的时候，左值和右值也有所不同。如果表达式的求值结果是左值，<em>decltype</em> 作用于该表达式（不是变量）得到一个引用类型。举个例子，假定 <em>p</em> 的类型是 <em>int*</em> ，因为解引用运算符生成左值，所以 <em>decltype(*p)</em> 的结果是 <em>int&amp;</em> 。另一方面，因为取地址运算符生成右值，所以 <em>decltype(&amp;p)</em> 的结果是 <em>int**</em> ，也就是说，结果是一个指向整型指针的指针。</p>
+<footer><strong>Stanley B.Lippman; Josée Lajoie; Barbara E. Moo</strong><cite>C++ Primer 4.1.1</cite></footer></blockquote>      
+<p><br><br>这一段话隐藏了太多的细节, 看起来反而更加迷惑</p>
+<ul>
+<li><em>decltype</em> 和左值/右值紧密纠缠, 同时还会和 <em>auto</em> 一起用于 <code>函数返回值后置</code></li>
+<li>为了验证 <em>decltype</em> 的工作方式, 又需要能获取表达式的类型信息</li>
+</ul>
+<p>所以还是有蛮多东西需要扩展学习的</p>
+<a id="more"></a>
+<h2 id="获取类型名称"><a href="#获取类型名称" class="headerlink" title="获取类型名称"></a>获取类型名称</h2><p>在学习和验证 <em>decltype</em> 前, 首先得学一下怎么获取类型名称. 这对后面直观的感受 <em>decltype</em> 的工作方式非常有好处</p>
+<h3 id="使用-C-内置方法"><a href="#使用-C-内置方法" class="headerlink" title="使用 C++ 内置方法"></a>使用 <em>C++</em> 内置方法</h3><p>使用 _std::type<em>info</em> 类和 <em>typeid</em> 操作符可以获取表达式的类型信息</p>
+<figure class="highlight cpp"><figcaption><span>获取类型名称</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;typeinfo&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span></div><div class="line">&#123;</div><div class="line"></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type_name[Test]: "</span> &lt;&lt; <span class="keyword">typeid</span> (Test).name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type_name[Test *]: "</span> &lt;&lt; <span class="keyword">typeid</span> (Test *).name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type_name[Test &amp;]: "</span> &lt;&lt; <span class="keyword">typeid</span> (Test &amp;).name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line"></div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type_name[int]: "</span> &lt;&lt; <span class="keyword">typeid</span> (<span class="keyword">int</span>).name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type_name[int *]: "</span> &lt;&lt; <span class="keyword">typeid</span> (<span class="keyword">int</span> *).name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type_name[int &amp;]: "</span> &lt;&lt; <span class="keyword">typeid</span> (<span class="keyword">int</span> &amp;).name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><figcaption><span>执行结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">type_name[Test]: 4Test</div><div class="line">type_name[Test *]: 4Test</div><div class="line">type_name[Test &amp;]: P4Test</div><div class="line">type_name[int]: i</div><div class="line">type_name[int *]: Pi</div><div class="line">type_name[int &amp;]: i</div></pre></td></tr></table></figure>
+<p>从结果可以看到, 能够勉强获得表达式的类型, 虽然不够直观但至少有</p>
+<p>但还是存在问题——获取 <em>reference</em> 类型名称的输出还是原始的类型名称, 从结果无法分辨表达的类型到底是一个引用还是一个对象——这其实是 <em>C++</em> 的问题[^1]<br>[^1]:<a href="http://stackoverflow.com/questions/5151875/typeid-doesnt-return-correct-type" target="_blank" rel="external">Stack Overflow : typeid doesn’t return correct type</a></p>
+<blockquote><p>When typeid is applied to a type-id, the result refers to a type_info object representing the type of the type-id</p>
+<footer><strong>ISO/IEC 14882:2003 - 5.2.8 / 4</strong></footer></blockquote>
+<h3 id="使用-Boost-typeindex-类"><a href="#使用-Boost-typeindex-类" class="headerlink" title="使用 _Boost::typeindex 类"></a>使用 _Boost::type<em>index</em> 类</h3><p><em>Boost</em> 提供了一套更好的模板来获得表达式的类型名称[^1]</p>
+<figure class="highlight cpp"><figcaption><span>使用 Boost::type_index</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;boost/type_index.hpp&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"><span class="keyword">namespace</span> bt = boost::typeindex;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span></div><div class="line">&#123;</div><div class="line"></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line"></div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type name[Test]: "</span> &lt;&lt; bt::type_id_with_cvr&lt;Test&gt; ().pretty_name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type name[Test *]: "</span> &lt;&lt; bt::type_id_with_cvr&lt;Test *&gt; ().pretty_name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type name[Test &amp;]: "</span> &lt;&lt; bt::type_id_with_cvr&lt;Test &amp;&gt; ().pretty_name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type name[int]: "</span> &lt;&lt; bt::type_id_with_cvr&lt;<span class="keyword">int</span>&gt; ().pretty_name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type name[int *]: "</span> &lt;&lt; bt::type_id_with_cvr&lt;<span class="keyword">int</span> &amp;&gt; ().pretty_name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type name[int &amp;]: "</span> &lt;&lt; bt::type_id_with_cvr&lt;<span class="keyword">int</span> &amp;&gt; ().pretty_name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><figcaption><span>执行结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">type name[Test]: Test</div><div class="line">type name[Test *]: Test*</div><div class="line">type name[Test &amp;]: Test&amp;</div><div class="line">type name[int]: int</div><div class="line">type name[int *]: int&amp;</div><div class="line">type name[int &amp;]: int&amp;</div></pre></td></tr></table></figure>
+<p>可以看到, 使用 <em>Boost</em> 的输出不仅准确而且可读性更高</p>
+<h2 id="左值-右值"><a href="#左值-右值" class="headerlink" title="左值/右值"></a>左值/右值</h2><p>左值与右值都是针对表达式</p>
+<p>简单来说[^2]<br>[^2]:<a href="https://msdn.microsoft.com/en-us/library/f90831hc.aspx" target="_blank" rel="external">Lvalues and Rvalues (Visual C++)</a></p>
+<ul>
+<li>左值在表达式执行后还能持久存在</li>
+<li>右值在表达式执行后不能持久存在</li>
+</ul>
+<p>这样的定义是非常不严谨的, 虽然大部分时间够用. 更详细的定义可以参考 <a href="http://en.cppreference.com/w/cpp/language/value_category" target="_blank" rel="external">Value categories</a> 和 <a href="https://zh.wikipedia.org/wiki/值_(電腦科學" target="_blank" rel="external">值 (计算机科学)</a>)</p>
+<h3 id="字面字符串-string-literal"><a href="#字面字符串-string-literal" class="headerlink" title="字面字符串 (string literal)"></a>字面字符串 <em>(string literal)</em></h3><figure class="highlight cpp"><figcaption><span>字面字符串</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> <span class="keyword">char</span> *str = <span class="string">"hello"</span>;</div></pre></td></tr></table></figure>
+<p>上面代码中的 <em>hello</em> 就是一个字面字符串, 又叫做 <code>字面字符串常量</code></p>
+<p><code>字面值都是右值, 但字面字符串除外——它是左值</code></p>
+<p>从 <code>表达式是否拥有自己的内存</code> 来看就比较好理解</p>
+<figure class="highlight c"><figcaption><span>字面值左/右值</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> a = <span class="number">10</span>;</div><div class="line">    <span class="keyword">char</span> *str = <span class="string">"hello"</span>;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><figcaption><span>汇编代码</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">        .file   &quot;test.c&quot;</div><div class="line">        .section        .rodata</div><div class="line">.LC0:</div><div class="line">        .string &quot;hello&quot;</div><div class="line">        .text</div><div class="line">        .globl  main</div><div class="line">        .type   main, @function</div><div class="line">main:</div><div class="line">.LFB0:</div><div class="line">        .cfi_startproc</div><div class="line">        pushq   %rbp</div><div class="line">        .cfi_def_cfa_offset 16</div><div class="line">        .cfi_offset 6, -16</div><div class="line">        movq    %rsp, %rbp</div><div class="line">        .cfi_def_cfa_register 6</div><div class="line">        movl    $10, -12(%rbp)</div><div class="line">        movq    $.LC0, -8(%rbp)</div><div class="line">        movl    $0, %eax</div><div class="line">        popq    %rbp</div><div class="line">        .cfi_def_cfa 7, 8</div><div class="line">        ret</div><div class="line">        .cfi_endproc</div><div class="line">.LFE0:</div><div class="line">        .size   main, .-main</div><div class="line">        .ident  &quot;GCC: (Ubuntu 4.9.2-10ubuntu13) 4.9.2&quot;</div><div class="line">        .section        .note.GNU-stack,&quot;&quot;,@progbits</div></pre></td></tr></table></figure>
+<p>汇编代码的第 <em>16, 17</em> 行分别是给 <em>int a</em> 和 <em>char *str</em> 赋值, 有明显的差别</p>
+<ul>
+<li>整型字面值 <em>10</em> 是一个立即数, 执行完这一行就不存在了——不要和数值 <em>10</em> 搞混了——这里是指 <em>C</em> 代码第 <em>3</em> 行中的 <em>10</em> 这个整型字面值表达式</li>
+<li><em>char *str</em> 的初始化用到了 <em>.LC0</em> 标签, 在汇编语言中标签指向了一块内存地址——在程序加载时会做内存映射构造出来, 所以这块内存是持久存在的——<em>hello</em> 这个字符串字面值就在这里</li>
+</ul>
+<h2 id="decltype-的规则"><a href="#decltype-的规则" class="headerlink" title="decltype 的规则"></a><em>decltype</em> 的规则</h2><p><em>decltype</em> 不对表达式求值而是推导表达式的类型, 规则如下<a href="[https://zh.wikipedia.org/wiki/Decltype](https://zh.wikipedia.org/wiki/Decltype)">^3</a></p>
+<p>对于 <em>decltype(e)</em></p>
+<ul>
+<li>若表达式 <em>e</em> 为一个无括号的变量、函数参数、类成员访问, 那么返回类型即为该变量或参数或类成员在源程序中的 “声明类型”</li>
+<li>否则的话, 根据表达式的值分类 <em>(value categories)</em> , 设 <em>T</em> 为 <em>e</em> 的类型<ul>
+<li>若 <em>e</em> 是一个左值 ( <em>lvalue</em> , 即 “可寻址值”) , 则 <em>decltype(e)</em> 将返回 <em>T&amp;</em></li>
+<li>若 <em>e</em> 是一个临终值 <em>(xvalue)</em> , 则返回值为 <em>T&amp;&amp;</em></li>
+<li>若 <em>e</em> 是一个纯右值 <em>(prvalue)</em> , 则返回值为 <em>T</em></li>
+</ul>
+</li>
+</ul>
+<h3 id="简单验证下"><a href="#简单验证下" class="headerlink" title="简单验证下"></a>简单验证下</h3><p>要完全验证 <em>decltype</em> 的结果非常的麻烦, 所以这里随便弄几个例子看看</p>
+<figure class="highlight cpp"><figcaption><span>简单验证</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;boost/type_index.hpp&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"><span class="keyword">namespace</span> bt = boost::typeindex;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">public</span>:</div><div class="line">    <span class="keyword">int</span> _ival;</div><div class="line">    <span class="keyword">static</span> <span class="keyword">int</span> sival;</div><div class="line"></div><div class="line">    Test (<span class="keyword">int</span> ival) : _ival (ival)</div><div class="line">    &#123; &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">int</span> <span class="title">get_ival</span> <span class="params">()</span> <span class="keyword">const</span></span>;</div><div class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">get_sival</span> <span class="params">()</span></span>;</div><div class="line">&#125;;</div><div class="line"><span class="keyword">int</span> Test::sival &#123;<span class="number">10</span>&#125;;</div><div class="line"></div><div class="line"><span class="keyword">int</span> Test::get_ival () <span class="keyword">const</span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">return</span> _ival;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">int</span> Test::get_sival ()</div><div class="line">&#123;</div><div class="line">  <span class="keyword">return</span> sival;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="function">Test <span class="title">ins</span> <span class="params">(<span class="number">1</span>)</span></span>;</div><div class="line"></div><div class="line">  <span class="keyword">int</span> i &#123;<span class="number">0</span>&#125;;</div><div class="line"></div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type name[ins]: "</span> &lt;&lt; bt::type_id_with_cvr&lt;<span class="keyword">decltype</span> (ins)&gt; ().pretty_name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type name[&amp;ins]: "</span> &lt;&lt; bt::type_id_with_cvr&lt;<span class="keyword">decltype</span> (&amp;ins)&gt; ().pretty_name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type name[ins._ival]: "</span> &lt;&lt; bt::type_id_with_cvr&lt;<span class="keyword">decltype</span> (ins._ival)&gt; ().pretty_name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type name[ins.get_ival()]: "</span> &lt;&lt; bt::type_id_with_cvr&lt;<span class="keyword">decltype</span> (ins.get_ival ())&gt; ().pretty_name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type name[Test::get_sival()]: "</span> &lt;&lt; bt::type_id_with_cvr&lt;<span class="keyword">decltype</span> (Test::get_sival ())&gt; ().pretty_name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line"></div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type name[i++]: "</span> &lt;&lt; bt::type_id_with_cvr&lt;<span class="keyword">decltype</span> (i++)&gt; ().pretty_name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"type name[++i]: "</span> &lt;&lt; bt::type_id_with_cvr&lt;<span class="keyword">decltype</span> (++i)&gt; ().pretty_name () &lt;&lt; <span class="built_in">endl</span>;</div><div class="line"></div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><figcaption><span>结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">type name[ins]: Test</div><div class="line">type name[&amp;ins]: Test*</div><div class="line">type name[ins._ival]: int</div><div class="line">type name[ins.get_ival()]: int</div><div class="line">type name[Test::get_sival()]: int</div><div class="line">type name[i++]: int</div><div class="line">type name[++i]: int&amp;</div></pre></td></tr></table></figure>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C-Primer/" rel="tag">#C++ Primer</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/03/i-和-i/" rel="prev" title="++i 和 i++">
+                <i class="fa fa-chevron-left"></i> ++i 和 i++
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/11/29/C-数组名称/" rel="next" title="C++ 数组名称">
+                C++ 数组名称 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="xfwduke" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">xfwduke</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">🌻天上掉下个向日葵🌻</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">64</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.flickr.com/xfwduke" target="_blank">
+                  
+                    <i class="fa fa-flickr"></i> 我的相册
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#获取类型名称"><span class="nav-number">1.</span> <span class="nav-text">获取类型名称</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-C-内置方法"><span class="nav-number">1.1.</span> <span class="nav-text">使用 C++ 内置方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-Boost-typeindex-类"><span class="nav-number">1.2.</span> <span class="nav-text">使用 _Boost::typeindex 类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#左值-右值"><span class="nav-number">2.</span> <span class="nav-text">左值/右值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字面字符串-string-literal"><span class="nav-number">2.1.</span> <span class="nav-text">字面字符串 (string literal)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#decltype-的规则"><span class="nav-number">3.</span> <span class="nav-text">decltype 的规则</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简单验证下"><span class="nav-number">3.1.</span> <span class="nav-text">简单验证下</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xfwduke</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

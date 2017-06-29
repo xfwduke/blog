@@ -1,0 +1,723 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="C++ Primer," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="lambda  比较适用于只在一两个地方使用的场景，如果在多个地方使用还是函数更合适。到目前为止，已经了解的函数对象有函数指针、 std::function 和 仿函数，但都有不方便的地方  无法取代有捕获的 lambda 函数的参数个数或者顺序不满足配接器（如标准库算法）的谓词要求  bind 可以很好的应对这些问题，同时 C++11 优化了 bind 的设计，让它变得更好用">
+<meta name="keywords" content="C++ Primer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++11 bind">
+<meta property="og:url" content="http://blog.xfwduke.com/2015/12/29/C-11-bind/index.html">
+<meta property="og:site_name" content="向日葵和小葵">
+<meta property="og:description" content="lambda  比较适用于只在一两个地方使用的场景，如果在多个地方使用还是函数更合适。到目前为止，已经了解的函数对象有函数指针、 std::function 和 仿函数，但都有不方便的地方  无法取代有捕获的 lambda 函数的参数个数或者顺序不满足配接器（如标准库算法）的谓词要求  bind 可以很好的应对这些问题，同时 C++11 优化了 bind 的设计，让它变得更好用">
+<meta property="og:updated_time" content="2017-06-29T12:13:31.699Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++11 bind">
+<meta name="twitter:description" content="lambda  比较适用于只在一两个地方使用的场景，如果在多个地方使用还是函数更合适。到目前为止，已经了解的函数对象有函数指针、 std::function 和 仿函数，但都有不方便的地方  无法取代有捕获的 lambda 函数的参数个数或者顺序不满足配接器（如标准库算法）的谓词要求  bind 可以很好的应对这些问题，同时 C++11 优化了 bind 的设计，让它变得更好用">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> C++11 bind | 向日葵和小葵 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向日葵和小葵</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'U3Lc1WNac4Nz2D1EV6Sm','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                C++11 bind
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-12-29T21:27:08+08:00" content="2015-12-29">
+              2015-12-29
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/C-C/" itemprop="url" rel="index">
+                    <span itemprop="name">C/C++</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p><em>lambda</em>  比较适用于只在一两个地方使用的场景，如果在多个地方使用还是函数更合适。到目前为止，已经了解的函数对象有函数指针、 <em>std::function</em> 和 仿函数，但都有不方便的地方</p>
+<ul>
+<li>无法取代有捕获的 <em>lambda</em></li>
+<li>函数的参数个数或者顺序不满足配接器（如标准库算法）的谓词要求</li>
+</ul>
+<p><em>bind</em> 可以很好的应对这些问题，同时 <em>C++11</em> 优化了 <em>bind</em> 的设计，让它变得更好用</p>
+<a id="more"></a>
+<p>在 <a href="/2015/12/27/lambda/" title="C++ 的 lambda">C++ 的 lambda</a> 中，为了找出 <em>vector\<string\></string\></em> 中 $长度 \le N$ 的字符串， <em>lambda</em> 捕捉了一个局部变量——如果在同一函数中 <em>N</em> 的值是多变的，代码就会变得非常难看</p>
+<ul>
+<li>类似的 <em>lambda</em> 代码要写多次</li>
+<li>要定义多个表示不同长度的局部变量以供捕捉</li>
+</ul>
+<h2 id="std-bind-的一般形式"><a href="#std-bind-的一般形式" class="headerlink" title="std::bind 的一般形式"></a><em>std::bind</em> 的一般形式</h2><figure class="highlight cpp"><figcaption><span>bind 的一般形式</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">auto</span> newCallable = bind(callable, arg_list);</div></pre></td></tr></table></figure>
+<ul>
+<li><em>callable</em> 是代加工的原始函数</li>
+<li>_arg<em>list</em> 是原始函数的参数列表，按原函数定义的顺序排列</li>
+<li><em>newCallable</em> 是得到的新可调用对象</li>
+</ul>
+<h2 id="占位符（placeholders）"><a href="#占位符（placeholders）" class="headerlink" title="占位符（placeholders）"></a>占位符（<em>placeholders</em>）</h2><p><em>std::placeholders</em> 名字空间下定义一系列如 <strong>1_ </strong>2_ 这样的占位符</p>
+<p>占位符用来处理不做值绑定的参数在新、老函数的对应关系</p>
+<ul>
+<li>占位符在 _arg<em>list</em> 的中的顺序位置用于表示原函数的参数位置</li>
+<li>占位符的字面数字值用于表示新函数的参数位置</li>
+</ul>
+<figure class="highlight cpp"><figcaption><span>占位符示例</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;functional&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>::placeholders;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">original_fn</span> <span class="params">(<span class="built_in">string</span> a, <span class="built_in">string</span> b, <span class="built_in">string</span> c)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"1st parameter = "</span> &lt;&lt; a &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"2nd parameter = "</span> &lt;&lt; b &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"3rd parameter = "</span> &lt;&lt; c &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">auto</span> bd = bind(original_fn, <span class="string">"hello"</span>, _2, _1);</div><div class="line">  bd(<span class="string">"word"</span>, <span class="string">"!"</span>);</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><figcaption><span>执行结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">1st parameter = hello</div><div class="line">2nd parameter = !</div><div class="line">3rd parameter = word</div></pre></td></tr></table></figure>
+<ul>
+<li><em>hello</em> 被值绑定给了 _original<em>fn</em> ，所以是第一个参数的值</li>
+<li>占位符 _<em>2</em> 位于 _arg<em>list</em> 第 <em>2</em> 个位置，表示新函数的第 <em>2</em> 个参数对应原函数的第 <em>2</em> 个参数</li>
+<li>占位符 _<em>1</em> 位于 _arg<em>list</em> 第 <em>3</em> 个位置，表示新函数的第 <em>1</em> 个参数对应原函数的第 <em>3</em> 个参数</li>
+</ul>
+<h2 id="重写示例"><a href="#重写示例" class="headerlink" title="重写示例"></a>重写示例</h2><p>前面提到有一个 <em>lambda</em> 实现的查找特定长度字符串的程序，用 <em>bind</em> 实现会更优雅</p>
+<figure class="highlight cpp"><figcaption><span>bind 版本</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;functional&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;random&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>::placeholders;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">filter_N</span> <span class="params">(<span class="keyword">const</span> <span class="built_in">string</span> s, <span class="keyword">const</span> <span class="keyword">int</span> N)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">if</span> (s.length () &lt;= N)</div><div class="line">    <span class="built_in">cout</span> &lt;&lt; s &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="built_in">std</span>::random_device rd;</div><div class="line">  <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; svec;</div><div class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; ++i)</div><div class="line">    svec.push_back (<span class="built_in">string</span> (rd () % <span class="number">15</span> + <span class="number">1</span>, <span class="string">'x'</span>));</div><div class="line"></div><div class="line">  <span class="keyword">auto</span> filter_5 = bind (filter_N, _1, <span class="number">5</span>);</div><div class="line">  <span class="keyword">auto</span> filter_10 = bind (filter_N, _1, <span class="number">10</span>);</div><div class="line"></div><div class="line">  for_each (svec.begin (), svec.end (), filter_5);</div><div class="line">  for_each (svec.begin (), svec.end (), filter_10);</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="绑定引用"><a href="#绑定引用" class="headerlink" title="绑定引用"></a>绑定引用</h2><p>前面一直提到 <code>值绑定</code>，这是 <em>bind</em> 的一个默认特性——总会复制被绑定的值</p>
+<figure class="highlight cpp"><figcaption><span>复制示例</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;functional&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>::placeholders;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Test</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> _v;</div><div class="line"></div><div class="line">    Test (<span class="keyword">int</span> v) : _v (v)</div><div class="line">    &#123; &#125;</div><div class="line"></div><div class="line">    Test (<span class="keyword">const</span> Test &amp; c)</div><div class="line">    &#123;</div><div class="line">      <span class="built_in">cout</span> &lt;&lt; <span class="string">"in copy"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">      _v = c._v;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">modify</span> <span class="params">(Test &amp; t, <span class="keyword">int</span> m)</span></span></div><div class="line">&#123;</div><div class="line">  t._v += m;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="function">Test <span class="title">ins</span> <span class="params">(<span class="number">5</span>)</span></span>;</div><div class="line">  <span class="keyword">auto</span> bdm = bind (modify, ins, _1);</div><div class="line"></div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"shall we go"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  bdm (<span class="number">3</span>);</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; ins._v &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><figcaption><span>结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">in copy</div><div class="line">shall we go</div><div class="line">5</div></pre></td></tr></table></figure>
+<p>代码尝试将一个 <em>Test</em> 对象绑定到 <em>modify</em> 函数，并修改对象的数据成员。虽然 <em>modify</em> 的参数已经考虑到了以引用作为参数，却没有得到预期的结果</p>
+<p>为了能绑定一个对象的引用，需要使用 <em>std::ref</em> 或 <em>std::cref</em> 函数——同样在 <em>functional</em> 头文件中——代码稍作修改即可</p>
+<figure class="highlight cpp"><figcaption><span>patch</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">auto</span> bdm = bind (modify, <span class="built_in">std</span>::ref(ins), _1);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><figcaption><span>结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">shall we go</div><div class="line">8</div></pre></td></tr></table></figure>
+<h2 id="右值引用"><a href="#右值引用" class="headerlink" title="右值引用"></a>右值引用</h2><p>上面没有使用 <em>std::ref</em> 代码的结果还有个有意思的地方</p>
+<ul>
+<li>复制发生在 <em>bind</em> 调用时</li>
+<li><em>modify</em> 函数接受引用类型的参数</li>
+</ul>
+<p>直观上来看，复制出来的 <em>Test</em> 对象只生存在 <strong><em>bind</em> 完成对象复制</strong> 到 <strong>这个对象的引用传递到函数内部</strong> 这个短暂的夹缝中。函数得到的引用指向了一个临时变量——这似乎有违常识</p>
+<p>实际上这是一个非常重要的概念——<a href="/2015/12/29/右值引用/" title="右值引用">右值引用</a></p>
+<figure class="highlight cpp"><figcaption><span>bind 原型</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Fn</span>, <span class="title">class</span>... <span class="title">Args</span>&gt;</span></div><div class="line">  /* <span class="title">unspecified</span> */ <span class="title">bind</span> (<span class="title">Fn</span>&amp;&amp; <span class="title">fn</span>, <span class="title">Args</span>&amp;&amp;... <span class="title">args</span>);</div><div class="line">  </div><div class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Ret</span>, <span class="title">class</span> <span class="title">Fn</span>, <span class="title">class</span>... <span class="title">Args</span>&gt;</span></div><div class="line">  /* <span class="title">unspecified</span> */ <span class="title">bind</span> (<span class="title">Fn</span>&amp;&amp; <span class="title">fn</span>, <span class="title">Args</span>&amp;&amp;... <span class="title">args</span>);</div></pre></td></tr></table></figure>
+<p>这里出现的一个没见过的符号：<em>&amp;&amp;</em> 就是专用于右值引用的</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C-Primer/" rel="tag">#C++ Primer</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/29/右值引用/" rel="prev" title="右值引用">
+                <i class="fa fa-chevron-left"></i> 右值引用
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/12/28/function/" rel="next" title="std::function">
+                std::function <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="xfwduke" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">xfwduke</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">🌻天上掉下个向日葵🌻</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">64</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.flickr.com/xfwduke" target="_blank">
+                  
+                    <i class="fa fa-flickr"></i> 我的相册
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#std-bind-的一般形式"><span class="nav-number">1.</span> <span class="nav-text">std::bind 的一般形式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#占位符（placeholders）"><span class="nav-number">2.</span> <span class="nav-text">占位符（placeholders）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重写示例"><span class="nav-number">3.</span> <span class="nav-text">重写示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#绑定引用"><span class="nav-number">4.</span> <span class="nav-text">绑定引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#右值引用"><span class="nav-number">5.</span> <span class="nav-text">右值引用</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xfwduke</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

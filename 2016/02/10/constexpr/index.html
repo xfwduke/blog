@@ -1,0 +1,734 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="The C++ Programming Language 4th," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="C++ 11 中新增的 constexpr 关键字用于声明可以在编译期求值的变量或函数——已有的 const 关键字是承诺不再修改变量的值—— constexpr 变量也不能修改 constexpr 按场景可以细分为  constexpr variable constexpr function constexpr constructor  详细的规则比较复杂，可以看下 constexpr spec">
+<meta name="keywords" content="The C++ Programming Language 4th">
+<meta property="og:type" content="article">
+<meta property="og:title" content="constexpr">
+<meta property="og:url" content="http://blog.xfwduke.com/2016/02/10/constexpr/index.html">
+<meta property="og:site_name" content="向日葵和小葵">
+<meta property="og:description" content="C++ 11 中新增的 constexpr 关键字用于声明可以在编译期求值的变量或函数——已有的 const 关键字是承诺不再修改变量的值—— constexpr 变量也不能修改 constexpr 按场景可以细分为  constexpr variable constexpr function constexpr constructor  详细的规则比较复杂，可以看下 constexpr spec">
+<meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="constexpr">
+<meta name="twitter:description" content="C++ 11 中新增的 constexpr 关键字用于声明可以在编译期求值的变量或函数——已有的 const 关键字是承诺不再修改变量的值—— constexpr 变量也不能修改 constexpr 按场景可以细分为  constexpr variable constexpr function constexpr constructor  详细的规则比较复杂，可以看下 constexpr spec">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> constexpr | 向日葵和小葵 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向日葵和小葵</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'U3Lc1WNac4Nz2D1EV6Sm','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                constexpr
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-02-10T14:06:14+08:00" content="2016-02-10">
+              2016-02-10
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/C-C/" itemprop="url" rel="index">
+                    <span itemprop="name">C/C++</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p><em>C++ 11</em> 中新增的 <em>constexpr</em> 关键字用于声明可以在编译期求值的变量或函数——已有的 <em>const</em> 关键字是承诺不再修改变量的值—— <em>constexpr</em> 变量也不能修改</p>
+<p><em>constexpr</em> 按场景可以细分为</p>
+<ul>
+<li><em>constexpr variable</em></li>
+<li><em>constexpr function</em></li>
+<li><em>constexpr constructor</em></li>
+</ul>
+<p>详细的规则比较复杂，可以看下 <a href="http://en.cppreference.com/w/cpp/language/constexpr" target="_blank" rel="external">constexpr specifier</a><a href="[http://en.cppreference.com/w/cpp/language/constexpr](http://en.cppreference.com/w/cpp/language/constexpr)">^1</a></p>
+<a id="more"></a>
+<h2 id="constexpr-variable"><a href="#constexpr-variable" class="headerlink" title="constexpr variable"></a><em>constexpr variable</em></h2><p><em>constexpr variable</em> 要求感觉比较抽象，不太容易和实际联系起来</p>
+<blockquote>
+<p><strong><em>its type must be a LiteralType</em></strong></p>
+</blockquote>
+<p>这个比较好理解，不是所有类型都可以用于 <em>constexpr</em> —— <em>std::string</em> 就不行，因为它是 <em>non-literal</em></p>
+<blockquote>
+<p><strong><em>it must be immediately constructed or assigned a value</em></strong></p>
+</blockquote>
+<p>这一要求和 <em>const</em> 一样——不能只声明而不初始化</p>
+<blockquote>
+<p><strong><em>the constructor parameters or the value to be assigned must contain only literal values, constexpr variables and functions</em></strong></p>
+</blockquote>
+<p>这一条字面意思是 构造一个 <em>constexpr variable</em> 时，构造函数的参数只能包含 <em>literal values、constexpr variables、constexpr functions</em> </p>
+<p>但实际上还表示 不能用非 <em>constexpr variables</em> 来初始化 <em>constexpr variables</em></p>
+<figure class="highlight cpp"><figcaption><span>错误</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> a = <span class="number">10</span>;</div><div class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> b = a;</div></pre></td></tr></table></figure>
+<p>上面的代码就违反了这一要求，换一种写法更明显</p>
+<figure class="highlight cpp"><figcaption><span>换一种写法</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> a = <span class="number">10</span>;</div><div class="line"><span class="function"><span class="keyword">constexpr</span> <span class="keyword">int</span> <span class="title">b</span><span class="params">(a)</span></span>;</div></pre></td></tr></table></figure>
+<blockquote>
+<p><strong><em>the constructor used to construct the object (either implicit or explicit) must satisfy the requirements of constexpr constructor. In the case of explicit constructor, it must have constexpr specified</em></strong></p>
+</blockquote>
+<p>这个简单了，自定义类必须有 <em>constexpr constructor</em> 并被调用</p>
+<h2 id="constexpr-function"><a href="#constexpr-function" class="headerlink" title="constexpr function"></a><em>constexpr function</em></h2><p><strong><em>constexpr function</em></strong> <strong>默认的就是内联函数</strong></p>
+<p><em>constexpr function</em> 对函数体中的语句有严格的要求 （ <em>C++ 11</em> ），可以是下列情况</p>
+<ul>
+<li>空语句</li>
+<li>_static<em>assert</em></li>
+<li><em>typedef</em> 和 <em>alias</em> </li>
+<li><em>using</em> 语句</li>
+<li>有且仅有一个 <em>return</em></li>
+</ul>
+<p>在 <em>C++ 14</em> 中则增加了</p>
+<ul>
+<li>内联汇编</li>
+<li><em>goto</em></li>
+<li><em>try block</em></li>
+<li>一些变量定义</li>
+</ul>
+<p>如 <em>if、for、while</em> 这样的复杂逻辑是不允许出现的</p>
+<figure class="highlight cpp"><figcaption><span>计算斐波那契数列</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">constexpr</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> <span class="title">fun</span><span class="params">(<span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> a)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">return</span> (a &gt; <span class="number">1</span> ? fun(a - <span class="number">1</span>) + fun(a - <span class="number">2</span>) : <span class="number">1</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">constexpr</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> r = fun(<span class="number">20</span>);</div><div class="line">  <span class="built_in">cout</span>&lt;&lt;r&lt;&lt;<span class="built_in">endl</span>;</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>计算斐波那契数列算是能用 <em>constexpr function</em> 实现的比较复杂的例子了——递归调用刚好能用一条语句搞定</p>
+<figure class="highlight plain"><figcaption><span>汇编代码</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">_main:                                  ## @main</div><div class="line">        .cfi_startproc</div><div class="line">## BB#0:</div><div class="line">        pushq   %rbp</div><div class="line">Ltmp0:</div><div class="line">        .cfi_def_cfa_offset 16</div><div class="line">Ltmp1:</div><div class="line">        .cfi_offset %rbp, -16</div><div class="line">        movq    %rsp, %rbp</div><div class="line">Ltmp2:</div><div class="line">        .cfi_def_cfa_register %rbp</div><div class="line">        subq    $48, %rsp</div><div class="line">        movq    __ZNSt3__14coutE@GOTPCREL(%rip), %rdi</div><div class="line">        movl    $10946, %eax            ## imm = 0x2AC2</div><div class="line">        movl    %eax, %esi</div><div class="line">        movl    $0, -20(%rbp)</div><div class="line">        movq    $10946, -32(%rbp)       ## imm = 0x2AC2</div><div class="line">        callq   __ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEElsEy</div><div class="line">        ...</div><div class="line">        ...</div><div class="line">        .cfi_endproc</div></pre></td></tr></table></figure>
+<p>从汇编代码可以看到，编译后直接计算出了 <em>fun(20)</em> 的结果，没有出现 <em>call</em> 指令调用 <em>fun()</em> 函数</p>
+<figure class="highlight plain"><figcaption><span>非 constexpr 版本</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">_main:                                  ## @main</div><div class="line">        .cfi_startproc</div><div class="line">## BB#0:</div><div class="line">        pushq   %rbp</div><div class="line">Ltmp3:</div><div class="line">        .cfi_def_cfa_offset 16</div><div class="line">Ltmp4:</div><div class="line">        .cfi_offset %rbp, -16</div><div class="line">        movq    %rsp, %rbp</div><div class="line">Ltmp5:</div><div class="line">        .cfi_def_cfa_register %rbp</div><div class="line">        subq    $48, %rsp</div><div class="line">        movl    $20, %eax</div><div class="line">        movl    %eax, %edi</div><div class="line">        movl    $0, -20(%rbp)</div><div class="line">        callq   __Z3funy</div><div class="line">        movq    __ZNSt3__14coutE@GOTPCREL(%rip), %rdi</div><div class="line">        movq    %rax, -32(%rbp)</div><div class="line">        movq    -32(%rbp), %rsi</div><div class="line">        callq   __ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEElsEy</div><div class="line">        ...</div><div class="line">        ...</div><div class="line">        .cfi_endproc</div></pre></td></tr></table></figure>
+<p>再看非 <em>constexpr function</em> 版本的汇编代码，第 <em>16</em> 行调用了 <em>fun()</em> 函数，在运行时计算结果</p>
+<h2 id="constexpr-constructor"><a href="#constexpr-constructor" class="headerlink" title="constexpr constructor"></a><em>constexpr constructor</em></h2><p>构造函数也是函数，所以 <em>constexpr constructor</em> 天然带有 <em>constexpr function</em> 的各种限制，然后才是特有的限制</p>
+<ul>
+<li>不能有虚基类</li>
+<li>构造函数不能有 <em>function-try-block</em> ——多用于处理构造函数异常的函数定义形式<a href="[http://en.cppreference.com/w/cpp/language/function-try-block](http://en.cppreference.com/w/cpp/language/function-try-block)">^2</a></li>
+<li>…</li>
+</ul>
+<p>更详细的定义参考<a href="[http://en.cppreference.com/w/cpp/language/constexpr](http://en.cppreference.com/w/cpp/language/constexpr)">^1</a></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/The-C-Programming-Language-4th/" rel="tag">#The C++ Programming Language 4th</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/12/type-conversions/" rel="prev" title="type conversions">
+                <i class="fa fa-chevron-left"></i> type conversions
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/04/literal-type/" rel="next" title="literal type">
+                literal type <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="xfwduke" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">xfwduke</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">🌻天上掉下个向日葵🌻</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">64</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.flickr.com/xfwduke" target="_blank">
+                  
+                    <i class="fa fa-flickr"></i> 我的相册
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#constexpr-variable"><span class="nav-number">1.</span> <span class="nav-text">constexpr variable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#constexpr-function"><span class="nav-number">2.</span> <span class="nav-text">constexpr function</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#constexpr-constructor"><span class="nav-number">3.</span> <span class="nav-text">constexpr constructor</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xfwduke</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

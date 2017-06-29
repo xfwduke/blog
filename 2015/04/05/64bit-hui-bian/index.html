@@ -1,0 +1,930 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="前面初步学习了 32 bit 环境下的汇编, 接下来需要进一步学习 64 bit 汇编 从 32 bit 升级到 64 bit 有几个明显的变化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初窥 64bit 汇编">
+<meta property="og:url" content="http://blog.xfwduke.com/2015/04/05/64bit-hui-bian/index.html">
+<meta property="og:site_name" content="向日葵和小葵">
+<meta property="og:description" content="前面初步学习了 32 bit 环境下的汇编, 接下来需要进一步学习 64 bit 汇编 从 32 bit 升级到 64 bit 有几个明显的变化">
+<meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="初窥 64bit 汇编">
+<meta name="twitter:description" content="前面初步学习了 32 bit 环境下的汇编, 接下来需要进一步学习 64 bit 汇编 从 32 bit 升级到 64 bit 有几个明显的变化">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> 初窥 64bit 汇编 | 向日葵和小葵 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向日葵和小葵</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'U3Lc1WNac4Nz2D1EV6Sm','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                初窥 64bit 汇编
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-04-05T16:59:28+08:00" content="2015-04-05">
+              2015-04-05
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/汇编/" itemprop="url" rel="index">
+                    <span itemprop="name">汇编</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>前面初步学习了 <em>32 bit</em> 环境下的汇编, 接下来需要进一步学习 <em>64 bit</em> 汇编</p>
+<p>从 <em>32 bit</em> 升级到 <em>64 bit</em> 有几个明显的变化</p>
+<a id="more"></a>
+<h2 id="数据字长-1"><a href="#数据字长-1" class="headerlink" title="数据字长[^1]"></a>数据字长[^1]</h2><p>[^1]:Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 3</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><em>C declaration</em></th>
+<th style="text-align:center"><em>Intel data type</em></th>
+<th style="text-align:center"><em>GAS suffix</em></th>
+<th style="text-align:center"><em>x86-64 Size (Bytes)</em></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>char</em></td>
+<td style="text-align:center"><em>Byte</em></td>
+<td style="text-align:center"><em>b</em></td>
+<td style="text-align:center"><em>1</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>short</em></td>
+<td style="text-align:center"><em>Word</em></td>
+<td style="text-align:center"><em>w</em></td>
+<td style="text-align:center"><em>2</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>int</em></td>
+<td style="text-align:center"><em>Double word</em></td>
+<td style="text-align:center"><em>l</em></td>
+<td style="text-align:center"><em>4</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>unsigned int</em></td>
+<td style="text-align:center"><em>Double word</em></td>
+<td style="text-align:center"><em>l</em></td>
+<td style="text-align:center"><em>4</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>long int</em></td>
+<td style="text-align:center"><em>Quad word</em></td>
+<td style="text-align:center"><em>q</em></td>
+<td style="text-align:center"><em>8</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>unsigned long int</em></td>
+<td style="text-align:center"><em>Quad word</em></td>
+<td style="text-align:center"><em>q</em></td>
+<td style="text-align:center"><em>8</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>float</em></td>
+<td style="text-align:center"><em>Single precision</em></td>
+<td style="text-align:center"><em>s</em></td>
+<td style="text-align:center"><em>4</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>double</em></td>
+<td style="text-align:center"><em>Double precision</em></td>
+<td style="text-align:center"><em>d</em></td>
+<td style="text-align:center"><em>8</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>long double</em></td>
+<td style="text-align:center"><em>Extended precision</em></td>
+<td style="text-align:center"><em>t</em></td>
+<td style="text-align:center"><em>16</em></td>
+</tr>
+</tbody>
+</table>
+<p>指针在 <em>64 bit</em> 环境下都是 <em>8 bytes</em></p>
+<h2 id="通用寄存器-2"><a href="#通用寄存器-2" class="headerlink" title="通用寄存器[^2]"></a>通用寄存器[^2]</h2><p>[^2]:Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 4</p>
+<p><em>64 bit</em> 环境下的通用寄存器主要有两个新的特性</p>
+<ul>
+<li>通用寄存器的数量从 <em>8</em> 个增加到 <em>16</em> 个</li>
+<li>通用寄存器字长增加到 <em>64 bits</em></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">通用寄存器</th>
+<th style="text-align:center">低 <em>32 bits</em></th>
+<th style="text-align:center">低 <em>16 bits</em></th>
+<th style="text-align:center"><em>8 ~ 15 bits</em></th>
+<th style="text-align:center">低 <em>8 bits</em></th>
+<th style="text-align:center">用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>%rax</em></td>
+<td style="text-align:center"><em>%eax</em></td>
+<td style="text-align:center"><em>%ax</em></td>
+<td style="text-align:center"><em>%ah</em></td>
+<td style="text-align:center"><em>%al</em></td>
+<td style="text-align:center"><em>Return value</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%rbx</em></td>
+<td style="text-align:center"><em>%ebx</em></td>
+<td style="text-align:center"><em>%bx</em></td>
+<td style="text-align:center"><em>%bh</em></td>
+<td style="text-align:center"><em>%bl</em></td>
+<td style="text-align:center"><em>callee saved</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%rcx</em></td>
+<td style="text-align:center"><em>%ecx</em></td>
+<td style="text-align:center"><em>%cx</em></td>
+<td style="text-align:center"><em>%ch</em></td>
+<td style="text-align:center"><em>%cl</em></td>
+<td style="text-align:center"><em>4th argument</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%rdx</em></td>
+<td style="text-align:center"><em>%edx</em></td>
+<td style="text-align:center"><em>%dx</em></td>
+<td style="text-align:center"><em>%dh</em></td>
+<td style="text-align:center"><em>%dl</em></td>
+<td style="text-align:center"><em>3rd argument</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%rsi</em></td>
+<td style="text-align:center"><em>%esi</em></td>
+<td style="text-align:center"><em>%si</em></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>%sil</em></td>
+<td style="text-align:center"><em>2nd argument</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%rdi</em></td>
+<td style="text-align:center"><em>%edi</em></td>
+<td style="text-align:center"><em>%di</em></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>%dil</em></td>
+<td style="text-align:center"><em>1st argument</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%rbp</em></td>
+<td style="text-align:center"><em>%ebp</em></td>
+<td style="text-align:center"><em>%bp</em></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>%bpl</em></td>
+<td style="text-align:center"><em>Callee saved</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%rsp</em></td>
+<td style="text-align:center"><em>%esp</em></td>
+<td style="text-align:center"><em>%sp</em></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>%spl</em></td>
+<td style="text-align:center"><em>Stack pointer</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%r8</em></td>
+<td style="text-align:center"><em>%r8d</em></td>
+<td style="text-align:center"><em>%r8w</em></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>%r8b</em></td>
+<td style="text-align:center"><em>5th argument</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%r9</em></td>
+<td style="text-align:center"><em>%r9d</em></td>
+<td style="text-align:center"><em>%r9w</em></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>%r9b</em></td>
+<td style="text-align:center"><em>6th argument</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%r10</em></td>
+<td style="text-align:center"><em>%r10d</em></td>
+<td style="text-align:center"><em>%r10w</em></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>%r10b</em></td>
+<td style="text-align:center"><em>Callee saved</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%r11</em></td>
+<td style="text-align:center"><em>%r11d</em></td>
+<td style="text-align:center"><em>%r11w</em></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>%r11b</em></td>
+<td style="text-align:center"><em>Used for linking</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%r12</em></td>
+<td style="text-align:center"><em>%r12d</em></td>
+<td style="text-align:center"><em>%r12w</em></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>%r12b</em></td>
+<td style="text-align:center"><em>Unused for C</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%r13</em></td>
+<td style="text-align:center"><em>%r13d</em></td>
+<td style="text-align:center"><em>%r13w</em></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>%r13b</em></td>
+<td style="text-align:center"><em>Callee saved</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%r14</em></td>
+<td style="text-align:center"><em>%r14d</em></td>
+<td style="text-align:center"><em>%r14w</em></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>%r14b</em></td>
+<td style="text-align:center"><em>Callee saved</em></td>
+</tr>
+<tr>
+<td style="text-align:center"><em>%r15</em></td>
+<td style="text-align:center"><em>%r15d</em></td>
+<td style="text-align:center"><em>%r15w</em></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>%r15b</em></td>
+<td style="text-align:center"><em>Callee saved</em></td>
+</tr>
+</tbody>
+</table>
+<h2 id="状态寄存器-3"><a href="#状态寄存器-3" class="headerlink" title="状态寄存器[^3]"></a>状态寄存器[^3]</h2><ul>
+<li><em>flags</em> —— <em>16 bit</em> 状态寄存器</li>
+<li><em>eflags</em> —— <em>32 bit</em> 状态寄存器</li>
+<li><em>rflags</em> —— <em>64 bit</em> 状态寄存器</li>
+</ul>
+<p>状态寄存器可以向下兼容</p>
+<table border="1"><br><tr><br><th style="text-align:center" colspan="5">Intel x86 FLAGS register</th><br></tr><br><tr><br><th style="text-align:center">Bit #</th><th style="text-align:center">Abbreviation</th><th style="text-align:center">Description</th><th style="text-align:center">Category</th><br></tr><br><tr><br><th style="text-align:center" colspan="5">FLAGS</th><br></tr><br><tr><td style="text-align:center">0</td><td style="text-align:center">CF</td><td style="text-align:center">Carry flag</td><td style="text-align:center">Status</td></tr><br><tr><td style="text-align:center">1</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr><br><tr><td style="text-align:center">2</td><td style="text-align:center">PF</td><td style="text-align:center">Parity flag</td><td style="text-align:center">Status</td></tr><br><tr><td style="text-align:center">3</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr><br><tr><td style="text-align:center">4</td><td style="text-align:center">AF</td><td style="text-align:center">Adjust flag</td><td style="text-align:center">Status</td></tr><br><tr><td style="text-align:center">5</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr><br><tr><td style="text-align:center">6</td><td style="text-align:center">ZF</td><td style="text-align:center">Zero flag</td><td style="text-align:center">Status</td></tr><br><tr><td style="text-align:center">7</td><td style="text-align:center">SF</td><td style="text-align:center">Sign flag</td><td style="text-align:center">Status</td></tr><br><tr><td style="text-align:center">8</td><td style="text-align:center">TF</td><td style="text-align:center">Trap flag (signle step)</td><td style="text-align:center">Control</td></tr><br><tr><td style="text-align:center">9</td><td style="text-align:center">IF</td><td style="text-align:center">Interrupt enable flag</td><td style="text-align:center">Control</td></tr><br><tr><td style="text-align:center">10</td><td style="text-align:center">DF</td><td style="text-align:center">Direction flag</td><td style="text-align:center">Status</td></tr><br><tr><td style="text-align:center">11</td><td style="text-align:center">OF</td><td style="text-align:center">Overflow flag</td><td style="text-align:center">Status</td></tr><br><tr><td style="text-align:center">12-13</td><td style="text-align:center">IOPL</td><td style="text-align:center">I/O privilege level (286+ only), always 1 on 8086 and 186</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">14</td><td style="text-align:center">NT</td><td style="text-align:center">Netsted task flag (286+ only), always 1 on 8086 and 186</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">15</td><td style="text-align:center"></td><td style="text-align:center">Reserved, always 1 on 8086 and 186, always 0 on later models</td><td style="text-align:center"></td></tr><br><tr><th style="text-align:center" colspan="5">EFLAGS</th></tr><br><tr><td style="text-align:center">16</td><td style="text-align:center">RF</td><td style="text-align:center">Resume flag (386+ only)</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">17</td><td style="text-align:center">VM</td><td style="text-align:center">Virtual 8086 mode flag (386+ only)</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">18</td><td style="text-align:center">AC</td><td style="text-align:center">Alignment check (486SX+ only)</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">19</td><td style="text-align:center">VIF</td><td style="text-align:center">Virtual interrupt flag (Pentium+)</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">20</td><td style="text-align:center">VIP</td><td style="text-align:center">Virtual interrupt pending (Pentium+)</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">21</td><td style="text-align:center">ID</td><td style="text-align:center">Able to use CPUID instruction (Pentium+)</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">22-31</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr><br><tr><th style="text-align:center" colspan="5">RFLAGS</th></tr><br><tr><td style="text-align:center">32-63</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr><br></table>
+
+
+<h2 id="函数-4"><a href="#函数-4" class="headerlink" title="函数[^4]"></a>函数[^4]</h2><p>[^4]:Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 6</p>
+<p><em>64 bit</em> 环境下的函数调用变化比较大</p>
+<ul>
+<li><em>6</em> 个以及 少于 <em>6</em> 个参数的传递不再使用栈, 改为使用寄存器</li>
+<li><em>call</em> 指令会在栈中存入一个 <em>64 bits</em> 的返回地址</li>
+<li>大多数函数不需要栈帧 —— 除非通用寄存器的数量无法满足函数局部变量的需求</li>
+<li>和 <em>AI32</em> 一样, 某些寄存器被设计为 <code>被调用者保存 (callee-save)</code> —— 由被调用的函数负责保存和恢复寄存器的值 —— 对应的概念是 <code>调用者保存 (caller-save)</code></li>
+<li>Functions can access storage on the stack up to 128 bytes beyond (i.e., at a lower address than) the current value of the stack pointer. This allows some functions to store information on the stack without incrementing or decrementing the stack pointer.</li>
+<li>There is no frame pointer. Instead, references to stack locations are made relative to the stack pointer. Typical functions allocate their total stack storage needs at the beginning of the call and keep the stack pointer at a fixed position.</li>
+</ul>
+<blockquote>
+<p>后面两条附上英文原文<br>因为没接触过, 没看懂什么意思, 等后面接触到了再回来修改</p>
+</blockquote>
+<h3 id="参数传递"><a href="#参数传递" class="headerlink" title="参数传递"></a>参数传递</h3><p>前面提到, 在 <em>32 bit</em> 环境下函数参数传递使用的是栈, 而在 <em>64 bit</em> 环境下改为使用通用寄存器 (函数参数少于等于 <em>6</em> 个时), 参数形式表格如下[^5]</p>
+<table><br><tr><br><th style="text-align:center" rowspan="2">Argument Number</th><br><th style="text-align:center" colspan="4">Operand Size (bits)</th><br></tr><br><tr><th style="text-align:center">64</th><th style="text-align:center">32</th><th style="text-align:center">16</th><th style="text-align:center">8</th></tr><br><tr><td style="text-align:center">1</td><td style="text-align:center">%rdi</td><td style="text-align:center">%edi</td><td style="text-align:center">%di</td><td style="text-align:center">%dil</td></tr><br><tr><td style="text-align:center">2</td><td style="text-align:center">%rsi</td><td style="text-align:center">%esi</td><td style="text-align:center">%si</td><td style="text-align:center">%sil</td></tr><br><tr><td style="text-align:center">3</td><td style="text-align:center">%rdx</td><td style="text-align:center">%edx</td><td style="text-align:center">%dx</td><td style="text-align:center">%dl</td></tr><br><tr><td style="text-align:center">4</td><td style="text-align:center">%rcx</td><td style="text-align:center">%ecx</td><td style="text-align:center">%cx</td><td style="text-align:center">%cl</td></tr><br><tr><td style="text-align:center">5</td><td style="text-align:center">%r8</td><td style="text-align:center">%r8d</td><td style="text-align:center">%r8w</td><td style="text-align:center">%r8b</td></tr><br><tr><td style="text-align:center">6</td><td style="text-align:center">%r9</td><td style="text-align:center">%r9d</td><td style="text-align:center">%r9w</td><td style="text-align:center">%r9b</td></tr><br></table>
+
+<p>从 <em>32 bit</em> 汇编学到的知识来看这样的 <code>规定</code> 更像是一个 <code>约定</code> —— 汇编器并没有办法强制函数必须使用通用寄存器来传递参数, 非要使用栈也是可以的; 但是大家都遵守这个 <code>约定</code>, 这样能减少沟通的障碍, 而且寄存器的速度比内存要快的多 —— 这是我个人的理解, 先放在这里, 后面学的更详细了再回头来看对不对</p>
+<p>对于参数个数大于 <em>6</em> 个情况, <em>gcc</em> 的处理是前 <em>6</em> 个参数依然使用通用寄存器, 多出来的参数使用栈</p>
+<h3 id="栈帧-6"><a href="#栈帧-6" class="headerlink" title="栈帧[^6]"></a>栈帧[^6]</h3><p>[^6]:Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 6</p>
+<p>函数的栈帧在 <em>32 bit</em> 环境下是一个非常重要的概念, 参考文档中非常强调 <em>64 bit</em> 环境下函数对栈的依赖减少了 —— 因为通用寄存器更多 —— 甚至在某些情况下, 函数根本不需要栈帧</p>
+<p>但是, 可以从文档中看出 <em>64 bit</em> 环境的汇编, 函数在栈方面并没有发生翻天覆地的变化</p>
+<ul>
+<li>如同 <em>32 bit</em> 环境一样, 一进入函数马上把 <em>%rbp</em> 入栈</li>
+<li>即便满足文档中 <code>函数可以不需要栈帧的条件</code> , 还是会把返回地址入栈</li>
+</ul>
+<p>有这两个存在, 其实也可以看做函数有自己的栈帧</p>
+<p>所以文档中强调的其实是, 由于通用寄存器增多, 函数在处理局部变量和临时数值时对栈的依赖可以有所减少 —— 但是否要使用栈, 文档中的条件也不是强制性约束, 程序员依然可以在需要的时候随意的使用栈空间</p>
+<h2 id="计划"><a href="#计划" class="headerlink" title="计划"></a>计划</h2><p>以上就是 <em>64 bit</em> 汇编的一些主要变化, 但是关于浮点操作的这里没有提及, 因为 <em>32 bit</em> 的浮点也没怎么详细看</p>
+<ul>
+<li>接下来会以 《 <em>Introduction to 64 Bit Assembly Programming for Linux and OS X</em> 》 为主要文档学习 <em>64 bit</em> 汇编</li>
+<li>同时参考 《 <em>Professional Assembly Language</em> 》 更为详细的对比 <em>32 bit</em> 汇编</li>
+<li><em>64 bit</em> 汇编文档的语法是 <em>Intel</em> 语法, 所以后续的笔记总结会更为复杂 —— 会包含同一逻辑代码的 <em>Intel</em> 版本 和 <em>AT &amp; T</em> 版本, 可能的情况下还会有 <em>64 bit</em> 和 <em>32 bit</em> 版本的对比</li>
+</ul>
+<p>[^5]:原书第一个参数的 <em>8 bit</em> 形式有误</p>
+<p>[^3]:<a href="http://en.wikipedia.org/wiki/FLAGS_register" target="_blank" rel="external">FLAGS register</a></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/05/13/hello-world-again/" rel="prev" title="Hello World Again">
+                <i class="fa fa-chevron-left"></i> Hello World Again
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/04/03/switch-to-intel-assembly/" rel="next" title="Switch to Intel Assembly">
+                Switch to Intel Assembly <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="xfwduke" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">xfwduke</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">🌻天上掉下个向日葵🌻</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">64</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://www.flickr.com/xfwduke" target="_blank">
+                  
+                    <i class="fa fa-flickr"></i> 我的相册
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据字长-1"><span class="nav-number">1.</span> <span class="nav-text">数据字长[^1]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通用寄存器-2"><span class="nav-number">2.</span> <span class="nav-text">通用寄存器[^2]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#状态寄存器-3"><span class="nav-number">3.</span> <span class="nav-text">状态寄存器[^3]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数-4"><span class="nav-number">4.</span> <span class="nav-text">函数[^4]</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数传递"><span class="nav-number">4.1.</span> <span class="nav-text">参数传递</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栈帧-6"><span class="nav-number">4.2.</span> <span class="nav-text">栈帧[^6]</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计划"><span class="nav-number">5.</span> <span class="nav-text">计划</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xfwduke</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>
