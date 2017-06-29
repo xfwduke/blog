@@ -273,9 +273,12 @@
         <span itemprop="articleBody"><p><a href="http://teaching.idallen.com/dat2343/10f/notes/040_overflow.txt" target="_blank" rel="external">The CARRY flag and OVERFLOW flag in binary arithmetic</a></p>
 <p>刚开始学汇编接触到 <em>CF</em> 和 <em>OF</em> 时陷入了一个误区 —— 想只使用 <em>CF</em> 和 <em>OF</em> 的状态来判断运算结果是否正确 —— 这实际上是不可行的</p>
 <a id="more"></a>
-<h2 id="何时置位-turned-on"><a href="#何时置位-turned-on" class="headerlink" title="何时置位 ( turned on )"></a>何时置位 ( <em>turned on</em> )</h2><p><em>CPU</em> 做数值运算时不会也不能关心数值的具体含义, 它只会根据固定的规则在合适的时候将 <em>CF</em> 和 <em>OF turned on</em></p>
-<h3 id="CF"><a href="#CF" class="headerlink" title="CF"></a><em>CF</em></h3><p>最高位 ( <em>leftmost</em> ) 处发生进位/借位时 <em>CF turned on</em></p>
-<h3 id="OF"><a href="#OF" class="headerlink" title="OF"></a><em>OF</em></h3><p>溢出位的规则相对复杂 —— 先只考虑加法</p>
+<h2 id="何时置位-turned-on">何时置位 ( <em>turned on</em> )</h2>
+<p><em>CPU</em> 做数值运算时不会也不能关心数值的具体含义, 它只会根据固定的规则在合适的时候将 <em>CF</em> 和 <em>OF turned on</em></p>
+<h3 id="cf"><em>CF</em></h3>
+<p>最高位 ( <em>leftmost</em> ) 处发生进位/借位时 <em>CF turned on</em></p>
+<h3 id="of"><em>OF</em></h3>
+<p>溢出位的规则相对复杂 —— 先只考虑加法</p>
 <ul>
 <li>源操作数的符号位 ( <em>sign bit</em> ) 相同</li>
 <li>结果数的符号位与源操作数的符号位不同</li>
@@ -283,7 +286,8 @@
 <p>当满足上面两个条件时 <em>OF turned on</em></p>
 <p>翻译成更容易理解的规则即是 : 两个正数相加结果为负或者两个负数相加结果为正时 <em>OF turned on</em> —— <em>APU</em> 做数值运算时并没有正负的概念, 只看 <em>sign bit</em> 的值. 但是人阅读代码时, 可以代入正负的概念易于理解</p>
 <p>对于减法的情况, 可以取反第二个操作转化为加法套用上面的规则</p>
-<h2 id="以-CF-OF-作为判据"><a href="#以-CF-OF-作为判据" class="headerlink" title="以 CF OF 作为判据"></a>以 <em>CF OF</em> 作为判据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">In unsigned arithmetic, watch the carry flag to detect errors.</div><div class="line">In unsigned arithmetic, the overflow flag tells you nothing interesting.</div><div class="line"></div><div class="line">In signed arithmetic, watch the overflow flag to detect errors.</div><div class="line">In signed arithmetic, the carry flag tells you nothing interesting.</div></pre></td></tr></table></figure>
+<h2 id="以-cf-of-作为判据">以 <em>CF OF</em> 作为判据</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">In unsigned arithmetic, watch the carry flag to detect errors.</div><div class="line">In unsigned arithmetic, the overflow flag tells you nothing interesting.</div><div class="line"></div><div class="line">In signed arithmetic, watch the overflow flag to detect errors.</div><div class="line">In signed arithmetic, the carry flag tells you nothing interesting.</div></pre></td></tr></table></figure>
 <p>这是开头处参考引文给出的明确定义</p>
 <p>所以 <em>APU</em> 无法直接使用 <em>CF OF</em> 作为结果判据 —— 只有在阅读代码的时候人主观的设定操作是无符号数还是有符号数, 或者在代码中加入类似的逻辑</p>
 </span>
@@ -439,7 +443,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#何时置位-turned-on"><span class="nav-number">1.</span> <span class="nav-text">何时置位 ( turned on )</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CF"><span class="nav-number">1.1.</span> <span class="nav-text">CF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OF"><span class="nav-number">1.2.</span> <span class="nav-text">OF</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#以-CF-OF-作为判据"><span class="nav-number">2.</span> <span class="nav-text">以 CF OF 作为判据</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#何时置位-turned-on"><span class="nav-number">1.</span> <span class="nav-text">何时置位 ( turned on )</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#cf"><span class="nav-number">1.1.</span> <span class="nav-text">CF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#of"><span class="nav-number">1.2.</span> <span class="nav-text">OF</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#以-cf-of-作为判据"><span class="nav-number">2.</span> <span class="nav-text">以 CF OF 作为判据</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">

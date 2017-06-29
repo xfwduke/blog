@@ -51,17 +51,17 @@
 
 
 
-<meta name="description" content="reference collapse——引用折叠 在使用类型别名（alias）和模板参数的时候，会遇到引用的引用（reference to reference） 的情况 如：reference to reference in alias123456using rr_i = int &amp;amp;&amp;amp;;using lr_i = int &amp;amp;;using rr_rr_i = rr_i &amp;amp">
+<meta name="description" content="reference collapse——引用折叠 在使用类型别名（alias）和模板参数的时候，会遇到引用的引用（reference to reference） 的情况 如： reference to reference in alias123456using rr_i = int &amp;amp;&amp;amp;;using lr_i = int &amp;amp;;using rr_rr_i = rr_i &amp;am">
 <meta name="keywords" content="The C++ Programming Language 4th">
 <meta property="og:type" content="article">
 <meta property="og:title" content="引用折叠">
 <meta property="og:url" content="http://blog.xfwduke.com/2016/01/30/引用折叠/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
-<meta property="og:description" content="reference collapse——引用折叠 在使用类型别名（alias）和模板参数的时候，会遇到引用的引用（reference to reference） 的情况 如：reference to reference in alias123456using rr_i = int &amp;amp;&amp;amp;;using lr_i = int &amp;amp;;using rr_rr_i = rr_i &amp;amp">
+<meta property="og:description" content="reference collapse——引用折叠 在使用类型别名（alias）和模板参数的时候，会遇到引用的引用（reference to reference） 的情况 如： reference to reference in alias123456using rr_i = int &amp;amp;&amp;amp;;using lr_i = int &amp;amp;;using rr_rr_i = rr_i &amp;am">
 <meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="引用折叠">
-<meta name="twitter:description" content="reference collapse——引用折叠 在使用类型别名（alias）和模板参数的时候，会遇到引用的引用（reference to reference） 的情况 如：reference to reference in alias123456using rr_i = int &amp;amp;&amp;amp;;using lr_i = int &amp;amp;;using rr_rr_i = rr_i &amp;amp">
+<meta name="twitter:description" content="reference collapse——引用折叠 在使用类型别名（alias）和模板参数的时候，会遇到引用的引用（reference to reference） 的情况 如： reference to reference in alias123456using rr_i = int &amp;amp;&amp;amp;;using lr_i = int &amp;amp;;using rr_rr_i = rr_i &amp;am">
 
 
 
@@ -272,18 +272,20 @@
       
         <span itemprop="articleBody"><p><code>reference collapse</code>——引用折叠</p>
 <p>在使用类型别名（<em>alias</em>）和模板参数的时候，会遇到引用的引用（<em>reference to reference</em>） 的情况</p>
-<p>如：<br><figure class="highlight cpp"><figcaption><span>reference to reference in alias</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">using</span> rr_i = <span class="keyword">int</span> &amp;&amp;;</div><div class="line"><span class="keyword">using</span> lr_i = <span class="keyword">int</span> &amp;;</div><div class="line"><span class="keyword">using</span> rr_rr_i = rr_i &amp;&amp;;</div><div class="line"><span class="keyword">using</span> lr_rr_i = rr_i &amp;;</div><div class="line"><span class="keyword">using</span> rr_lr_i = lr_i &amp;&amp;;</div><div class="line"><span class="keyword">using</span> lr_lr_i = lr_i &amp;;</div></pre></td></tr></table></figure></p>
+<p>如：</p>
+<figure class="highlight cpp"><figcaption><span>reference to reference in alias</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">using</span> rr_i = <span class="keyword">int</span> &amp;&amp;;</div><div class="line"><span class="keyword">using</span> lr_i = <span class="keyword">int</span> &amp;;</div><div class="line"><span class="keyword">using</span> rr_rr_i = rr_i &amp;&amp;;</div><div class="line"><span class="keyword">using</span> lr_rr_i = rr_i &amp;;</div><div class="line"><span class="keyword">using</span> rr_lr_i = lr_i &amp;&amp;;</div><div class="line"><span class="keyword">using</span> lr_lr_i = lr_i &amp;;</div></pre></td></tr></table></figure>
 <p>代码中 <em>3 ~ 6</em> 行的类型最终是 <em>&amp;</em> 或 <em>&amp;&amp;</em> 中的一个——这就是引用折叠的效果</p>
 <p>但具体是哪个呢？</p>
 <a id="more"></a>
 <blockquote><p>In other words, lvalue reference always wins.</p>
 <footer><strong>Bjarne Stroustrup</strong><cite>The C++ Programming Language 4th 7.7.3</cite></footer></blockquote>
-<p><br><br>这句简直是神总结，很容易得出结果</p>
+<br>
+这句简直是神总结，很容易得出结果
 <ul>
-<li>_rr_rr<em>i</em> ：右值引用（<em>int &amp;&amp; &amp;&amp; $\rightarrow$ int &amp;&amp;</em>）</li>
-<li>_lr_rr<em>i</em> ：左值引用（<em>int &amp;&amp; &amp; $\rightarrow$ int &amp;</em>）</li>
-<li>_rr_lr<em>i</em> ：左值引用（<em>int &amp; &amp;&amp; $\rightarrow$ int &amp;</em>）</li>
-<li>_lr_lr<em>i</em> ：左值引用（<em>int &amp; &amp; $\rightarrow$ int &amp;</em>）</li>
+<li><em>rr_rr_i</em> ：右值引用（<em>int &amp;&amp; &amp;&amp; $\rightarrow$ int &amp;&amp;</em>）</li>
+<li><em>lr_rr_i</em> ：左值引用（<em>int &amp;&amp; &amp; $\rightarrow$ int &amp;</em>）</li>
+<li><em>rr_lr_i</em> ：左值引用（<em>int &amp; &amp;&amp; $\rightarrow$ int &amp;</em>）</li>
+<li><em>lr_lr_i</em> ：左值引用（<em>int &amp; &amp; $\rightarrow$ int &amp;</em>）</li>
 </ul>
 </span>
       

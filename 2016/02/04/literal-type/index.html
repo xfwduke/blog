@@ -273,16 +273,18 @@
         <span itemprop="articleBody"><p><em>literal type</em> 这个概念可以说是专为 <em>constexpr</em> 而生</p>
 <blockquote><p>Literal types are the types of constexpr variables and they can be constructed, manipulated, and returned from constexpr functions.</p>
 <footer><strong>@LiteralType</strong><cite><a href="http://en.cppreference.com/w/cpp/concept/LiteralType" target="_blank" rel="external">en.cppreference.com/w/cpp/concept/LiteralType</a></cite></footer></blockquote>
-<p><br></p>
+<br>
 <a id="more"></a>
-<p><em>literal type</em> 的定义是（只涉及 <em>C++ 11</em> 中有的）<a href="[http://en.cppreference.com/w/cpp/concept/LiteralType](http://en.cppreference.com/w/cpp/concept/LiteralType)">^1</a></p>
+<p><em>literal type</em> 的定义是（只涉及 <em>C++ 11</em> 中有的）<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <ul>
 <li><em>scalar type</em></li>
 <li><em>reference type</em></li>
 <li><em>an array of literal type</em></li>
-<li><em>class type that has all of the following properties</em><ul>
+<li><em>class type that has all of the following properties</em>
+<ul>
 <li><em>has a trivial destructor</em></li>
-<li><em>is ether</em><ul>
+<li><em>is ether</em>
+<ul>
 <li><em>an aggregate type</em></li>
 <li><em>a type with at least one constexpr (possibly template) constructor that is not a copy or move constructor</em></li>
 </ul>
@@ -291,7 +293,8 @@
 </ul>
 </li>
 </ul>
-<h2 id="literal-type-class"><a href="#literal-type-class" class="headerlink" title="literal type class"></a><em>literal type class</em></h2><p>用户自定义类要成为 <em>literal type</em> 必须</p>
+<h2 id="literal-type-class"><em>literal type class</em></h2>
+<p>用户自定义类要成为 <em>literal type</em> 必须</p>
 <ul>
 <li>只能有 <em>trivial destructor</em> —— <a href="/2016/02/03/trivial-type/" title="trivial type">trivial type</a></li>
 <li>非静态数据成员和基类必须是 <em>non-volatile literal type</em></li>
@@ -301,6 +304,13 @@
 <li>要么是 <em>aggregate type</em> —— <a href="/2016/02/04/aggregate-initialization/" title="aggregate initialization">aggregate initialization</a></li>
 <li>要么至少有一个 <em>constexpr constructor</em> —— 不能是复制和移动构造函数</li>
 </ul>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a href="http://en.cppreference.com/w/cpp/concept/LiteralType" target="_blank" rel="external">http://en.cppreference.com/w/cpp/concept/LiteralType</a> <a href="#fnref1" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>
 </span>
       
     </div>

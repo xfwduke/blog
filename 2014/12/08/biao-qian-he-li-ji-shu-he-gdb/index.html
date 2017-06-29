@@ -272,31 +272,34 @@
       
         <span itemprop="articleBody"><p>汇编的标签, 立即数再加上 <em>gdb</em> 会出现一些复杂的组合, 为了不混乱必须把相关的概念弄清楚</p>
 <a id="more"></a>
-<h3 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">some_number:</div><div class="line">	.long 0x1020304</div></pre></td></tr></table></figure>
-<p>这段代码通常的解释是 : 在数据段定义了一个 <em>long</em> 类型的数 _some<em>number</em> , 值是 <em>0x1020304</em> —— 这个值是专门设计的, 方便 <em>gdb</em> 查看 —— _some<em>number</em> 就是一个标签</p>
+<h3 id="标签">标签</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">some_number:</div><div class="line">	.long 0x1020304</div></pre></td></tr></table></figure>
+<p>这段代码通常的解释是 : 在数据段定义了一个 <em>long</em> 类型的数 <em>some_number</em> , 值是 <em>0x1020304</em> —— 这个值是专门设计的, 方便 <em>gdb</em> 查看 —— <em>some_number</em> 就是一个标签</p>
 <p>计算机中数据都必须存放在内存中, 要访问数据就必须知道对应的内存地址, 所以这个定义更详细的含义是</p>
 <ul>
-<li>_some<em>number</em> 表示内存中一个连续的 <em>4 Bytes</em> 块</li>
-<li>_some<em>number</em> 的值是这个内存块低位字节的地址</li>
+<li><em>some_number</em> 表示内存中一个连续的 <em>4 Bytes</em> 块</li>
+<li><em>some_number</em> 的值是这个内存块低位字节的地址</li>
 <li>这个内存块中的值是 <em>0x1020304</em></li>
 </ul>
-<h3 id="标签和-gdb"><a href="#标签和-gdb" class="headerlink" title="标签和 gdb"></a>标签和 <em>gdb</em></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">(gdb) p/x some_number</div><div class="line"><span class="variable">$3</span> = 0x1020304</div><div class="line">(gdb) x some_number</div><div class="line">0x1020304:	Cannot access memory at address 0x1020304</div></pre></td></tr></table></figure>
-<p><code>p/x some_number</code> 直接显示了 <em>0x1020304</em> , 用 <em>x</em> 指令访问 _some<em>number</em> 被告知内存地址 <em>0x1020304</em> 无法访问</p>
+<h3 id="标签和-gdb">标签和 <em>gdb</em></h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">(gdb) p/x some_number</div><div class="line"><span class="variable">$3</span> = 0x1020304</div><div class="line">(gdb) x some_number</div><div class="line">0x1020304:	Cannot access memory at address 0x1020304</div></pre></td></tr></table></figure>
+<p><code>p/x some_number</code> 直接显示了 <em>0x1020304</em> , 用 <em>x</em> 指令访问 <em>some_number</em> 被告知内存地址 <em>0x1020304</em> 无法访问</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">(gdb) p &amp;some_number</div><div class="line"><span class="variable">$1</span> = (&lt;data variable, no debug info&gt; *) 0x8049080</div><div class="line">(gdb) x/4bx &amp;some_number</div><div class="line">0x8049080 &lt;some_number&gt;:	0x04	0x03	0x02	0x01</div></pre></td></tr></table></figure>
 <p><code>p &amp;some_number</code> 显示了一个 <em>32</em> 位数字, 用 <em>x</em> 指令访问其指向的 <em>4</em> 字节, 得到了 <em>0x1020304</em> (考虑 <em>little end</em> )</p>
-<p>所以在 <em>gdb</em> 中, 标签名 _some<em>number</em> 代表了变量的值, 而 _&amp;some<em>number</em> 才是变量的地址</p>
-<h3 id="标签和立即数"><a href="#标签和立即数" class="headerlink" title="标签和立即数"></a>标签和立即数</h3><p>用程序处理数据, 除了处理数据的值总会有需求要处理数据的地址. 在汇编中, 可以用 <code>$some_number</code> 的形式来取得对应的地址 —— <code>$</code> 是汇编中的立即数前导符</p>
+<p>所以在 <em>gdb</em> 中, 标签名 <em>some_number</em> 代表了变量的值, 而 <em>&amp;some_number</em> 才是变量的地址</p>
+<h3 id="标签和立即数">标签和立即数</h3>
+<p>用程序处理数据, 除了处理数据的值总会有需求要处理数据的地址. 在汇编中, 可以用 <code>$some_number</code> 的形式来取得对应的地址 —— <code>$</code> 是汇编中的立即数前导符</p>
 <p><em>movx</em> 指令总会把 <em>source</em> 指向的内存地址的值传送到 <em>destination</em> (当 <em>source</em> 是一个内存地址时) —— 当 <em>source</em> 不是寄存器, 也不用 <em>$</em> 前导时, <em>mov</em> 总会把其当做一个内存地址</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">.section .text</div><div class="line">.global _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    movl 1, %eax</div></pre></td></tr></table></figure>
 <p>上面这段代码可以正常编译连接, 但指向的时候会出现 <em>Segment Fault</em> —— 因为会尝试把内存地址为 <em>1</em> 的值取出来 —— 这是不允许的</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">some_number:</div><div class="line">    .long 0x1020304</div><div class="line">.section .text</div><div class="line">.global _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    movl some_number, %eax</div></pre></td></tr></table></figure>
 <p>在 <em>gdb</em> 中单步执行完 <em>movl</em> 指令后, 查看寄存器 <em>eax</em> 的值</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(gdb) p/x <span class="variable">$eax</span></div><div class="line"><span class="variable">$2</span> = 0x1020304</div></pre></td></tr></table></figure>
-<p>修改下上面的代码, 在 _some<em>number</em> 前加一个 <em>$</em> 前导符</p>
+<p>修改下上面的代码, 在 <em>some_number</em> 前加一个 <em>$</em> 前导符</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">some_number:</div><div class="line">    .long 0x1020304</div><div class="line">.section .text</div><div class="line">.global _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    movl $some_number, %eax	#modify here</div></pre></td></tr></table></figure>
 <p>再在 <em>gdb</em> 中跟踪下代码执行情况</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">(gdb) p &amp;some_number</div><div class="line"><span class="variable">$1</span> = (&lt;data variable, no debug info&gt; *) 0x804907c</div><div class="line">(gdb) p/x <span class="variable">$eax</span></div><div class="line"><span class="variable">$3</span> = 0x804907c</div><div class="line">(gdb) x/4bx <span class="variable">$eax</span></div><div class="line">0x804907c &lt;some_number&gt;:	0x04	0x03	0x02	0x01</div></pre></td></tr></table></figure>
-<p>此时 <em>eax</em> 的值确实是 <em>0x1020304</em> 的对应的内存地址了 —— 这是因为 <em>$</em> 前导符把 _some<em>number</em> 的值 <em>0x804907c</em> 当做立即数传送给了 <em>eax</em> , 而不是去这个位置取 <em>4 Bytes</em> 传送 —— <code>立即</code> 的意思就是 <strong>本地搞定</strong></p>
+<p>此时 <em>eax</em> 的值确实是 <em>0x1020304</em> 的对应的内存地址了 —— 这是因为 <em>$</em> 前导符把 <em>some_number</em> 的值 <em>0x804907c</em> 当做立即数传送给了 <em>eax</em> , 而不是去这个位置取 <em>4 Bytes</em> 传送 —— <code>立即</code> 的意思就是 <strong>本地搞定</strong></p>
 <p><em>$</em> 这个东西作用在标签上的行为, 会很容易让人联想到 <em>c</em> 的指针行为</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> a = <span class="number">1234</span>;</div></pre></td></tr></table></figure>
 <p>这里 <em>a</em> 表示 <em>1234</em>, <em>&amp;a</em> 表示 <em>1234</em> 所在内存的地址 (倒是和 <em>gdb</em> 中一样的) —— <em>$</em> 就是汇编中取地址的操作符, 这样理解不是比搞出个<code>立即数</code>的概念更简单? —— 实际不能这样理解</p>
@@ -305,15 +308,18 @@
 <p>前面已经知道, <code>movl 1, %eax</code> 会因为寻址到内存 <em>1</em> 位置导致 <em>Segment Fault</em></p>
 <p>而 <code>movl $1, %eax</code> 则会直接把数值 <em>1</em> 传送到 <em>eax</em></p>
 <p>所以, 再汇编中 <em>$</em> 前导符有非常明确的含义 <strong>不做寻址, 直接操作其后的数值</strong></p>
-<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>前面那么多都是为了梳理思路和概念, 才能对结论的印象更深</p>
+<h3 id="结论">结论</h3>
+<p>前面那么多都是为了梳理思路和概念, 才能对结论的印象更深</p>
 <p>对于在数据段中定义的元素</p>
 <ul>
-<li>要取得元素的值<ul>
+<li>要取得元素的值
+<ul>
 <li>在汇编中直接引用标签</li>
 <li>在 <em>gdb</em> 中直接引用标签</li>
 </ul>
 </li>
-<li>要取得元素的地址<ul>
+<li>要取得元素的地址
+<ul>
 <li>在汇编中添加 <em>$</em> 前导</li>
 <li>在 <em>gdb</em> 中添加 <em>&amp;</em> 前导</li>
 </ul>

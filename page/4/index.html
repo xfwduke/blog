@@ -281,7 +281,8 @@
 <p>在 <em>AT&amp;T</em> 中虽然没有 <em>PTR OPS</em>, 但是存在指令的字长后缀, 参考 <a href="/2014/12/08/guan-yu-mov/" title="关于 mov">关于 mov</a></p>
 <p>利用指令后缀, 可以实现 <em>PTR OPS</em> 中 <em>BYTE PTR , WORD PTR , DWORD PTR , QWORD PTR</em> 一样的功能</p>
 <ul>
-<li>和 <em>Intel</em> 语法的 <em>PTR OPS</em> 一样, 当汇编器可以推断出源和目的操作数字长时, 可以不用给 <em>mov</em> 添加后缀<ul>
+<li>和 <em>Intel</em> 语法的 <em>PTR OPS</em> 一样, 当汇编器可以推断出源和目的操作数字长时, 可以不用给 <em>mov</em> 添加后缀
+<ul>
 <li>当操作数有一个是寄存器时, 几乎都可以不需要后缀</li>
 <li>将立即数载入内存, 必须要有后缀</li>
 <li>如果使用了后缀, 就必须要与字长相符</li>
@@ -383,7 +384,7 @@
 
       
         
-          <p><em>PTR Operator</em> 在 <em>Intel</em> 语法中算是一个比较重要的概念[^1]</p>
+          <p><em>PTR Operator</em> 在 <em>Intel</em> 语法中算是一个比较重要的概念<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">Syntax:</div><div class="line">	type PTR name</div><div class="line">	</div><div class="line">type filed:</div><div class="line">	1. BYTE</div><div class="line">	2. WORD</div><div class="line">	3. DWORD</div><div class="line">	4. QWORD</div><div class="line">	5. TBYTE</div><div class="line">	6. NEAR</div><div class="line">	7. FAR</div><div class="line"></div><div class="line">name filed:</div><div class="line">	1. A variable name</div><div class="line">	2. A label name</div><div class="line">	3. An address or register expression</div><div class="line">	4. An integer that represents an offset</div></pre></td></tr></table></figure>
 <p>需要重点注意的是 : <strong><em>PTR OPS</em> 只能作用于内存对象</strong></p>
 <p><em>PTR OPS</em> 的作用是 : 将 <code>name field</code> 所指内存位置的数据看做是 <code>type filed</code> 类型</p>
@@ -481,7 +482,7 @@
 
       
         
-          <p>特指在 <code>data段</code> 定义的变量 </p>
+          <p>特指在 <code>data段</code> 定义的变量</p>
 <p>在汇编里面, <code>变量</code> 这个东西真的是个很容易把人弄迷糊的概念, 因为总是和 <code>内存</code> 掺和在一起</p>
 <p>再加上同时在看 <em>AT&amp;T</em> 和 <em>Intel</em> 两种语法, 就更加混乱了</p>
 <ul>

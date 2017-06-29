@@ -282,7 +282,8 @@
 <li><em>data</em> 为实际的数据</li>
 </ul>
 <figure class="highlight plain"><figcaption><span>数据定义示例</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">output:</div><div class="line">	.ascii	&quot;Hello World\n&quot;</div><div class="line">numbers:</div><div class="line">	.long	100, 150, 200</div></pre></td></tr></table></figure>
-<h3 id="命令和数据类型的对应关系"><a href="#命令和数据类型的对应关系" class="headerlink" title="命令和数据类型的对应关系"></a>命令和数据类型的对应关系</h3><table>
+<h3 id="命令和数据类型的对应关系">命令和数据类型的对应关系</h3>
+<table>
 <thead>
 <tr>
 <th style="text-align:center">命令</th>
@@ -291,13 +292,54 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align:center"></td>
+<td style="text-align:center"><em>.byte</em></td>
+<td style="text-align:center">字节值</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>.ascii</em></td>
+<td style="text-align:center">文本字符串</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>.asciz</em></td>
+<td style="text-align:center">以空字符结尾的文本字符串</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>.float</em></td>
+<td style="text-align:center">单精度浮点数</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>.single</em></td>
+<td style="text-align:center">单精度浮点数(和 <em>.float</em> 相同)</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>.double</em></td>
+<td style="text-align:center">双精度浮点数</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>.short</em></td>
+<td style="text-align:center"><em>16</em> 位整数</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>.int</em></td>
+<td style="text-align:center"><em>32</em> 位整数</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>.long</em></td>
+<td style="text-align:center"><em>32</em> 位整数(和 <em>.int</em> 相同)</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>.quad</em></td>
+<td style="text-align:center"><em>8</em> 字节整数</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>.octa</em></td>
+<td style="text-align:center"><em>16</em> 字节整数</td>
 </tr>
 </tbody>
 </table>
-<p><em>.byte</em> | 字节值<br><em>.ascii</em> | 文本字符串<br><em>.asciz</em> | 以空字符结尾的文本字符串<br><em>.float</em> | 单精度浮点数<br><em>.single</em> | 单精度浮点数(和 <em>.float</em> 相同)<br><em>.double</em> | 双精度浮点数<br><em>.short</em> | <em>16</em> 位整数<br><em>.int</em> | <em>32</em> 位整数<br><em>.long</em> | <em>32</em> 位整数(和 <em>.int</em> 相同)<br><em>.quad</em> | <em>8</em> 字节整数<br><em>.octa</em> | <em>16</em> 字节整数</p>
-<h3 id="静态符号-常量"><a href="#静态符号-常量" class="headerlink" title="静态符号 (常量)"></a>静态符号 (常量)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">.equ SOFT_INT, 0x80</div></pre></td></tr></table></figure>
-<p>这样的形式定义一个类似于常量的 _SOFT_INT_ , 值是 <em>0x80</em>. 在程序中 <code>int $SOFT_INT</code> 来使用 </p>
+<h3 id="静态符号-常量">静态符号 (常量)</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">.equ SOFT_INT, 0x80</div></pre></td></tr></table></figure>
+<p>这样的形式定义一个类似于常量的 <em>SOFT_INT</em> , 值是 <em>0x80</em>. 在程序中 <code>int $SOFT_INT</code> 来使用</p>
 </span>
       
     </div>

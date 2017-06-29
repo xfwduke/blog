@@ -51,17 +51,17 @@
 
 
 
-<meta name="description" content="右值引用（rvalue reference）是 C++ 11 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是^1  实现移动语义（move semantics）——主要是为了性能 完美转发（perfect forwarding）——主要用于参数传递">
+<meta name="description" content="右值引用（rvalue reference）是 C++ 11 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是[1]  实现移动语义（move semantics）——主要是为了性能 完美转发（perfect forwarding）——主要用于参数传递">
 <meta name="keywords" content="C++ Primer">
 <meta property="og:type" content="article">
 <meta property="og:title" content="右值引用">
 <meta property="og:url" content="http://blog.xfwduke.com/2015/12/29/右值引用/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
-<meta property="og:description" content="右值引用（rvalue reference）是 C++ 11 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是^1  实现移动语义（move semantics）——主要是为了性能 完美转发（perfect forwarding）——主要用于参数传递">
+<meta property="og:description" content="右值引用（rvalue reference）是 C++ 11 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是[1]  实现移动语义（move semantics）——主要是为了性能 完美转发（perfect forwarding）——主要用于参数传递">
 <meta property="og:updated_time" content="2017-06-29T12:13:31.699Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="右值引用">
-<meta name="twitter:description" content="右值引用（rvalue reference）是 C++ 11 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是^1  实现移动语义（move semantics）——主要是为了性能 完美转发（perfect forwarding）——主要用于参数传递">
+<meta name="twitter:description" content="右值引用（rvalue reference）是 C++ 11 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是[1]  实现移动语义（move semantics）——主要是为了性能 完美转发（perfect forwarding）——主要用于参数传递">
 
 
 
@@ -270,29 +270,31 @@
       
 
       
-        <span itemprop="articleBody"><p><code>右值引用</code>（<em>rvalue reference</em>）是 <em>C++ 11</em> 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是<a href="[https://zh.wikipedia.org/wiki/右值引用](https://zh.wikipedia.org/wiki/右值引用)">^1</a></p>
+        <span itemprop="articleBody"><p><code>右值引用</code>（<em>rvalue reference</em>）是 <em>C++ 11</em> 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <ul>
 <li>实现移动语义（<em>move semantics</em>）——主要是为了性能</li>
 <li>完美转发（<em>perfect forwarding</em>）——主要用于参数传递</li>
 </ul>
 <a id="more"></a>
 <p>目前接触到的使用了右值引用的代码大多是和类、模板有关，很少用在普通函数，但以普通函数为起点来了解右值引用会让问题变得更简单。同时，右值引用的定义更多的出现在函数的参数定义中，很少有在代码中直接定义出一个右值引用对象的</p>
-<h2 id="重载普通函数"><a href="#重载普通函数" class="headerlink" title="重载普通函数"></a>重载普通函数</h2><figure class="highlight cpp"><figcaption><span>没什么意义的示例</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">fn</span> <span class="params">(<span class="keyword">int</span> &amp; a)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">return</span> ++a;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">int</span> a = <span class="number">1</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; fn (a) &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="重载普通函数">重载普通函数</h2>
+<figure class="highlight cpp"><figcaption><span>没什么意义的示例</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">fn</span> <span class="params">(<span class="keyword">int</span> &amp; a)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">return</span> ++a;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">int</span> a = <span class="number">1</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; fn (a) &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>函数 <em>fn</em> 是 <em>C++</em> 常用的一类范式——传入一个引用，在函数内修改对象的值。但换一种调用方式</p>
 <figure class="highlight cpp"><figcaption><span>无法编译的调用方式</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">fn(<span class="number">1</span>);</div></pre></td></tr></table></figure>
 <p>就无法正常编译，因为 <em>1</em> 是个右值，不能以引用方式传入函数，为了通过编译就需要把函数形参改为 <em>const int &amp;</em>，这样又不能修改对象的值了</p>
 <p>为了解决这个问题，可以重载 <em>fn</em></p>
 <figure class="highlight cpp"><figcaption><span>右值引用重载</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">fn</span> <span class="params">(<span class="keyword">int</span> &amp;&amp; a)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">return</span> ++a;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>这样两种调用情况都正常了。函数有形参是右值引用和左值引用两个版本，分别对应实参是左值和右值的场景，少重载一个，都会造成无法编译——这一点和后面会提到的用于模板函数的情况不同</p>
-<h2 id="移动语义"><a href="#移动语义" class="headerlink" title="移动语义"></a>移动语义</h2><p>在最开始要强调的是</p>
+<h2 id="移动语义">移动语义</h2>
+<p>在最开始要强调的是</p>
 <ul>
 <li><em>std::move</em> 在实现移动语义是会用到，但这个函数只是返回一个左值对象的右值引用</li>
 <li>最终的 <strong>移动</strong> ，是要自己写代码实现的</li>
 </ul>
 <p>首先提出这两点是因为在看书的时候被 <em>std::move</em> 这个名字迷惑了很长时间</p>
-<p>通过一个例子来直观的看下什么叫移动[^2]</p>
+<p>通过一个例子来直观的看下什么叫移动<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup></p>
 <figure class="highlight cpp"><figcaption><span>复制构造</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function">X <span class="title">foo</span><span class="params">()</span></span>;</div><div class="line">X x;</div><div class="line">x = foo();</div></pre></td></tr></table></figure>
-<p>参考文档[^2]中，这一小段代码是结合 <em>swap</em> 来解释的。但感觉换一种理解方式能让移动语义更加清晰</p>
+<p>参考文档<sup class="footnote-ref"><a href="#fn2" id="fnref2:1">[2]</a></sup>中，这一小段代码是结合 <em>swap</em> 来解释的。但感觉换一种理解方式能让移动语义更加清晰</p>
 <p>关键是第 <em>3</em> 行——函数 <em>foo</em> 返回一个 <em>X</em> 类型对象赋值给实例 <em>x</em></p>
 <ul>
 <li><em>foo</em> 返回一个临时对象</li>
@@ -300,9 +302,8 @@
 </ul>
 <p>这里的重点是： <em>foo</em> 返回的临时对象仅仅用于复制构造，然后就被析构了。既然这个临时对象在以后的代码中不可能被用到，那么如果能在赋值操作中直接窃取这个临时对象的所有资源给实例 <em>x</em> ，就能省掉复制构造过程</p>
 <p>这就是移动语义——将一个对象（通常是临时对象）的资源移动给另一个对象（通常是左值）</p>
-<p>[^2]:<a href="http://thbecker.net/articles/rvalue_references/section_02.html" target="_blank" rel="external">Rvalue References Explained - Move Semantics @Thomas Becker</a></p>
-<h3 id="实现移动"><a href="#实现移动" class="headerlink" title="实现移动"></a>实现移动</h3><p>实现移动的关键就是资源窃取，如何窃取有很多种方法。参考文档[^3]中使用了 <em>swap</em>，这并不是太好，所以准备用另一种方式实现[^4]</p>
-<p>[^3]:<a href="http://thbecker.net/articles/rvalue_references/section_04.html" target="_blank" rel="external">Rvalue References Explained - Forcing Move Semantics @Thomas Becker</a><br>[^4]:《C++ Primer 5th》- 13.6.2</p>
+<h3 id="实现移动">实现移动</h3>
+<p>实现移动的关键就是资源窃取，如何窃取有很多种方法。参考文档<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>中使用了 <em>swap</em>，这并不是太好，所以准备用另一种方式实现<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup></p>
 <figure class="highlight cpp"><figcaption><span>实现移动</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Test</span></span></div><div class="line">&#123;</div><div class="line">    Test (<span class="keyword">int</span> size, <span class="keyword">int</span> va) : _size (size)</div><div class="line">    &#123;</div><div class="line">      ptr = <span class="keyword">new</span> <span class="keyword">int</span>[_size];</div><div class="line">      for_each (ptr, ptr + _size, [=] (<span class="keyword">int</span> &amp; v)</div><div class="line">      &#123;</div><div class="line">          v = va;</div><div class="line">      &#125;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Test (Test &amp;&amp; t)</div><div class="line">    &#123;</div><div class="line">      <span class="keyword">if</span> (<span class="keyword">this</span> != &amp;t)</div><div class="line">      &#123;</div><div class="line">        <span class="built_in">free</span> ();</div><div class="line">        ptr = t.ptr;</div><div class="line">        _size = t._size;</div><div class="line">        t._size = <span class="number">0</span>;</div><div class="line">        t.ptr = <span class="literal">nullptr</span>;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Test &amp; <span class="keyword">operator</span> = (Test &amp;&amp; t)</div><div class="line">    &#123;</div><div class="line">      <span class="keyword">if</span> (<span class="keyword">this</span> != &amp;t)</div><div class="line">      &#123;</div><div class="line">        <span class="built_in">free</span> ();</div><div class="line">        ptr = t.ptr;</div><div class="line">        _size = t._size;</div><div class="line">        t._size = <span class="number">0</span>;</div><div class="line">        t.ptr = <span class="literal">nullptr</span>;</div><div class="line">      &#125;</div><div class="line">      <span class="keyword">return</span> *<span class="keyword">this</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ~Test ()</div><div class="line">    &#123;</div><div class="line">      <span class="built_in">free</span> ();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">free</span> <span class="params">()</span></span></div><div class="line">    &#123;</div><div class="line">      _size = <span class="number">0</span>;</div><div class="line">      <span class="keyword">delete</span>[] ptr;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">int</span> *ptr;</div><div class="line">    <span class="keyword">int</span> _size;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <ul>
 <li>窃取前，先将目标对象（等号右边）的资源回收</li>
@@ -310,27 +311,29 @@
 <li>窃取后，将源对象（等号右边）的指针置空。这一步是必须的，因为临时对象马上会被析构，若不修改指针的值，则资源依然会被回收</li>
 <li>移动构造必须判断源和目标对象是否相同，否则会错误的将资源回收</li>
 </ul>
-<h3 id="强制移动"><a href="#强制移动" class="headerlink" title="强制移动"></a>强制移动</h3><p>上面的代码没有实现普通的复制构造函数，所以将一个左值对象赋值给另一个对象是无法编译的</p>
+<h3 id="强制移动">强制移动</h3>
+<p>上面的代码没有实现普通的复制构造函数，所以将一个左值对象赋值给另一个对象是无法编译的</p>
 <figure class="highlight cpp"><figcaption><span>无法编译</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function">Test <span class="title">ins_a</span> <span class="params">(<span class="number">10</span>, <span class="number">4</span>)</span></span>;</div><div class="line"><span class="function">Test <span class="title">ins_b</span> <span class="params">(<span class="number">12</span>, <span class="number">7</span>)</span></span>;</div><div class="line">ins_a = ins_b;</div></pre></td></tr></table></figure>
 <figure class="highlight plain"><figcaption><span>clang++ 编译报错</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">error: object of type &apos;Test&apos; cannot be assigned because its copy assignment operator is implicitly deleted</div><div class="line">note: copy assignment operator is implicitly deleted because &apos;Test&apos; has a user-declared move constructor</div></pre></td></tr></table></figure>
 <p>幸运的是，<em>C++</em> 提供了实现的办法——用 <em>std::move</em> 获得左值对象的右值引用</p>
 <figure class="highlight cpp"><figcaption><span>用 std::move 实现强制移动</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">pprint</span> <span class="params">(<span class="keyword">const</span> Test &amp; ins)</span></span></div><div class="line">&#123;</div><div class="line">  for_each (ins.ptr, ins.ptr + ins._size, [] (<span class="keyword">const</span> <span class="keyword">int</span> &amp; v)</div><div class="line">  &#123;</div><div class="line">      <span class="built_in">cout</span> &lt;&lt; v &lt;&lt; <span class="string">" "</span>;</div><div class="line">  &#125;);</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">" @ "</span> &lt;&lt; ins.ptr &lt;&lt; <span class="string">" ["</span> &lt;&lt; ins._size &lt;&lt; <span class="string">"]"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="function">Test <span class="title">ins_a</span> <span class="params">(<span class="number">10</span>, <span class="number">4</span>)</span></span>;</div><div class="line">  <span class="function">Test <span class="title">ins_b</span> <span class="params">(<span class="number">12</span>, <span class="number">7</span>)</span></span>;</div><div class="line"></div><div class="line">  <span class="built_in">cout</span>&lt;&lt;<span class="string">"before move ins_a: "</span>;</div><div class="line">  pprint (ins_a);</div><div class="line">  <span class="built_in">cout</span>&lt;&lt;<span class="string">"before move ins_b: "</span>;</div><div class="line">  pprint (ins_b);</div><div class="line"></div><div class="line">  ins_a = <span class="built_in">std</span>::move (ins_b);</div><div class="line"></div><div class="line">  <span class="built_in">cout</span>&lt;&lt;<span class="string">"after move ins_a: "</span>;</div><div class="line">  pprint (ins_a);</div><div class="line">  <span class="built_in">cout</span>&lt;&lt;<span class="string">"after move ins_b: "</span>;</div><div class="line">  pprint (ins_b);</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <figure class="highlight plain"><figcaption><span>结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">before move ins_a: 4 4 4 4 4 4 4 4 4 4  @ 0x7f9351403280 [10]</div><div class="line">before move ins_b: 7 7 7 7 7 7 7 7 7 7 7 7  @ 0x7f93514032b0 [12]</div><div class="line">after move ins_a: 7 7 7 7 7 7 7 7 7 7 7 7  @ 0x7f93514032b0 [12]</div><div class="line">after move ins_b:  @ 0x0 [0]</div></pre></td></tr></table></figure>
-<p>强制移动后源对象（_ins<em>b</em>）因为是左值，所以依然可以访问，但其资源已经无效。所以在强制移动后，除了对 _ins<em>b</em> 赋值或销毁它外，不应该再使用它。[^5]</p>
-<h3 id="编译器合成"><a href="#编译器合成" class="headerlink" title="编译器合成"></a>编译器合成</h3><p>编译器可以自动合成移动构造函数和移动构造操作符。但具体到哪些情况下会合成，哪些不会；哪些情况下合成的是 <em>= delete</em> 的，有一套非常复杂的规则，可以参考书中[^4]<code>合成移动操作</code>的内容</p>
-<p>需要单独列出的[^4]</p>
+<p>强制移动后源对象（<em>ins_b</em>）因为是左值，所以依然可以访问，但其资源已经无效。所以在强制移动后，除了对 <em>ins_b</em> 赋值或销毁它外，不应该再使用它。<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup></p>
+<h3 id="编译器合成">编译器合成</h3>
+<p>编译器可以自动合成移动构造函数和移动构造操作符。但具体到哪些情况下会合成，哪些不会；哪些情况下合成的是 <em>= delete</em> 的，有一套非常复杂的规则，可以参考书中<sup class="footnote-ref"><a href="#fn4" id="fnref4:1">[4]</a></sup><code>合成移动操作</code>的内容</p>
+<p>需要单独列出的<sup class="footnote-ref"><a href="#fn4" id="fnref4:2">[4]</a></sup></p>
 <ul>
 <li>如果类同时定义了移动构造和复制构造，则遵循 <strong>移动右值，拷贝左值</strong> 的原则</li>
 <li>如果类没有实现移动构造函数，则无论是左值还是右值都会匹配复制构造，即便使用 <em>std::move</em> 做强制移动——在这种情况下，前面提到的强制移动后的风险当然也就不存在了</li>
 </ul>
-<p>[^5]:《C++ Primer 5th》- 13.6.1</p>
-<h3 id="移动继承"><a href="#移动继承" class="headerlink" title="移动继承"></a>移动继承</h3><p>在有基类和派生类的情况下，如何正确处理移动语义是一个很有意思的问题。关键在于</p>
+<h3 id="移动继承">移动继承</h3>
+<p>在有基类和派生类的情况下，如何正确处理移动语义是一个很有意思的问题。关键在于</p>
 <p><strong><em>Is an Rvalue Reference an Rvalue?</em></strong></p>
-<p>直接引用文中的结论[^6]</p>
+<p>直接引用文中的结论<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup></p>
 <p>一个对象是一个右值引用</p>
 <ul>
 <li>如果它有一个名字，对象本身是左值</li>
-<li>否则对象本身是右值 </li>
+<li>否则对象本身是右值</li>
 </ul>
 <p>从上面的规则可以联想到，<em>std::move(ins)</em> 这个表达式返回的对象是一个右值引用，而这个对象没有名字，所以这个对象本身是右值</p>
 <p>回到继承关系上来，考虑基类 <em>Base</em> 和派生类 <em>Derived</em> ，它们都实现了复制构造函数和移动构造函数，改怎么实现？</p>
@@ -342,8 +345,25 @@
 <p>则会调用基类的复制构造函数，这无法实现正确的派生类移动。所以正确的写法应该是</p>
 <figure class="highlight cpp"><figcaption><span>正确的写法</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Derived(Derived &amp;&amp;rhs):Base(<span class="built_in">std</span>::move(rhs))&#123;</div></pre></td></tr></table></figure>
 <p>用 <em>std::move</em> 构造出一个匿名右值引用，它本身也是一个右值。所以能匹配到基类的移动构造函数</p>
-<h2 id="完美转发"><a href="#完美转发" class="headerlink" title="完美转发"></a>完美转发</h2><p>完美转发牵涉到 <em>std::forward</em> ，这个目前还看不太懂，后面再补完这部分</p>
-<p>[^6]:<a href="http://thbecker.net/articles/rvalue_references/section_05.html" target="_blank" rel="external">Rvalue References Explained - Is an Rvalue Reference an Rvalue? @Thomas Becker</a></p>
+<h2 id="完美转发">完美转发</h2>
+<p>完美转发牵涉到 <em>std::forward</em> ，这个目前还看不太懂，后面再补完这部分</p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a href="https://zh.wikipedia.org/wiki/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8" target="_blank" rel="external">https://zh.wikipedia.org/wiki/右值引用</a> <a href="#fnref1" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p><a href="http://thbecker.net/articles/rvalue_references/section_02.html" target="_blank" rel="external">Rvalue References Explained - Move Semantics @Thomas Becker</a> <a href="#fnref2" class="footnote-backref">↩</a> <a href="#fnref2:1" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p><a href="http://thbecker.net/articles/rvalue_references/section_04.html" target="_blank" rel="external">Rvalue References Explained - Forcing Move Semantics @Thomas Becker</a> <a href="#fnref3" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn4" class="footnote-item"><p>《C++ Primer 5th》- 13.6.2 <a href="#fnref4" class="footnote-backref">↩</a> <a href="#fnref4:1" class="footnote-backref">↩</a> <a href="#fnref4:2" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn5" class="footnote-item"><p>《C++ Primer 5th》- 13.6.1 <a href="#fnref5" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p><a href="http://thbecker.net/articles/rvalue_references/section_05.html" target="_blank" rel="external">Rvalue References Explained - Is an Rvalue Reference an Rvalue? @Thomas Becker</a> <a href="#fnref6" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>
 </span>
       
     </div>

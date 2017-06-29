@@ -472,7 +472,7 @@
 
       
         
-          <p><code>开始位置标签</code> 用于表明程序应该从哪里开始运行. 如果连接器找不到这个标签, 会报错<br>
+          <p><code>开始位置标签</code> 用于表明程序应该从哪里开始运行. 如果连接器找不到这个标签, 会报错</p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2014/12/06/kai-shi-wei-zhi-biao-qian/#more" rel="contents">
               阅读全文 &raquo;
@@ -761,7 +761,7 @@
       
         
           <p>书上的第二个例子是在一堆数字里面找最大的一个, 这里的程序稍微改了下流程, 单基本还是差不多的. 另一个差别是, 最大值设定成了 <em>257</em></p>
-<p>这个程序的结果, 是用了 _sys<em>__exit</em> 调用返回的, 因为还没学到怎么把一个数字输出到屏幕上</p>
+<p>这个程序的结果, 是用了 <em>sys___exit</em> 调用返回的, 因为还没学到怎么把一个数字输出到屏幕上</p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2014/12/05/zhao-zui-da-zhi/#more" rel="contents">
               阅读全文 &raquo;
@@ -857,7 +857,7 @@
 
       
         
-          <p>看了书上的例子, 尝试着写了个打印 <em>ASCII</em> 码表的程序<br>
+          <p>看了书上的例子, 尝试着写了个打印 <em>ASCII</em> 码表的程序</p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2014/12/05/da-yin-ascii-ma-biao/#more" rel="contents">
               阅读全文 &raquo;
@@ -951,7 +951,7 @@
 
       
         
-          <p>由于之前在 _O<em>APPEND</em> 上做了 <a href="/2014/11/22/O_APPEND的一次犯二测试/" title="一个极其二 B 的测试">一个极其二 B 的测试</a> , 倒是好好看了下操作系统里面和文件以及文件共享相关的东西<br>
+          <p>由于之前在 <em>O_APPEND</em> 上做了 <a href="/2014/11/22/O_APPEND的一次犯二测试/" title="一个极其二 B 的测试">一个极其二 B 的测试</a> , 倒是好好看了下操作系统里面和文件以及文件共享相关的东西</p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2014/11/22/文件及文件共享/#more" rel="contents">
               阅读全文 &raquo;
@@ -1045,8 +1045,8 @@
 
       
         
-          <p>在看 <em>APUE</em> 的时候, 顺手写了个程序试试 _O<em>APPEND</em> 在多进程时候的效果, 发现在 <em>FreeBSD</em> 和 <em>Debian</em> 上得到的文件不是 <em>2000000</em> 行</p>
-<p>研究了半天还以为是 _O<em>APPEND</em> 不能保证原子性, 还专门跑到 <em>StackOverFlow</em> 上发了个问题. 从别人的回答里面才发现是 <em>open</em> 文件的时候多加了个 _O<em>TRUNC</em> 标志, 纯属犯二啊</p>
+          <p>在看 <em>APUE</em> 的时候, 顺手写了个程序试试 <em>O_APPEND</em> 在多进程时候的效果, 发现在 <em>FreeBSD</em> 和 <em>Debian</em> 上得到的文件不是 <em>2000000</em> 行</p>
+<p>研究了半天还以为是 <em>O_APPEND</em> 不能保证原子性, 还专门跑到 <em>StackOverFlow</em> 上发了个问题. 从别人的回答里面才发现是 <em>open</em> 文件的时候多加了个 <em>O_TRUNC</em> 标志, 纯属犯二啊</p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2014/11/22/O_APPEND的一次犯二测试/#more" rel="contents">
               阅读全文 &raquo;
@@ -1140,8 +1140,8 @@
 
       
         
-          <p>GDB 调试多进程代码可以用 <code>set follow-fork-mode child</code> 跟踪到子进程中去. 但是在 LLDB 中还没有对应的方法. 系统更新到 OS X 10.10 后 GDB 没有发布对应的版本, 造成现在调试多进程代码非常的麻烦  </p>
-<p>在 Stack Overflow 上找到一篇不错的文章, 自己试了下. 发现其实可以比文章中的方法更加简单<br>
+          <p>GDB 调试多进程代码可以用 <code>set follow-fork-mode child</code> 跟踪到子进程中去. 但是在 LLDB 中还没有对应的方法. 系统更新到 OS X 10.10 后 GDB 没有发布对应的版本, 造成现在调试多进程代码非常的麻烦</p>
+<p>在 Stack Overflow 上找到一篇不错的文章, 自己试了下. 发现其实可以比文章中的方法更加简单</p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2014/11/21/XCODE Follow Child/#more" rel="contents">
               阅读全文 &raquo;

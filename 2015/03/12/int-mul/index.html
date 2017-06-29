@@ -51,17 +51,17 @@
 
 
 
-<meta name="description" content="无符号和带符号整数乘法需要不同的指令   mul 系列 : 无符号整数乘法 imul 系列 : 带符号整数乘法  上面两个系列的命令都用不同的后缀表示不同字长的操作数    b : 1 字节 ( 8 bit ) w : 2 字节 ( 16 bit ) l : 4 字节 ( 32 bit )">
+<meta name="description" content="无符号和带符号整数乘法需要不同的指令  mul 系列 : 无符号整数乘法 imul 系列 : 带符号整数乘法  上面两个系列的命令都用不同的后缀表示不同字长的操作数  b : 1 字节 ( 8 bit ) w : 2 字节 ( 16 bit ) l : 4 字节 ( 32 bit )">
 <meta name="keywords" content="Professional Assembly Language">
 <meta property="og:type" content="article">
 <meta property="og:title" content="整数乘法">
 <meta property="og:url" content="http://blog.xfwduke.com/2015/03/12/int-mul/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
-<meta property="og:description" content="无符号和带符号整数乘法需要不同的指令   mul 系列 : 无符号整数乘法 imul 系列 : 带符号整数乘法  上面两个系列的命令都用不同的后缀表示不同字长的操作数    b : 1 字节 ( 8 bit ) w : 2 字节 ( 16 bit ) l : 4 字节 ( 32 bit )">
+<meta property="og:description" content="无符号和带符号整数乘法需要不同的指令  mul 系列 : 无符号整数乘法 imul 系列 : 带符号整数乘法  上面两个系列的命令都用不同的后缀表示不同字长的操作数  b : 1 字节 ( 8 bit ) w : 2 字节 ( 16 bit ) l : 4 字节 ( 32 bit )">
 <meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="整数乘法">
-<meta name="twitter:description" content="无符号和带符号整数乘法需要不同的指令   mul 系列 : 无符号整数乘法 imul 系列 : 带符号整数乘法  上面两个系列的命令都用不同的后缀表示不同字长的操作数    b : 1 字节 ( 8 bit ) w : 2 字节 ( 16 bit ) l : 4 字节 ( 32 bit )">
+<meta name="twitter:description" content="无符号和带符号整数乘法需要不同的指令  mul 系列 : 无符号整数乘法 imul 系列 : 带符号整数乘法  上面两个系列的命令都用不同的后缀表示不同字长的操作数  b : 1 字节 ( 8 bit ) w : 2 字节 ( 16 bit ) l : 4 字节 ( 32 bit )">
 
 
 
@@ -270,26 +270,29 @@
       
 
       
-        <span itemprop="articleBody"><p>无符号和带符号整数乘法需要不同的指令 </p>
+        <span itemprop="articleBody"><p>无符号和带符号整数乘法需要不同的指令</p>
 <ul>
 <li><em>mul</em> 系列 : 无符号整数乘法</li>
 <li><em>imul</em> 系列 : 带符号整数乘法</li>
 </ul>
-<p>上面两个系列的命令都用不同的后缀表示不同字长的操作数  </p>
+<p>上面两个系列的命令都用不同的后缀表示不同字长的操作数</p>
 <ul>
 <li><em>b</em> : <em>1</em> 字节 ( <em>8 bit</em> )</li>
 <li><em>w</em> : <em>2</em> 字节 ( <em>16 bit</em> )</li>
 <li><em>l</em> : <em>4</em> 字节 ( <em>32 bit</em> )</li>
 </ul>
 <a id="more"></a>
-<h2 id="无符号整数乘法"><a href="#无符号整数乘法" class="headerlink" title="无符号整数乘法"></a>无符号整数乘法</h2><p><em>mul</em> 的指令格式是</p>
+<h2 id="无符号整数乘法">无符号整数乘法</h2>
+<p><em>mul</em> 的指令格式是</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mul source</div></pre></td></tr></table></figure>
 <ul>
 <li><em>source</em> 可以是 <em>8 bit , 16 bit , 32 bit</em> 的寄存器或内存值</li>
 <li>目标操作数是隐含操作数, 对应不同字长的 <em>source</em> 可以是 <em>al, ax, eax</em></li>
 <li>结果操作数也是隐含的, 对应不同字长的 <em>source</em> 可以是 <em>ax, eax, edx:eax</em></li>
 </ul>
-<p>$$<br>Result = Source \times Secondary\ source<br>$$</p>
+<p>$$
+Result = Source \times Secondary\ source
+$$</p>
 <table>
 <thead>
 <tr>
@@ -316,7 +319,8 @@
 </tr>
 </tbody>
 </table>
-<h3 id="错误判定"><a href="#错误判定" class="headerlink" title="错误判定"></a>错误判定</h3><p>由于无符号整数乘法的结果操作数字长总是源操作字长的两倍, 所以结果总是正确的</p>
+<h3 id="错误判定">错误判定</h3>
+<p>由于无符号整数乘法的结果操作数字长总是源操作字长的两倍, 所以结果总是正确的</p>
 <p>上面这句转换为数学表达式即是</p>
 
 $$
@@ -348,24 +352,30 @@ $$
 \end{alignat}
 $$
 
-<h2 id="带符号整数乘法"><a href="#带符号整数乘法" class="headerlink" title="带符号整数乘法"></a>带符号整数乘法</h2><p><em>imul</em> 指令有 <em>3</em> 种格式</p>
+<h2 id="带符号整数乘法">带符号整数乘法</h2>
+<p><em>imul</em> 指令有 <em>3</em> 种格式</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">imul source</div><div class="line">imul source, destination</div><div class="line">imul multiplier, source, destination</div></pre></td></tr></table></figure>
 <ul>
 <li>第一种格式的含义和 <em>mul</em> 一样</li>
 <li>第二种格式的含义是 $destination = source \times destination$ —— <em>source</em> 可以是 <em>16bit</em> 或 <em>32bit</em> 寄存器或内存中的值, <em>destination</em> 必须是 <em>16bit</em> 或 <em>32bit</em> 通用寄存器</li>
 <li>第三种格式的含义是 $destination = source \times multiplier$ —— <em>multiplier</em> 是立即数, <em>source</em> 可以是 <em>16bit</em> 或 <em>32bit</em> 寄存器或内存中的值, <em>destination</em> 必须是 <em>16bit</em> 或 <em>32bit</em> 通用寄存器</li>
 </ul>
-<h2 id="进位与溢出"><a href="#进位与溢出" class="headerlink" title="进位与溢出"></a>进位与溢出</h2><p>乘法如何影响 <em>CF</em> 和 <em>OF</em> 比加法要复杂</p>
+<h2 id="进位与溢出">进位与溢出</h2>
+<p>乘法如何影响 <em>CF</em> 和 <em>OF</em> 比加法要复杂</p>
 <blockquote>
-<p><strong>符号扩展</strong><br>将一个低精度数转换为一个高精度数, 如 : 将 <em>8bit</em> 数转换为 <em>16bit</em> , 扩展出来的位的值保持与原数的符号位相同</p>
+<p><strong>符号扩展</strong><br>
+将一个低精度数转换为一个高精度数, 如 : 将 <em>8bit</em> 数转换为 <em>16bit</em> , 扩展出来的位的值保持与原数的符号位相同
+### 单操作数乘法
+<em>mul</em> 指令和 <em>imul</em> 的单操作数格式, 有隐含的位扩展动作 —— 结果字长是源的两倍</p>
 </blockquote>
-<h3 id="单操作数乘法"><a href="#单操作数乘法" class="headerlink" title="单操作数乘法"></a>单操作数乘法</h3><p><em>mul</em> 指令和 <em>imul</em> 的单操作数格式, 有隐含的位扩展动作 —— 结果字长是源的两倍</p>
 <ul>
 <li>当结果未使用到扩展位时, <em>CF</em> 和 <em>OF</em> 均为 <em>0</em></li>
 <li>当结果使用到扩展位时, 若不是一个符号扩展 —— 其实在单操作数乘法中一但使用到扩展位, 不可能是符号扩展 —— <em>CF</em> 和 <em>OF</em> 均为 <em>1</em></li>
 </ul>
 <p>所以对于单操作数乘法, <em>CF</em> 和 <em>OF</em> 并不能用来判断结果是否正确 —— 其实结果肯定是正确的 —— 这两个标志位有同样的意义, 即用来判断结果是否用到扩展位</p>
-<h3 id="imul-多操作数乘法"><a href="#imul-多操作数乘法" class="headerlink" title="imul 多操作数乘法"></a><em>imul</em> 多操作数乘法</h3><p>结果超出 <em>destination</em> 的表达范围时 <em>OF</em> 为 <em>1</em></p>
+<h3 id="imul-多操作数乘法"><em>imul</em> 多操作数乘法</h3>
+<p>结果超出 <em>destination</em> 的表达范围时 <em>OF</em> 为 <em>1</em></p>
+<p></p>
 </span>
       
     </div>
@@ -519,7 +529,7 @@ $$
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#无符号整数乘法"><span class="nav-number">1.</span> <span class="nav-text">无符号整数乘法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#错误判定"><span class="nav-number">1.1.</span> <span class="nav-text">错误判定</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#带符号整数乘法"><span class="nav-number">2.</span> <span class="nav-text">带符号整数乘法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进位与溢出"><span class="nav-number">3.</span> <span class="nav-text">进位与溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#单操作数乘法"><span class="nav-number">3.1.</span> <span class="nav-text">单操作数乘法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#imul-多操作数乘法"><span class="nav-number">3.2.</span> <span class="nav-text">imul 多操作数乘法</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#无符号整数乘法"><span class="nav-number">1.</span> <span class="nav-text">无符号整数乘法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#错误判定"><span class="nav-number">1.1.</span> <span class="nav-text">错误判定</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#带符号整数乘法"><span class="nav-number">2.</span> <span class="nav-text">带符号整数乘法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进位与溢出"><span class="nav-number">3.</span> <span class="nav-text">进位与溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#imul-多操作数乘法"><span class="nav-number">3.1.</span> <span class="nav-text">imul 多操作数乘法</span></a></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">

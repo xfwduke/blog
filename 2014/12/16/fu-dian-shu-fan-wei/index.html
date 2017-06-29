@@ -51,17 +51,17 @@
 
 
 
-<meta name="description" content="浮点数的实现比整数复杂很多, 并且不同类型的浮点数(单精度或双精度)的挑选, 也不仅仅和最大值有关 在书上看到和浮点相关的内容, 对于单精度浮点数绝对值最大, 最小值范围有疑惑, 所以查阅了一些文档,  按数值的最小粒度, 可以把浮点数分为两类[^1]  规约浮点数 ( normalized number ) 非规约浮点数 ( denormalized number )">
+<meta name="description" content="浮点数的实现比整数复杂很多, 并且不同类型的浮点数(单精度或双精度)的挑选, 也不仅仅和最大值有关 在书上看到和浮点相关的内容, 对于单精度浮点数绝对值最大, 最小值范围有疑惑, 所以查阅了一些文档, 按数值的最小粒度, 可以把浮点数分为两类[1]  规约浮点数 ( normalized number ) 非规约浮点数 ( denormalized number )">
 <meta name="keywords" content="Professional Assembly Language">
 <meta property="og:type" content="article">
 <meta property="og:title" content="浮点数范围">
 <meta property="og:url" content="http://blog.xfwduke.com/2014/12/16/fu-dian-shu-fan-wei/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
-<meta property="og:description" content="浮点数的实现比整数复杂很多, 并且不同类型的浮点数(单精度或双精度)的挑选, 也不仅仅和最大值有关 在书上看到和浮点相关的内容, 对于单精度浮点数绝对值最大, 最小值范围有疑惑, 所以查阅了一些文档,  按数值的最小粒度, 可以把浮点数分为两类[^1]  规约浮点数 ( normalized number ) 非规约浮点数 ( denormalized number )">
+<meta property="og:description" content="浮点数的实现比整数复杂很多, 并且不同类型的浮点数(单精度或双精度)的挑选, 也不仅仅和最大值有关 在书上看到和浮点相关的内容, 对于单精度浮点数绝对值最大, 最小值范围有疑惑, 所以查阅了一些文档, 按数值的最小粒度, 可以把浮点数分为两类[1]  规约浮点数 ( normalized number ) 非规约浮点数 ( denormalized number )">
 <meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浮点数范围">
-<meta name="twitter:description" content="浮点数的实现比整数复杂很多, 并且不同类型的浮点数(单精度或双精度)的挑选, 也不仅仅和最大值有关 在书上看到和浮点相关的内容, 对于单精度浮点数绝对值最大, 最小值范围有疑惑, 所以查阅了一些文档,  按数值的最小粒度, 可以把浮点数分为两类[^1]  规约浮点数 ( normalized number ) 非规约浮点数 ( denormalized number )">
+<meta name="twitter:description" content="浮点数的实现比整数复杂很多, 并且不同类型的浮点数(单精度或双精度)的挑选, 也不仅仅和最大值有关 在书上看到和浮点相关的内容, 对于单精度浮点数绝对值最大, 最小值范围有疑惑, 所以查阅了一些文档, 按数值的最小粒度, 可以把浮点数分为两类[1]  规约浮点数 ( normalized number ) 非规约浮点数 ( denormalized number )">
 
 
 
@@ -271,35 +271,66 @@
 
       
         <span itemprop="articleBody"><p>浮点数的实现比整数复杂很多, 并且不同类型的浮点数(单精度或双精度)的挑选, 也不仅仅和最大值有关</p>
-<p>在书上看到和浮点相关的内容, 对于单精度浮点数绝对值最大, 最小值范围有疑惑, 所以查阅了一些文档, </p>
-<p>按数值的最小粒度, 可以把浮点数分为两类[^1]</p>
+<p>在书上看到和浮点相关的内容, 对于单精度浮点数绝对值最大, 最小值范围有疑惑, 所以查阅了一些文档,</p>
+<p>按数值的最小粒度, 可以把浮点数分为两类<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <ul>
 <li>规约浮点数 ( <em>normalized number</em> )</li>
 <li>非规约浮点数 ( <em>denormalized number</em> )</li>
 </ul>
 <a id="more"></a>
-<h3 id="规约单精度浮点数-normalized-number"><a href="#规约单精度浮点数-normalized-number" class="headerlink" title="规约单精度浮点数 ( normalized number )"></a>规约单精度浮点数 ( <em>normalized number</em> )</h3><p>[^1]:<a href="http://en.wikipedia.org/wiki/IEEE_754-1985#Single-precision_32-bit" target="_blank" rel="external">IEEE 754-1985</a>  </p>
-<p>单精度浮点数( <em>float</em> ) 用 <em>32 bit</em> 表示, 具体的布局是 [^2]</p>
-<p>[^2]:<a href="http://zh.wikipedia.org/wiki/IEEE_754" target="_blank" rel="external">IEEE 754</a></p>
-<table border="1" align="center"><br><tr><br><th style="text-align:center">31</th><br><th style="text-align:center">30</th><br><th style="text-align:center">29</th><br><th style="text-align:center">~</th><br><th style="text-align:center">24</th><br><th style="text-align:center">23</th><br><th style="text-align:center">22</th><br><th style="text-align:center">21</th><br><th style="text-align:center">~</th><br><th style="text-align:center">01</th><br><th style="text-align:center">00</th><br></tr><br><tr><br><td style="text-align:center">符号位 (sign bit)</td><br><td style="text-align:center" colspan="5">指数位 (Exponent bit)</td><br><td style="text-align:center" colspan="5">尾数位 (Significand bit)</td><br></tr><br></table>
-
+<h3 id="规约单精度浮点数-normalized-number">规约单精度浮点数 ( <em>normalized number</em> )</h3>
+<p>单精度浮点数( <em>float</em> ) 用 <em>32 bit</em> 表示, 具体的布局是 <sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup></p>
+<table border="1" align="center">
+<tr>
+<th style="text-align:center">31</th>
+<th style="text-align:center">30</th>
+<th style="text-align:center">29</th>
+<th style="text-align:center">~</th>
+<th style="text-align:center">24</th>
+<th style="text-align:center">23</th>
+<th style="text-align:center">22</th>
+<th style="text-align:center">21</th>
+<th style="text-align:center">~</th>
+<th style="text-align:center">01</th>
+<th style="text-align:center">00</th>
+</tr>
+<tr>
+<td style="text-align:center">符号位 (sign bit)</td>
+<td style="text-align:center" colspan="5">指数位 (Exponent bit)</td>
+<td style="text-align:center" colspan="5">尾数位 (Significand bit)</td>
+</tr>
+</table>
 <ul>
 <li>符号位取 <em>0</em> 时为正值</li>
-<li>指数位有 <em>8 bits</em><ul>
+<li>指数位有 <em>8 bits</em>
+<ul>
 <li><em>0</em> 和 <em>255</em> 为特殊值, 不能使用</li>
 <li>用于生成浮点数的指数值需要做 <em>-127</em> 偏移, 所以实际指数值范围是 <em>[ -126, 127 ]</em></li>
 </ul>
 </li>
-<li>尾数位有 <em>23 bits</em><ul>
+<li>尾数位有 <em>23 bits</em>
+<ul>
 <li>对于规约浮点数, 全用于表示小数点后的有效值, 而小数点前有效值固定为 <em>1</em></li>
-<li>对于非规约浮点数, 先不做讨论 </li>
+<li>对于非规约浮点数, 先不做讨论</li>
 </ul>
 </li>
 </ul>
-<h4 id="指数的计算-Exponent"><a href="#指数的计算-Exponent" class="headerlink" title="指数的计算 Exponent"></a>指数的计算 <em>Exponent</em></h4><p>指数的计算非常简单, 将二进制数转换为十进制数, 并注意定义中的偏移即可</p>
-<h4 id="尾数计算-Significand"><a href="#尾数计算-Significand" class="headerlink" title="尾数计算 Significand"></a>尾数计算 <em>Significand</em></h4><p>规约浮点数的尾数位全部是小数点后的有效数字, 且第 <em>22</em> 位是小数点后第 <em>1</em> 位, 以此类推. 对于上面表格中的尾数位, 从左向右重新编号如下</p>
-<table border="1" style="text-align:center"><br><tr><br><th style="text-align:center">0</th><br><th style="text-align:center">1</th><br><th style="text-align:center">~</th><br><th style="text-align:center">21</th><br><th style="text-align:center">22</th><br></tr><tr><br><td style="text-align:center" colspan="5">尾数位</td><br></tr><br><br></table>
+<h4 id="指数的计算-exponent">指数的计算 <em>Exponent</em></h4>
+<p>指数的计算非常简单, 将二进制数转换为十进制数, 并注意定义中的偏移即可</p>
+<h4 id="尾数计算-significand">尾数计算 <em>Significand</em></h4>
+<p>规约浮点数的尾数位全部是小数点后的有效数字, 且第 <em>22</em> 位是小数点后第 <em>1</em> 位, 以此类推. 对于上面表格中的尾数位, 从左向右重新编号如下</p>
+<table border="1" style="text-align:center">
+<tr>
+<th style="text-align:center">0</th>
+<th style="text-align:center">1</th>
+<th style="text-align:center">~</th>
+<th style="text-align:center">21</th>
+<th style="text-align:center">22</th>
+</tr><tr>
+<td style="text-align:center" colspan="5">尾数位</td>
+</tr>
 
+</table>
 <p>这里的尾数是用二进制表示的小数, 同样需要转换为十进制, 再考虑到规约浮点固定有 <em>1</em> 做为尾数, 所以</p>
 <ul>
 <li>取 <em>i</em> 为上表中的编号</li>
@@ -311,13 +342,15 @@ $$
 Significand = 1 + \sum_{i=0}^{22} {bit}_i \times 2^{-(i+1)}
 $$
 
-<h4 id="规约浮点数值计算"><a href="#规约浮点数值计算" class="headerlink" title="规约浮点数值计算"></a>规约浮点数值计算</h4><p>把上面各部分合起来, 有如下浮点数值计算公式 —— 需要重点注意的是, 指数对应的底 ( <em>Base</em> ) 为 <em>2</em></p>
+<h4 id="规约浮点数值计算">规约浮点数值计算</h4>
+<p>把上面各部分合起来, 有如下浮点数值计算公式 —— 需要重点注意的是, 指数对应的底 ( <em>Base</em> ) 为 <em>2</em></p>
 
 $$
 float = (-1) ^ {sign} \times {Significand} \times 2 ^ {Exponent}
 $$
 
-<h4 id="数值范围"><a href="#数值范围" class="headerlink" title="数值范围"></a>数值范围</h4><p>先忽略符号位, 只计算绝对值的上下限</p>
+<h4 id="数值范围">数值范围</h4>
+<p>先忽略符号位, 只计算绝对值的上下限</p>
 <ul>
 <li>下限</li>
 </ul>
@@ -363,20 +396,22 @@ $$
 $$
 
 
-<p>或者<br>
+<p>或者</p>
+
 $$
 {float} \in \lbrack {1.17549} \times {10}^{-38} , {3.40282} \times {10} ^ {38} \rbrack
 $$
-</p>
+
 <p>对于规约单精度浮点, 有这样几个特点 (均只讨论绝对值)</p>
 <ul>
 <li>最小值是 $ 2 ^ {-126} $</li>
-<li>精度 —— 相邻的两个数的差值是 $ 2 ^ {-149} $</li>
+<li>精度 —— 相邻的两个数的差值是 $ 2 ^ {-149} $<br>
+最小值和精度不相等, 且相差倍数极大 —— 这两个特性的另外一个含义是规约单精度浮点在小于其最小值后, 以极快的速度溢出到 <em>0</em> , 这个速度比起大于最小值时的收敛速度有些过于的快了<sup class="footnote-ref"><a href="#fn2" id="fnref2:1">[2]</a></sup></li>
 </ul>
-<p>最小值和精度不相等, 且相差倍数极大 —— 这两个特性的另外一个含义是规约单精度浮点在小于其最小值后, 以极快的速度溢出到 <em>0</em> , 这个速度比起大于最小值时的收敛速度有些过于的快了[^2]</p>
 <p>对比整数类型, 最小值和粒度都是 <em>1</em></p>
-<h3 id="非规约单精度浮点-denormalized-number"><a href="#非规约单精度浮点-denormalized-number" class="headerlink" title="非规约单精度浮点 ( denormalized number )"></a>非规约单精度浮点 ( <em>denormalized number</em> )</h3><p>正是由于浮点有上面的特性, 才出现了非规约的概念 —— 为了补充 <em>0</em> 到绝对值最小值之间的空白</p>
-<p>实际的非规约定义比较复杂, 这里可以做些简化 [^2]</p>
+<h3 id="非规约单精度浮点-denormalized-number">非规约单精度浮点 ( <em>denormalized number</em> )</h3>
+<p>正是由于浮点有上面的特性, 才出现了非规约的概念 —— 为了补充 <em>0</em> 到绝对值最小值之间的空白</p>
+<p>实际的非规约定义比较复杂, 这里可以做些简化 <sup class="footnote-ref"><a href="#fn2" id="fnref2:2">[2]</a></sup></p>
 <ul>
 <li>指数位全为 <em>0</em> , 且此时指数值记为 <em>-126</em></li>
 <li>尾数位含义不变</li>
@@ -389,13 +424,31 @@ $$
 $$
 
 <p>或者</p>
-<p>$$<br>{float} \in \lbrack {1.4013} \times 10 ^ {-45}, {1.17549} \times {10}^{-38} \rbrack<br>$$</p>
-<p>这样补充之后, 单精度浮点的最小值和精度大小一样了, 并且收敛速度变得平滑</p>
-<h3 id="编程中的使用"><a href="#编程中的使用" class="headerlink" title="编程中的使用"></a>编程中的使用</h3><blockquote><p>Do not produce code that could use denormalized numbers. If floats are producing denormalized numbers, use doubles instead</p>
+<p>$$
+{float} \in \lbrack {1.4013} \times 10 ^ {-45}, {1.17549} \times {10}^{-38} \rbrack
+$$这样补充之后, 单精度浮点的最小值和精度大小一样了, 并且收敛速度变得平滑</p>
+<h3 id="编程中的使用">编程中的使用</h3>
+<blockquote><p>Do not produce code that could use denormalized numbers. If floats are producing denormalized numbers, use doubles instead</p>
 <footer><strong>Tim Wilson, Do not use denormalized numbers</strong><cite><a href="https://www.securecoding.cert.org/confluence/display/seccode/FLP05-C.+Don't+use+denormalized+numbers" target="_blank" rel="external">www.securecoding.cert.org/confluence/display/seccode/FLP05-C.+Don't+use+denormalized+numbers</a></cite></footer></blockquote>
-<p>因为规约双精度浮点的精度比非规约单精度浮点的精度高很多<a href="[双精度浮点数](http://zh.wikipedia.org/wiki/雙精度浮點數)">^3</a></p>
-<h3 id="双精度浮点数"><a href="#双精度浮点数" class="headerlink" title="双精度浮点数"></a>双精度浮点数</h3><p>基本概念差不多, 只是变成了 <em>64 bits</em></p>
-<h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h3><p><a href="http://en.wikipedia.org/wiki/IEEE_floating_point" target="_blank" rel="external">IEEE floating point</a><br><a href="http://en.wikipedia.org/wiki/Denormal_number" target="_blank" rel="external">Denormal number</a><br><a href="http://stackoverflow.com/questions/9314534/why-does-changing-0-1f-to-0-slow-down-performance-by-10x/9314926#9314926" target="_blank" rel="external">Why does changing 0.1f to 0 slow down performance by 10x?</a>   </p>
+<p>因为规约双精度浮点的精度比非规约单精度浮点的精度高很多<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup></p>
+<h3 id="双精度浮点数">双精度浮点数</h3>
+<p>基本概念差不多, 只是变成了 <em>64 bits</em></p>
+<h3 id="参考文档">参考文档</h3>
+<p><a href="http://en.wikipedia.org/wiki/IEEE_floating_point" target="_blank" rel="external">IEEE floating point</a><br>
+<a href="http://en.wikipedia.org/wiki/Denormal_number" target="_blank" rel="external">Denormal number</a><br>
+<a href="http://stackoverflow.com/questions/9314534/why-does-changing-0-1f-to-0-slow-down-performance-by-10x/9314926#9314926" target="_blank" rel="external">Why does changing 0.1f to 0 slow down performance by 10x?</a></p>
+<p></p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a href="http://en.wikipedia.org/wiki/IEEE_754-1985#Single-precision_32-bit" target="_blank" rel="external">IEEE 754-1985</a> <a href="#fnref1" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p><a href="http://zh.wikipedia.org/wiki/IEEE_754" target="_blank" rel="external">IEEE 754</a> <a href="#fnref2" class="footnote-backref">↩</a> <a href="#fnref2:1" class="footnote-backref">↩</a> <a href="#fnref2:2" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p><a href="http://zh.wikipedia.org/wiki/%E9%9B%99%E7%B2%BE%E5%BA%A6%E6%B5%AE%E9%BB%9E%E6%95%B8" target="_blank" rel="external">双精度浮点数</a> <a href="#fnref3" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>
 </span>
       
     </div>
@@ -549,7 +602,7 @@ $$
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#规约单精度浮点数-normalized-number"><span class="nav-number">1.</span> <span class="nav-text">规约单精度浮点数 ( normalized number )</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#指数的计算-Exponent"><span class="nav-number">1.1.</span> <span class="nav-text">指数的计算 Exponent</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#尾数计算-Significand"><span class="nav-number">1.2.</span> <span class="nav-text">尾数计算 Significand</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#规约浮点数值计算"><span class="nav-number">1.3.</span> <span class="nav-text">规约浮点数值计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数值范围"><span class="nav-number">1.4.</span> <span class="nav-text">数值范围</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非规约单精度浮点-denormalized-number"><span class="nav-number">2.</span> <span class="nav-text">非规约单精度浮点 ( denormalized number )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编程中的使用"><span class="nav-number">3.</span> <span class="nav-text">编程中的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#双精度浮点数"><span class="nav-number">4.</span> <span class="nav-text">双精度浮点数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文档"><span class="nav-number">5.</span> <span class="nav-text">参考文档</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#规约单精度浮点数-normalized-number"><span class="nav-number">1.</span> <span class="nav-text">规约单精度浮点数 ( normalized number )</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#指数的计算-exponent"><span class="nav-number">1.1.</span> <span class="nav-text">指数的计算 Exponent</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#尾数计算-significand"><span class="nav-number">1.2.</span> <span class="nav-text">尾数计算 Significand</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#规约浮点数值计算"><span class="nav-number">1.3.</span> <span class="nav-text">规约浮点数值计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数值范围"><span class="nav-number">1.4.</span> <span class="nav-text">数值范围</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非规约单精度浮点-denormalized-number"><span class="nav-number">2.</span> <span class="nav-text">非规约单精度浮点 ( denormalized number )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编程中的使用"><span class="nav-number">3.</span> <span class="nav-text">编程中的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#双精度浮点数"><span class="nav-number">4.</span> <span class="nav-text">双精度浮点数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文档"><span class="nav-number">5.</span> <span class="nav-text">参考文档</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">

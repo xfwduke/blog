@@ -278,13 +278,14 @@
 <a id="more"></a>
 <figure class="highlight cpp"><figcaption><span>具有包含关系的类</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Inner</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> _v;</div><div class="line"></div><div class="line">    Inner (<span class="keyword">int</span> v) : _v (v)</div><div class="line">    &#123; &#125;</div><div class="line"></div><div class="line">    ~Inner ()</div><div class="line">    &#123;</div><div class="line">      <span class="built_in">cout</span> &lt;&lt; <span class="string">"Destory inner"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Outter</span></span></div><div class="line">&#123;</div><div class="line">    Inner _in;</div><div class="line"></div><div class="line">    Outter (<span class="keyword">int</span> v) : _in (v)</div><div class="line">    &#123; &#125;</div><div class="line"></div><div class="line">    ~Outter ()</div><div class="line">    &#123;</div><div class="line">      <span class="built_in">cout</span> &lt;&lt; <span class="string">"Destroy outter"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p><em>Outter</em> 和 <em>Inner</em> 类存在包含关系——一个 <em>Outter</em> 类型的对象包含一个 <em>Inner</em> 类型的子对象 ( <em>subobject</em> )</p>
-<p>当[^1]</p>
+<p>当<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <ul>
 <li>通过动态分配( <em>dynamically allocted</em> ) 构造了一个 <em>Outter</em> 类型的共享指针</li>
 <li>希望把子对象 ( <em>Inner</em> 类型) 以共享指针的形式用于其他地方</li>
 </ul>
 <p>需要保证子对象使用结束前, 其外围对象能一直有效—— <em>aliasing constructor</em> 就是为了达到这个目的</p>
-<h2 id="错误的示例"><a href="#错误的示例" class="headerlink" title="错误的示例"></a>错误的示例</h2><p>先来看看不使用 <em>aliasing constructor</em> 会怎样</p>
+<h2 id="错误的示例">错误的示例</h2>
+<p>先来看看不使用 <em>aliasing constructor</em> 会怎样</p>
 <figure class="highlight cpp"><figcaption><span>类定义沿用前面的</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">null_deleter</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">operator</span> <span class="params">()</span> <span class="params">(T *)</span></span></div><div class="line">    &#123; &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="built_in">shared_ptr</span>&lt;Inner&gt; fun ()</div><div class="line">&#123;</div><div class="line">  <span class="built_in">shared_ptr</span>&lt;Outter&gt; spo (<span class="keyword">new</span> Outter (<span class="number">5</span>));</div><div class="line">  <span class="built_in">shared_ptr</span>&lt;Inner&gt; spi (&amp;spo-&gt;_in, null_deleter ());</div><div class="line">  <span class="keyword">return</span> spi;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">auto</span> spi = fun ();</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"returned from fun"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; ++(spi-&gt;_v) &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <figure class="highlight plain"><figcaption><span>执行结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Destroy outter</div><div class="line">Destory inner</div><div class="line">returned from fun</div><div class="line">1</div></pre></td></tr></table></figure>
 <p>从结果可以看到</p>
@@ -292,7 +293,8 @@
 <li>离开函数 <em>fun</em> 时, <em>Outter</em> 对象被析构, 同时导致 <em>Inner</em> 对象也被析构</li>
 <li>最后的整型计算结果输出 <em>1</em> 而不是预期的 <em>5</em>——虽然最后计算没有报错, 但保不齐以后执行会不会出什么错误——因为修改了一个被回收了的内存地址</li>
 </ul>
-<h2 id="正确的示例"><a href="#正确的示例" class="headerlink" title="正确的示例"></a>正确的示例</h2><p>将上面代码的第 <em>16</em> 行替换成下面这样</p>
+<h2 id="正确的示例">正确的示例</h2>
+<p>将上面代码的第 <em>16</em> 行替换成下面这样</p>
 <figure class="highlight cpp"><figcaption><span>替换代码</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">shared_ptr</span>&lt;Inner&gt; spi (spo, &amp;spo-&gt;_in);</div></pre></td></tr></table></figure>
 <p>则执行结果符合预期, 并且对象都是在使用结束后 ( <em>main</em> 函数返回 ) 时才析构</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">returned from fun</div><div class="line">6</div><div class="line">Destroy outter</div><div class="line">Destory inner</div></pre></td></tr></table></figure>
@@ -301,14 +303,21 @@
 <li>第 <em>2</em> 个参数是要共享的子对象指针</li>
 <li>第 <em>1</em> 个参数是拥有这个子对象的上级对象的共享指针</li>
 </ul>
-<h2 id="不明白的地方"><a href="#不明白的地方" class="headerlink" title="不明白的地方"></a>不明白的地方</h2><p>有两个不明白的地方</p>
+<h2 id="不明白的地方">不明白的地方</h2>
+<p>有两个不明白的地方</p>
 <ul>
-<li><a href="#错误的示例">错误的示例</a> 中的代码, 编译器没有报错, 而且也还没想到用什么办法来让程序崩溃掉</li>
+<li><a href="#%E9%94%99%E8%AF%AF%E7%9A%84%E7%A4%BA%E4%BE%8B">错误的示例</a> 中的代码, 编译器没有报错, 而且也还没想到用什么办法来让程序崩溃掉</li>
 <li>将代码的第 <em>15</em> 行替换成</li>
 </ul>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">shared_ptr</span>&lt;Outter&gt; spo (make_shared&lt;Outter&gt; (<span class="number">5</span>));</div></pre></td></tr></table></figure>
 <p>即使不使用 <em>aliasing constructor</em> , 对象在从 <em>fun</em> 返回时被析构, 也可以让整型计算的结果是正确的</p>
-<p>[^1]:<a href="https://www.justsoftwaresolutions.co.uk/cplusplus/shared-ptr-secret-constructor.html" target="_blank" rel="external">std::shared_ptr’s secret constructor</a></p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a href="https://www.justsoftwaresolutions.co.uk/cplusplus/shared-ptr-secret-constructor.html" target="_blank" rel="external">std::shared_ptr’s secret constructor</a> <a href="#fnref1" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>
 </span>
       
     </div>

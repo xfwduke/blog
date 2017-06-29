@@ -270,9 +270,10 @@
       
 
       
-        <span itemprop="articleBody"><p><code>开始位置标签</code> 用于表明程序应该从哪里开始运行. 如果连接器找不到这个标签, 会报错<br><a id="more"></a></p>
+        <span itemprop="articleBody"><p><code>开始位置标签</code> 用于表明程序应该从哪里开始运行. 如果连接器找不到这个标签, 会报错</p>
+<a id="more"></a>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">output:</div><div class="line">    .ascii &quot;The processor Vendor ID is &apos;xxxxxxxxxxxx&apos;\n&quot;</div><div class="line">.section .text</div><div class="line">.globl _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    movl $0, %eax</div><div class="line">    cpuid</div><div class="line"></div><div class="line">    movl $output, %edi</div><div class="line">    movl %ebx, 28(%edi)</div><div class="line">    movl %edx, 32(%edi)</div><div class="line">    movl %ecx, 36(%edi)</div><div class="line"></div><div class="line">    movl $4, %eax</div><div class="line">    movl $1, %ebx</div><div class="line">    movl $output, %ecx</div><div class="line">    movl $42, %edx</div><div class="line">    int $0x80</div><div class="line"></div><div class="line">    movl $1, %eax</div><div class="line">    movl $0, %ebx</div><div class="line">    int $0x80</div></pre></td></tr></table></figure>
-<p>这段程序是书上的一个示例, 代码中使用 __start_ 作为 <code>开始位置标签</code> —— 这也是 <em>ld</em> 的默认值 —— 如果想使用其他的标签, 则可以用 <em>-e</em> 参数来指定, 如用 <em>main</em></p>
+<p>这段程序是书上的一个示例, 代码中使用 <em>_start</em> 作为 <code>开始位置标签</code> —— 这也是 <em>ld</em> 的默认值 —— 如果想使用其他的标签, 则可以用 <em>-e</em> 参数来指定, 如用 <em>main</em></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ld -o execute -e main source.o</div></pre></td></tr></table></figure>
 <p>用 <em>gcc</em> 直接编译汇编代码时, 默认则是用 <em>main</em> —— 这和 <em>c</em> 的习惯一样</p>
 </span>

@@ -277,9 +277,10 @@
 <li><em>constexpr function</em></li>
 <li><em>constexpr constructor</em></li>
 </ul>
-<p>详细的规则比较复杂，可以看下 <a href="http://en.cppreference.com/w/cpp/language/constexpr" target="_blank" rel="external">constexpr specifier</a><a href="[http://en.cppreference.com/w/cpp/language/constexpr](http://en.cppreference.com/w/cpp/language/constexpr)">^1</a></p>
+<p>详细的规则比较复杂，可以看下 <a href="http://en.cppreference.com/w/cpp/language/constexpr" target="_blank" rel="external">constexpr specifier</a><sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <a id="more"></a>
-<h2 id="constexpr-variable"><a href="#constexpr-variable" class="headerlink" title="constexpr variable"></a><em>constexpr variable</em></h2><p><em>constexpr variable</em> 要求感觉比较抽象，不太容易和实际联系起来</p>
+<h2 id="constexpr-variable"><em>constexpr variable</em></h2>
+<p><em>constexpr variable</em> 要求感觉比较抽象，不太容易和实际联系起来</p>
 <blockquote>
 <p><strong><em>its type must be a LiteralType</em></strong></p>
 </blockquote>
@@ -291,7 +292,7 @@
 <blockquote>
 <p><strong><em>the constructor parameters or the value to be assigned must contain only literal values, constexpr variables and functions</em></strong></p>
 </blockquote>
-<p>这一条字面意思是 构造一个 <em>constexpr variable</em> 时，构造函数的参数只能包含 <em>literal values、constexpr variables、constexpr functions</em> </p>
+<p>这一条字面意思是 构造一个 <em>constexpr variable</em> 时，构造函数的参数只能包含 <em>literal values、constexpr variables、constexpr functions</em></p>
 <p>但实际上还表示 不能用非 <em>constexpr variables</em> 来初始化 <em>constexpr variables</em></p>
 <figure class="highlight cpp"><figcaption><span>错误</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> a = <span class="number">10</span>;</div><div class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> b = a;</div></pre></td></tr></table></figure>
 <p>上面的代码就违反了这一要求，换一种写法更明显</p>
@@ -300,12 +301,13 @@
 <p><strong><em>the constructor used to construct the object (either implicit or explicit) must satisfy the requirements of constexpr constructor. In the case of explicit constructor, it must have constexpr specified</em></strong></p>
 </blockquote>
 <p>这个简单了，自定义类必须有 <em>constexpr constructor</em> 并被调用</p>
-<h2 id="constexpr-function"><a href="#constexpr-function" class="headerlink" title="constexpr function"></a><em>constexpr function</em></h2><p><strong><em>constexpr function</em></strong> <strong>默认的就是内联函数</strong></p>
+<h2 id="constexpr-function"><em>constexpr function</em></h2>
+<p><strong><em>constexpr function</em></strong> <strong>默认的就是内联函数</strong></p>
 <p><em>constexpr function</em> 对函数体中的语句有严格的要求 （ <em>C++ 11</em> ），可以是下列情况</p>
 <ul>
 <li>空语句</li>
-<li>_static<em>assert</em></li>
-<li><em>typedef</em> 和 <em>alias</em> </li>
+<li><em>static_assert</em></li>
+<li><em>typedef</em> 和 <em>alias</em></li>
 <li><em>using</em> 语句</li>
 <li>有且仅有一个 <em>return</em></li>
 </ul>
@@ -323,13 +325,23 @@
 <p>从汇编代码可以看到，编译后直接计算出了 <em>fun(20)</em> 的结果，没有出现 <em>call</em> 指令调用 <em>fun()</em> 函数</p>
 <figure class="highlight plain"><figcaption><span>非 constexpr 版本</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">_main:                                  ## @main</div><div class="line">        .cfi_startproc</div><div class="line">## BB#0:</div><div class="line">        pushq   %rbp</div><div class="line">Ltmp3:</div><div class="line">        .cfi_def_cfa_offset 16</div><div class="line">Ltmp4:</div><div class="line">        .cfi_offset %rbp, -16</div><div class="line">        movq    %rsp, %rbp</div><div class="line">Ltmp5:</div><div class="line">        .cfi_def_cfa_register %rbp</div><div class="line">        subq    $48, %rsp</div><div class="line">        movl    $20, %eax</div><div class="line">        movl    %eax, %edi</div><div class="line">        movl    $0, -20(%rbp)</div><div class="line">        callq   __Z3funy</div><div class="line">        movq    __ZNSt3__14coutE@GOTPCREL(%rip), %rdi</div><div class="line">        movq    %rax, -32(%rbp)</div><div class="line">        movq    -32(%rbp), %rsi</div><div class="line">        callq   __ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEElsEy</div><div class="line">        ...</div><div class="line">        ...</div><div class="line">        .cfi_endproc</div></pre></td></tr></table></figure>
 <p>再看非 <em>constexpr function</em> 版本的汇编代码，第 <em>16</em> 行调用了 <em>fun()</em> 函数，在运行时计算结果</p>
-<h2 id="constexpr-constructor"><a href="#constexpr-constructor" class="headerlink" title="constexpr constructor"></a><em>constexpr constructor</em></h2><p>构造函数也是函数，所以 <em>constexpr constructor</em> 天然带有 <em>constexpr function</em> 的各种限制，然后才是特有的限制</p>
+<h2 id="constexpr-constructor"><em>constexpr constructor</em></h2>
+<p>构造函数也是函数，所以 <em>constexpr constructor</em> 天然带有 <em>constexpr function</em> 的各种限制，然后才是特有的限制</p>
 <ul>
 <li>不能有虚基类</li>
-<li>构造函数不能有 <em>function-try-block</em> ——多用于处理构造函数异常的函数定义形式<a href="[http://en.cppreference.com/w/cpp/language/function-try-block](http://en.cppreference.com/w/cpp/language/function-try-block)">^2</a></li>
+<li>构造函数不能有 <em>function-try-block</em> ——多用于处理构造函数异常的函数定义形式<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup></li>
 <li>…</li>
 </ul>
-<p>更详细的定义参考<a href="[http://en.cppreference.com/w/cpp/language/constexpr](http://en.cppreference.com/w/cpp/language/constexpr)">^1</a></p>
+<p>更详细的定义参考<sup class="footnote-ref"><a href="#fn1" id="fnref1:1">[1]</a></sup></p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a href="http://en.cppreference.com/w/cpp/language/constexpr" target="_blank" rel="external">http://en.cppreference.com/w/cpp/language/constexpr</a> <a href="#fnref1" class="footnote-backref">↩</a> <a href="#fnref1:1" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p><a href="http://en.cppreference.com/w/cpp/language/function-try-block" target="_blank" rel="external">http://en.cppreference.com/w/cpp/language/function-try-block</a> <a href="#fnref2" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>
 </span>
       
     </div>

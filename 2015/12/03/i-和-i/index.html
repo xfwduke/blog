@@ -51,16 +51,16 @@
 
 
 
-<meta name="description" content="为什么 ++i 比 i++ 效率高? 为什么 ++i 是左值而 _i++ 是右值?[^1]  [^1]:Value categories">
+<meta name="description" content="为什么 ++i 比 i++ 效率高? 为什么 ++i 是左值而 _i++ 是右值?[1]">
 <meta property="og:type" content="article">
 <meta property="og:title" content="++i 和 i++">
 <meta property="og:url" content="http://blog.xfwduke.com/2015/12/03/i-和-i/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
-<meta property="og:description" content="为什么 ++i 比 i++ 效率高? 为什么 ++i 是左值而 _i++ 是右值?[^1]  [^1]:Value categories">
+<meta property="og:description" content="为什么 ++i 比 i++ 效率高? 为什么 ++i 是左值而 _i++ 是右值?[1]">
 <meta property="og:updated_time" content="2017-06-29T12:13:31.699Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="++i 和 i++">
-<meta name="twitter:description" content="为什么 ++i 比 i++ 效率高? 为什么 ++i 是左值而 _i++ 是右值?[^1]  [^1]:Value categories">
+<meta name="twitter:description" content="为什么 ++i 比 i++ 效率高? 为什么 ++i 是左值而 _i++ 是右值?[1]">
 
 
 
@@ -271,19 +271,20 @@
       
         <span itemprop="articleBody"><ul>
 <li>为什么 <em>++i</em> 比 <em>i++</em> 效率高?</li>
-<li>为什么 <em>++i</em> 是左值而 _i++ 是右值?[^1]</li>
+<li>为什么 <em>++i</em> 是左值而 _i++ 是右值?<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></li>
 </ul>
-<p>[^1]:<a href="http://en.cppreference.com/w/cpp/language/value_category" target="_blank" rel="external">Value categories</a></p>
 <a id="more"></a>
 <figure class="highlight c"><figcaption><span>C示例</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> i = <span class="number">11</span>;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"%d\n"</span>, ++i <span class="comment">/*i++*/</span>);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="i"><a href="#i" class="headerlink" title="++i"></a><em>++i</em></h2><figure class="highlight plain"><figcaption><span>++i 汇编代码</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">movl    $11, -4(%rbp)</div><div class="line">addl    $1, -4(%rbp)</div><div class="line">movl    -4(%rbp), %eax</div><div class="line">movl    %eax, %esi</div><div class="line">movl    $.LC0, %edi</div><div class="line">movl    $0, %eax</div><div class="line">call    printf</div></pre></td></tr></table></figure>
+<h2 id="i"><em>++i</em></h2>
+<figure class="highlight plain"><figcaption><span>++i 汇编代码</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">movl    $11, -4(%rbp)</div><div class="line">addl    $1, -4(%rbp)</div><div class="line">movl    -4(%rbp), %eax</div><div class="line">movl    %eax, %esi</div><div class="line">movl    $.LC0, %edi</div><div class="line">movl    $0, %eax</div><div class="line">call    printf</div></pre></td></tr></table></figure>
 <p>从汇编代码看, 操作非常直接而且符合想象</p>
 <ul>
 <li>第 <em>1</em> 行获取一块栈内存, 并赋值为 <em>11</em>——初始化 <em>i</em></li>
 <li>第 <em>2</em> 行直接在 <em>i</em> 的内存处加 <em>1</em></li>
 <li>之后处理 <em>printf</em></li>
 </ul>
-<h2 id="i-1"><a href="#i-1" class="headerlink" title="i++"></a><em>i++</em></h2><figure class="highlight plain"><figcaption><span>i++ 汇编代码</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">movl    $11, -4(%rbp)</div><div class="line">movl    -4(%rbp), %eax</div><div class="line">leal    1(%rax), %edx</div><div class="line">movl    %edx, -4(%rbp)</div><div class="line">movl    %eax, %esi</div><div class="line">movl    $.LC0, %edi</div><div class="line">movl    $0, %eax</div><div class="line">call    printf</div></pre></td></tr></table></figure>
+<h2 id="i-v2"><em>i++</em></h2>
+<figure class="highlight plain"><figcaption><span>i++ 汇编代码</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">movl    $11, -4(%rbp)</div><div class="line">movl    -4(%rbp), %eax</div><div class="line">leal    1(%rax), %edx</div><div class="line">movl    %edx, -4(%rbp)</div><div class="line">movl    %eax, %esi</div><div class="line">movl    $.LC0, %edi</div><div class="line">movl    $0, %eax</div><div class="line">call    printf</div></pre></td></tr></table></figure>
 <p><em>i++</em> 版本的第 <em>1</em> 行还是初始化 <em>i</em> , 但这之后就不一样了</p>
 <ul>
 <li>第 <em>2</em> 行将 <em>i</em> 的初值 <em>11</em> 读入 <em>%eax</em></li>
@@ -292,12 +293,21 @@
 <li>在做完这些后 <em>i</em> 的初值 <em>11</em> 并没有消失, 只是无法持久化——仅存在于寄存器中, 不再拥有内存</li>
 <li>第 <em>5</em> 行打印 <em>i</em> 的原初值 <em>11</em> ——位于 <em>%eax</em> 中</li>
 </ul>
-<h2 id="关于效率"><a href="#关于效率" class="headerlink" title="关于效率"></a>关于效率</h2><p>从汇编代码的差别很容易看出 <em>i++</em> 用了 <em>3</em> 行代码才实现了自增操作并持久化结果, 而 <em>++i</em> 只用了 <em>1</em> 行</p>
+<h2 id="关于效率">关于效率</h2>
+<p>从汇编代码的差别很容易看出 <em>i++</em> 用了 <em>3</em> 行代码才实现了自增操作并持久化结果, 而 <em>++i</em> 只用了 <em>1</em> 行</p>
 <p>说的更文艺一些的话, <em>i++</em> 需要构造一个临时整型对象</p>
-<h2 id="关于左值和右值"><a href="#关于左值和右值" class="headerlink" title="关于左值和右值"></a>关于左值和右值</h2><p>要强调一点, 左/右值是针对表达式来说的, 不是变量——表达式的范围比变量要宽很多</p>
+<h2 id="关于左值和右值">关于左值和右值</h2>
+<p>要强调一点, 左/右值是针对表达式来说的, 不是变量——表达式的范围比变量要宽很多</p>
 <p>在上面的代码中, 表达式 <em>++i</em> 的值是 <em>12</em> 而 <em>i++</em> 是 <em>11</em></p>
 <p>从汇编代码可以看到, <em>i++</em> 的值 <em>11</em> 是位于寄存器中的, 当程序离开表达式的作用范围——<em>printf</em> 语句后, <em>11</em> 就不存在了</p>
 <p>所以 <em>i++</em> 是右值</p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a href="http://en.cppreference.com/w/cpp/language/value_category" target="_blank" rel="external">Value categories</a> <a href="#fnref1" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>
 </span>
       
     </div>
@@ -445,7 +455,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#i"><span class="nav-number">1.</span> <span class="nav-text">++i</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#i-1"><span class="nav-number">2.</span> <span class="nav-text">i++</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于效率"><span class="nav-number">3.</span> <span class="nav-text">关于效率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于左值和右值"><span class="nav-number">4.</span> <span class="nav-text">关于左值和右值</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#i"><span class="nav-number">1.</span> <span class="nav-text">++i</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#i-v2"><span class="nav-number">2.</span> <span class="nav-text">i++</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于效率"><span class="nav-number">3.</span> <span class="nav-text">关于效率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于左值和右值"><span class="nav-number">4.</span> <span class="nav-text">关于左值和右值</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">

@@ -51,17 +51,17 @@
 
 
 
-<meta name="description" content="C++ 11 中给标准容器引入了 3 以 emplace 开头的操作, 并和原有的操作存在对应关系  _emplace_front_ $ \Longleftrightarrow $ _push_front_ emplace $ \Longleftrightarrow $ insert _emplace_back_ $ \Longleftrightarrow $ _push_back_">
+<meta name="description" content="C++ 11 中给标准容器引入了 3 以 emplace 开头的操作, 并和原有的操作存在对应关系  emplace_front $ \Longleftrightarrow $ push_front emplace $ \Longleftrightarrow $ insert emplace_back $ \Longleftrightarrow $ push_back">
 <meta name="keywords" content="C++ Primer">
 <meta property="og:type" content="article">
 <meta property="og:title" content="容器的 emplace 操作">
 <meta property="og:url" content="http://blog.xfwduke.com/2015/12/05/容器的-emplace-操作/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
-<meta property="og:description" content="C++ 11 中给标准容器引入了 3 以 emplace 开头的操作, 并和原有的操作存在对应关系  _emplace_front_ $ \Longleftrightarrow $ _push_front_ emplace $ \Longleftrightarrow $ insert _emplace_back_ $ \Longleftrightarrow $ _push_back_">
+<meta property="og:description" content="C++ 11 中给标准容器引入了 3 以 emplace 开头的操作, 并和原有的操作存在对应关系  emplace_front $ \Longleftrightarrow $ push_front emplace $ \Longleftrightarrow $ insert emplace_back $ \Longleftrightarrow $ push_back">
 <meta property="og:updated_time" content="2017-06-29T12:13:31.699Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="容器的 emplace 操作">
-<meta name="twitter:description" content="C++ 11 中给标准容器引入了 3 以 emplace 开头的操作, 并和原有的操作存在对应关系  _emplace_front_ $ \Longleftrightarrow $ _push_front_ emplace $ \Longleftrightarrow $ insert _emplace_back_ $ \Longleftrightarrow $ _push_back_">
+<meta name="twitter:description" content="C++ 11 中给标准容器引入了 3 以 emplace 开头的操作, 并和原有的操作存在对应关系  emplace_front $ \Longleftrightarrow $ push_front emplace $ \Longleftrightarrow $ insert emplace_back $ \Longleftrightarrow $ push_back">
 
 
 
@@ -272,9 +272,9 @@
       
         <span itemprop="articleBody"><p><em>C++ 11</em> 中给标准容器引入了 <em>3</em> 以 <em>emplace</em> 开头的操作, 并和原有的操作存在对应关系</p>
 <ul>
-<li>_emplace_front_ $ \Longleftrightarrow $ _push_front_</li>
+<li><em>emplace_front</em> $ \Longleftrightarrow $ <em>push_front</em></li>
 <li><em>emplace</em> $ \Longleftrightarrow $ <em>insert</em></li>
-<li>_emplace_back_ $ \Longleftrightarrow $ _push_back_</li>
+<li><em>emplace_back</em> $ \Longleftrightarrow $ <em>push_back</em></li>
 </ul>
 <a id="more"></a>
 <p>这些操作最终的效果都是在容器的恰当位置增加一个元素</p>
@@ -282,11 +282,14 @@
 <figure class="highlight cpp"><figcaption><span>emplace 示例</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">public</span>:</div><div class="line">    Test (<span class="keyword">int</span> a, <span class="keyword">int</span> b) : _a (a), _b (b)</div><div class="line">    &#123;</div><div class="line">      <span class="built_in">cout</span> &lt;&lt; <span class="string">"in constructor for ("</span> &lt;&lt; a &lt;&lt; <span class="string">", "</span> &lt;&lt; b &lt;&lt; <span class="string">")"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Test (<span class="keyword">const</span> Test &amp; <span class="keyword">_t</span>)</div><div class="line">    &#123;</div><div class="line">      <span class="built_in">cout</span> &lt;&lt; <span class="string">"in copy constructor for ("</span> &lt;&lt; <span class="keyword">_t</span>._a &lt;&lt; <span class="string">", "</span> &lt;&lt; <span class="keyword">_t</span>._b &lt;&lt; <span class="string">")"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">      _a = <span class="keyword">_t</span>._a;</div><div class="line">      _b = <span class="keyword">_t</span>._b;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">int</span> _a;</div><div class="line">    <span class="keyword">int</span> _b;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="built_in">vector</span>&lt;Test&gt; tvec;</div><div class="line">  tvec.push_back (&#123;<span class="number">1</span>, <span class="number">2</span>&#125;);</div><div class="line">  tvec.emplace_back (<span class="number">0</span>, <span class="number">2</span>);</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <figure class="highlight plain"><figcaption><span>执行结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">in constructor for (1, 2)</div><div class="line">in copy constructor for (1, 2)</div><div class="line">in constructor for (0, 2)</div><div class="line">in copy constructor for (1, 2)</div></pre></td></tr></table></figure>
 <ul>
-<li><p>_push_back_ 需要一个已经构造好的对象复制到容器中, 所以代码中用了初始化列表, 而结果的第 <em>1, 2</em> 行展示了这个过程</p>
+<li>
+<p><em>push_back</em> 需要一个已经构造好的对象复制到容器中, 所以代码中用了初始化列表, 而结果的第 <em>1, 2</em> 行展示了这个过程</p>
 </li>
-<li><p>_emplace_back_ 用传入的参数直接在容器中构造对象, 结果的第 <em>3</em> 行展示了这个过程</p>
+<li>
+<p><em>emplace_back</em> 用传入的参数直接在容器中构造对象, 结果的第 <em>3</em> 行展示了这个过程</p>
 </li>
-<li><p>结果的第 <em>4</em> 行展示了 <code>向 vector 容器中增加元素导致迭代器失效</code> 这一现象——把已有的元素复制到新的地方, 所以触发了复制构造</p>
+<li>
+<p>结果的第 <em>4</em> 行展示了 <code>向 vector 容器中增加元素导致迭代器失效</code> 这一现象——把已有的元素复制到新的地方, 所以触发了复制构造</p>
 </li>
 </ul>
 </span>

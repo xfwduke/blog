@@ -272,19 +272,21 @@
       
 
       
-        <span itemprop="articleBody"><p>看了书上的例子, 尝试着写了个打印 <em>ASCII</em> 码表的程序<br><a id="more"></a></p>
+        <span itemprop="articleBody"><p>看了书上的例子, 尝试着写了个打印 <em>ASCII</em> 码表的程序</p>
+<a id="more"></a>
 <figure class="highlight plain"><figcaption><span>打印 ASICC 码表</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">.section .text</div><div class="line">.globl _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    movl $0, %ecx</div><div class="line">    pushl %ecx</div><div class="line"></div><div class="line">_loop:</div><div class="line">    movl $4, %eax</div><div class="line">    movl $1, %ebx</div><div class="line">    movl $1, %edx</div><div class="line">    movl %esp, %ecx</div><div class="line">    int $0x80</div><div class="line"></div><div class="line">    popl %ecx</div><div class="line">    incl %ecx</div><div class="line">    cmpl $256, %ecx</div><div class="line">    je _exit</div><div class="line">    pushl %ecx</div><div class="line">    jmp _loop</div><div class="line"></div><div class="line">_exit:</div><div class="line">    pushl $10</div><div class="line">    movl %esp, %ecx</div><div class="line">    movl $4, %eax</div><div class="line">    movl $1, %ebx</div><div class="line">    movl $1, %edx</div><div class="line">    int $0x80</div><div class="line">    movl $1, %eax</div><div class="line">    int $0x80</div></pre></td></tr></table></figure>
-<h2 id="sys-write"><a href="#sys-write" class="headerlink" title="_sys_write_"></a>_sys_write_</h2><blockquote>
+<h2 id="sys-write"><em>sys_write</em></h2>
+<blockquote>
 <p>系统调用号 4</p>
 </blockquote>
 <table>
 <thead>
 <tr>
 <th style="text-align:center">Name</th>
-<th style="text-align:center">\%eax</th>
-<th style="text-align:center">\%ebx</th>
-<th style="text-align:center">\%ecx</th>
-<th style="text-align:center">\%edx</th>
+<th style="text-align:center">%eax</th>
+<th style="text-align:center">%ebx</th>
+<th style="text-align:center">%ecx</th>
+<th style="text-align:center">%edx</th>
 </tr>
 </thead>
 <tbody>
@@ -461,7 +463,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#sys-write"><span class="nav-number">1.</span> <span class="nav-text">_sys_write_</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#sys-write"><span class="nav-number">1.</span> <span class="nav-text">sys_write</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">

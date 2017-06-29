@@ -272,7 +272,7 @@
         <span itemprop="articleBody"><p>前面初步学习了 <em>32 bit</em> 环境下的汇编, 接下来需要进一步学习 <em>64 bit</em> 汇编</p>
 <p>从 <em>32 bit</em> 升级到 <em>64 bit</em> 有几个明显的变化</p>
 <a id="more"></a>
-<h2 id="数据字长-1"><a href="#数据字长-1" class="headerlink" title="数据字长[^1]"></a>数据字长[^1]</h2><p>[^1]:Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 3</p>
+<h2 id="数据字长">数据字长<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></h2>
 <table>
 <thead>
 <tr>
@@ -335,12 +335,11 @@
 <td style="text-align:center"><em>long double</em></td>
 <td style="text-align:center"><em>Extended precision</em></td>
 <td style="text-align:center"><em>t</em></td>
-<td style="text-align:center"><em>16</em></td>
+<td style="text-align:center"><em>16</em>指针在 <em>64 bit</em> 环境下都是 <em>8 bytes</em></td>
 </tr>
 </tbody>
 </table>
-<p>指针在 <em>64 bit</em> 环境下都是 <em>8 bytes</em></p>
-<h2 id="通用寄存器-2"><a href="#通用寄存器-2" class="headerlink" title="通用寄存器[^2]"></a>通用寄存器[^2]</h2><p>[^2]:Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 4</p>
+<h2 id="通用寄存器">通用寄存器<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup></h2>
 <p><em>64 bit</em> 环境下的通用寄存器主要有两个新的特性</p>
 <ul>
 <li>通用寄存器的数量从 <em>8</em> 个增加到 <em>16</em> 个</li>
@@ -488,16 +487,50 @@
 </tr>
 </tbody>
 </table>
-<h2 id="状态寄存器-3"><a href="#状态寄存器-3" class="headerlink" title="状态寄存器[^3]"></a>状态寄存器[^3]</h2><ul>
+<h2 id="状态寄存器">状态寄存器<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup></h2>
+<ul>
 <li><em>flags</em> —— <em>16 bit</em> 状态寄存器</li>
 <li><em>eflags</em> —— <em>32 bit</em> 状态寄存器</li>
 <li><em>rflags</em> —— <em>64 bit</em> 状态寄存器</li>
 </ul>
 <p>状态寄存器可以向下兼容</p>
-<table border="1"><br><tr><br><th style="text-align:center" colspan="5">Intel x86 FLAGS register</th><br></tr><br><tr><br><th style="text-align:center">Bit #</th><th style="text-align:center">Abbreviation</th><th style="text-align:center">Description</th><th style="text-align:center">Category</th><br></tr><br><tr><br><th style="text-align:center" colspan="5">FLAGS</th><br></tr><br><tr><td style="text-align:center">0</td><td style="text-align:center">CF</td><td style="text-align:center">Carry flag</td><td style="text-align:center">Status</td></tr><br><tr><td style="text-align:center">1</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr><br><tr><td style="text-align:center">2</td><td style="text-align:center">PF</td><td style="text-align:center">Parity flag</td><td style="text-align:center">Status</td></tr><br><tr><td style="text-align:center">3</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr><br><tr><td style="text-align:center">4</td><td style="text-align:center">AF</td><td style="text-align:center">Adjust flag</td><td style="text-align:center">Status</td></tr><br><tr><td style="text-align:center">5</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr><br><tr><td style="text-align:center">6</td><td style="text-align:center">ZF</td><td style="text-align:center">Zero flag</td><td style="text-align:center">Status</td></tr><br><tr><td style="text-align:center">7</td><td style="text-align:center">SF</td><td style="text-align:center">Sign flag</td><td style="text-align:center">Status</td></tr><br><tr><td style="text-align:center">8</td><td style="text-align:center">TF</td><td style="text-align:center">Trap flag (signle step)</td><td style="text-align:center">Control</td></tr><br><tr><td style="text-align:center">9</td><td style="text-align:center">IF</td><td style="text-align:center">Interrupt enable flag</td><td style="text-align:center">Control</td></tr><br><tr><td style="text-align:center">10</td><td style="text-align:center">DF</td><td style="text-align:center">Direction flag</td><td style="text-align:center">Status</td></tr><br><tr><td style="text-align:center">11</td><td style="text-align:center">OF</td><td style="text-align:center">Overflow flag</td><td style="text-align:center">Status</td></tr><br><tr><td style="text-align:center">12-13</td><td style="text-align:center">IOPL</td><td style="text-align:center">I/O privilege level (286+ only), always 1 on 8086 and 186</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">14</td><td style="text-align:center">NT</td><td style="text-align:center">Netsted task flag (286+ only), always 1 on 8086 and 186</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">15</td><td style="text-align:center"></td><td style="text-align:center">Reserved, always 1 on 8086 and 186, always 0 on later models</td><td style="text-align:center"></td></tr><br><tr><th style="text-align:center" colspan="5">EFLAGS</th></tr><br><tr><td style="text-align:center">16</td><td style="text-align:center">RF</td><td style="text-align:center">Resume flag (386+ only)</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">17</td><td style="text-align:center">VM</td><td style="text-align:center">Virtual 8086 mode flag (386+ only)</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">18</td><td style="text-align:center">AC</td><td style="text-align:center">Alignment check (486SX+ only)</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">19</td><td style="text-align:center">VIF</td><td style="text-align:center">Virtual interrupt flag (Pentium+)</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">20</td><td style="text-align:center">VIP</td><td style="text-align:center">Virtual interrupt pending (Pentium+)</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">21</td><td style="text-align:center">ID</td><td style="text-align:center">Able to use CPUID instruction (Pentium+)</td><td style="text-align:center">System</td></tr><br><tr><td style="text-align:center">22-31</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr><br><tr><th style="text-align:center" colspan="5">RFLAGS</th></tr><br><tr><td style="text-align:center">32-63</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr><br></table>
-
-
-<h2 id="函数-4"><a href="#函数-4" class="headerlink" title="函数[^4]"></a>函数[^4]</h2><p>[^4]:Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 6</p>
+<table border="1">
+<tr>
+<th style="text-align:center" colspan="5">Intel x86 FLAGS register</th>
+</tr>
+<tr>
+<th style="text-align:center">Bit #</th><th style="text-align:center">Abbreviation</th><th style="text-align:center">Description</th><th style="text-align:center">Category</th>
+</tr>
+<tr>
+<th style="text-align:center" colspan="5">FLAGS</th>
+</tr>
+<tr><td style="text-align:center">0</td><td style="text-align:center">CF</td><td style="text-align:center">Carry flag</td><td style="text-align:center">Status</td></tr>
+<tr><td style="text-align:center">1</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr>
+<tr><td style="text-align:center">2</td><td style="text-align:center">PF</td><td style="text-align:center">Parity flag</td><td style="text-align:center">Status</td></tr>
+<tr><td style="text-align:center">3</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr>
+<tr><td style="text-align:center">4</td><td style="text-align:center">AF</td><td style="text-align:center">Adjust flag</td><td style="text-align:center">Status</td></tr>
+<tr><td style="text-align:center">5</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr>
+<tr><td style="text-align:center">6</td><td style="text-align:center">ZF</td><td style="text-align:center">Zero flag</td><td style="text-align:center">Status</td></tr>
+<tr><td style="text-align:center">7</td><td style="text-align:center">SF</td><td style="text-align:center">Sign flag</td><td style="text-align:center">Status</td></tr>
+<tr><td style="text-align:center">8</td><td style="text-align:center">TF</td><td style="text-align:center">Trap flag (signle step)</td><td style="text-align:center">Control</td></tr>
+<tr><td style="text-align:center">9</td><td style="text-align:center">IF</td><td style="text-align:center">Interrupt enable flag</td><td style="text-align:center">Control</td></tr>
+<tr><td style="text-align:center">10</td><td style="text-align:center">DF</td><td style="text-align:center">Direction flag</td><td style="text-align:center">Status</td></tr>
+<tr><td style="text-align:center">11</td><td style="text-align:center">OF</td><td style="text-align:center">Overflow flag</td><td style="text-align:center">Status</td></tr>
+<tr><td style="text-align:center">12-13</td><td style="text-align:center">IOPL</td><td style="text-align:center">I/O privilege level (286+ only), always 1 on 8086 and 186</td><td style="text-align:center">System</td></tr>
+<tr><td style="text-align:center">14</td><td style="text-align:center">NT</td><td style="text-align:center">Netsted task flag (286+ only), always 1 on 8086 and 186</td><td style="text-align:center">System</td></tr>
+<tr><td style="text-align:center">15</td><td style="text-align:center"></td><td style="text-align:center">Reserved, always 1 on 8086 and 186, always 0 on later models</td><td style="text-align:center"></td></tr>
+<tr><th style="text-align:center" colspan="5">EFLAGS</th></tr>
+<tr><td style="text-align:center">16</td><td style="text-align:center">RF</td><td style="text-align:center">Resume flag (386+ only)</td><td style="text-align:center">System</td></tr>
+<tr><td style="text-align:center">17</td><td style="text-align:center">VM</td><td style="text-align:center">Virtual 8086 mode flag (386+ only)</td><td style="text-align:center">System</td></tr>
+<tr><td style="text-align:center">18</td><td style="text-align:center">AC</td><td style="text-align:center">Alignment check (486SX+ only)</td><td style="text-align:center">System</td></tr>
+<tr><td style="text-align:center">19</td><td style="text-align:center">VIF</td><td style="text-align:center">Virtual interrupt flag (Pentium+)</td><td style="text-align:center">System</td></tr>
+<tr><td style="text-align:center">20</td><td style="text-align:center">VIP</td><td style="text-align:center">Virtual interrupt pending (Pentium+)</td><td style="text-align:center">System</td></tr>
+<tr><td style="text-align:center">21</td><td style="text-align:center">ID</td><td style="text-align:center">Able to use CPUID instruction (Pentium+)</td><td style="text-align:center">System</td></tr>
+<tr><td style="text-align:center">22-31</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr>
+<tr><th style="text-align:center" colspan="5">RFLAGS</th></tr>
+<tr><td style="text-align:center">32-63</td><td style="text-align:center"></td><td style="text-align:center">Reserved</td><td style="text-align:center"></td></tr>
+</table>
+<h2 id="函数">函数<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup></h2>
 <p><em>64 bit</em> 环境下的函数调用变化比较大</p>
 <ul>
 <li><em>6</em> 个以及 少于 <em>6</em> 个参数的传递不再使用栈, 改为使用寄存器</li>
@@ -508,14 +541,27 @@
 <li>There is no frame pointer. Instead, references to stack locations are made relative to the stack pointer. Typical functions allocate their total stack storage needs at the beginning of the call and keep the stack pointer at a fixed position.</li>
 </ul>
 <blockquote>
-<p>后面两条附上英文原文<br>因为没接触过, 没看懂什么意思, 等后面接触到了再回来修改</p>
+<p>后面两条附上英文原文<br>
+因为没接触过, 没看懂什么意思, 等后面接触到了再回来修改</p>
 </blockquote>
-<h3 id="参数传递"><a href="#参数传递" class="headerlink" title="参数传递"></a>参数传递</h3><p>前面提到, 在 <em>32 bit</em> 环境下函数参数传递使用的是栈, 而在 <em>64 bit</em> 环境下改为使用通用寄存器 (函数参数少于等于 <em>6</em> 个时), 参数形式表格如下[^5]</p>
-<table><br><tr><br><th style="text-align:center" rowspan="2">Argument Number</th><br><th style="text-align:center" colspan="4">Operand Size (bits)</th><br></tr><br><tr><th style="text-align:center">64</th><th style="text-align:center">32</th><th style="text-align:center">16</th><th style="text-align:center">8</th></tr><br><tr><td style="text-align:center">1</td><td style="text-align:center">%rdi</td><td style="text-align:center">%edi</td><td style="text-align:center">%di</td><td style="text-align:center">%dil</td></tr><br><tr><td style="text-align:center">2</td><td style="text-align:center">%rsi</td><td style="text-align:center">%esi</td><td style="text-align:center">%si</td><td style="text-align:center">%sil</td></tr><br><tr><td style="text-align:center">3</td><td style="text-align:center">%rdx</td><td style="text-align:center">%edx</td><td style="text-align:center">%dx</td><td style="text-align:center">%dl</td></tr><br><tr><td style="text-align:center">4</td><td style="text-align:center">%rcx</td><td style="text-align:center">%ecx</td><td style="text-align:center">%cx</td><td style="text-align:center">%cl</td></tr><br><tr><td style="text-align:center">5</td><td style="text-align:center">%r8</td><td style="text-align:center">%r8d</td><td style="text-align:center">%r8w</td><td style="text-align:center">%r8b</td></tr><br><tr><td style="text-align:center">6</td><td style="text-align:center">%r9</td><td style="text-align:center">%r9d</td><td style="text-align:center">%r9w</td><td style="text-align:center">%r9b</td></tr><br></table>
-
+<h3 id="参数传递">参数传递</h3>
+<p>前面提到, 在 <em>32 bit</em> 环境下函数参数传递使用的是栈, 而在 <em>64 bit</em> 环境下改为使用通用寄存器 (函数参数少于等于 <em>6</em> 个时), 参数形式表格如下<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup></p>
+<table>
+<tr>
+<th style="text-align:center" rowspan="2">Argument Number</th>
+<th style="text-align:center" colspan="4">Operand Size (bits)</th>
+</tr>
+<tr><th style="text-align:center">64</th><th style="text-align:center">32</th><th style="text-align:center">16</th><th style="text-align:center">8</th></tr>
+<tr><td style="text-align:center">1</td><td style="text-align:center">%rdi</td><td style="text-align:center">%edi</td><td style="text-align:center">%di</td><td style="text-align:center">%dil</td></tr>
+<tr><td style="text-align:center">2</td><td style="text-align:center">%rsi</td><td style="text-align:center">%esi</td><td style="text-align:center">%si</td><td style="text-align:center">%sil</td></tr>
+<tr><td style="text-align:center">3</td><td style="text-align:center">%rdx</td><td style="text-align:center">%edx</td><td style="text-align:center">%dx</td><td style="text-align:center">%dl</td></tr>
+<tr><td style="text-align:center">4</td><td style="text-align:center">%rcx</td><td style="text-align:center">%ecx</td><td style="text-align:center">%cx</td><td style="text-align:center">%cl</td></tr>
+<tr><td style="text-align:center">5</td><td style="text-align:center">%r8</td><td style="text-align:center">%r8d</td><td style="text-align:center">%r8w</td><td style="text-align:center">%r8b</td></tr>
+<tr><td style="text-align:center">6</td><td style="text-align:center">%r9</td><td style="text-align:center">%r9d</td><td style="text-align:center">%r9w</td><td style="text-align:center">%r9b</td></tr>
+</table>
 <p>从 <em>32 bit</em> 汇编学到的知识来看这样的 <code>规定</code> 更像是一个 <code>约定</code> —— 汇编器并没有办法强制函数必须使用通用寄存器来传递参数, 非要使用栈也是可以的; 但是大家都遵守这个 <code>约定</code>, 这样能减少沟通的障碍, 而且寄存器的速度比内存要快的多 —— 这是我个人的理解, 先放在这里, 后面学的更详细了再回头来看对不对</p>
 <p>对于参数个数大于 <em>6</em> 个情况, <em>gcc</em> 的处理是前 <em>6</em> 个参数依然使用通用寄存器, 多出来的参数使用栈</p>
-<h3 id="栈帧-6"><a href="#栈帧-6" class="headerlink" title="栈帧[^6]"></a>栈帧[^6]</h3><p>[^6]:Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 6</p>
+<h3 id="栈帧">栈帧<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup></h3>
 <p>函数的栈帧在 <em>32 bit</em> 环境下是一个非常重要的概念, 参考文档中非常强调 <em>64 bit</em> 环境下函数对栈的依赖减少了 —— 因为通用寄存器更多 —— 甚至在某些情况下, 函数根本不需要栈帧</p>
 <p>但是, 可以从文档中看出 <em>64 bit</em> 环境的汇编, 函数在栈方面并没有发生翻天覆地的变化</p>
 <ul>
@@ -524,14 +570,30 @@
 </ul>
 <p>有这两个存在, 其实也可以看做函数有自己的栈帧</p>
 <p>所以文档中强调的其实是, 由于通用寄存器增多, 函数在处理局部变量和临时数值时对栈的依赖可以有所减少 —— 但是否要使用栈, 文档中的条件也不是强制性约束, 程序员依然可以在需要的时候随意的使用栈空间</p>
-<h2 id="计划"><a href="#计划" class="headerlink" title="计划"></a>计划</h2><p>以上就是 <em>64 bit</em> 汇编的一些主要变化, 但是关于浮点操作的这里没有提及, 因为 <em>32 bit</em> 的浮点也没怎么详细看</p>
+<h2 id="计划">计划</h2>
+<p>以上就是 <em>64 bit</em> 汇编的一些主要变化, 但是关于浮点操作的这里没有提及, 因为 <em>32 bit</em> 的浮点也没怎么详细看</p>
 <ul>
 <li>接下来会以 《 <em>Introduction to 64 Bit Assembly Programming for Linux and OS X</em> 》 为主要文档学习 <em>64 bit</em> 汇编</li>
 <li>同时参考 《 <em>Professional Assembly Language</em> 》 更为详细的对比 <em>32 bit</em> 汇编</li>
 <li><em>64 bit</em> 汇编文档的语法是 <em>Intel</em> 语法, 所以后续的笔记总结会更为复杂 —— 会包含同一逻辑代码的 <em>Intel</em> 版本 和 <em>AT &amp; T</em> 版本, 可能的情况下还会有 <em>64 bit</em> 和 <em>32 bit</em> 版本的对比</li>
 </ul>
-<p>[^5]:原书第一个参数的 <em>8 bit</em> 形式有误</p>
-<p>[^3]:<a href="http://en.wikipedia.org/wiki/FLAGS_register" target="_blank" rel="external">FLAGS register</a></p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 3 <a href="#fnref1" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p>Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 4 <a href="#fnref2" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p><a href="http://en.wikipedia.org/wiki/FLAGS_register" target="_blank" rel="external">FLAGS register</a> <a href="#fnref3" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn4" class="footnote-item"><p>Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 6 <a href="#fnref4" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn5" class="footnote-item"><p>原书第一个参数的 <em>8 bit</em> 形式有误 <a href="#fnref5" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p>Randal E. Bryant, David R. O’Hallaron : x86-64 Machine-Level Programming - Chapter 6 <a href="#fnref6" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>
 </span>
       
     </div>
@@ -679,7 +741,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据字长-1"><span class="nav-number">1.</span> <span class="nav-text">数据字长[^1]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通用寄存器-2"><span class="nav-number">2.</span> <span class="nav-text">通用寄存器[^2]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#状态寄存器-3"><span class="nav-number">3.</span> <span class="nav-text">状态寄存器[^3]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数-4"><span class="nav-number">4.</span> <span class="nav-text">函数[^4]</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数传递"><span class="nav-number">4.1.</span> <span class="nav-text">参数传递</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栈帧-6"><span class="nav-number">4.2.</span> <span class="nav-text">栈帧[^6]</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计划"><span class="nav-number">5.</span> <span class="nav-text">计划</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据字长"><span class="nav-number">1.</span> <span class="nav-text">数据字长[1]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通用寄存器"><span class="nav-number">2.</span> <span class="nav-text">通用寄存器[2]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#状态寄存器"><span class="nav-number">3.</span> <span class="nav-text">状态寄存器[3]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数"><span class="nav-number">4.</span> <span class="nav-text">函数[4]</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数传递"><span class="nav-number">4.1.</span> <span class="nav-text">参数传递</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栈帧"><span class="nav-number">4.2.</span> <span class="nav-text">栈帧[6]</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计划"><span class="nav-number">5.</span> <span class="nav-text">计划</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">

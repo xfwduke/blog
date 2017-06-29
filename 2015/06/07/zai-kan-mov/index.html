@@ -272,16 +272,25 @@
         <span itemprop="articleBody"><p><em>mov</em> 是汇编中最常用的操作之一, 在 <a href="/2014/12/08/guan-yu-mov/" title="关于 mov">关于 mov</a> 中很初步的了解了 <em>32 bit AT&amp;T</em> 语法下的 <em>mov</em> 操作</p>
 <p>升级到 <em>64 bit</em> 后 <em>mov</em> 操作有了一些新的内容, 同时由于要一并学习 <em>Intel</em> 语法, 所以 <em>mov</em> 操作的内容又变得多了起来</p>
 <a id="more"></a>
-<h2 id="mov-指令"><a href="#mov-指令" class="headerlink" title="mov 指令"></a><em>mov</em> 指令</h2><ul>
+<h2 id="mov-指令"><em>mov</em> 指令</h2>
+<ul>
 <li><em>AT&amp;T</em> 语法的指令较多, 有 <em>b, w, l, q</em> 四种后缀分别对应操作数为 <em>8bit, 16bit, 32bit, 64bit</em> 的情况</li>
 <li><em>Intel</em> 只有一个指令 <em>mov</em> , 但是可以和 <a href="/2015/06/02/ptr-operator-yu-jie-qu/" title="PTR Operator">PTR Operator</a> 配合使用 : <em>byte ptr, word ptr, dword ptr, qword ptr</em>  —— 可以简写为 <em>byte, word, dword, qword</em></li>
 <li><em>mov</em> 指令后的操作数, 源和目的操作数的位置在两种语法中是反的</li>
 </ul>
-<h2 id="源和目的的各种组合"><a href="#源和目的的各种组合" class="headerlink" title="源和目的的各种组合"></a>源和目的的各种组合</h2><ul>
-<li><a href="/2015/06/04/moving-a-constant-into-a-register/" title="Moving a constant into a register">Moving a constant into a register</a></li>
-<li><a href="/2015/06/06/moving-values-from-memory-to-registers/" title="Moving values from memory to registers">Moving values from memory to registers</a></li>
-<li><a href="/2015/06/07/moving-values-from-a-register-to-memory/" title="Moving values from a register to memory">Moving values from a register to memory</a></li>
-<li><p><em>Moving data from one register to another</em></p>
+<h2 id="源和目的的各种组合">源和目的的各种组合</h2>
+<ul>
+<li>
+<a href="/2015/06/04/moving-a-constant-into-a-register/" title="Moving a constant into a register">Moving a constant into a register</a>
+</li>
+<li>
+<a href="/2015/06/06/moving-values-from-memory-to-registers/" title="Moving values from memory to registers">Moving values from memory to registers</a>
+</li>
+<li>
+<a href="/2015/06/07/moving-values-from-a-register-to-memory/" title="Moving values from a register to memory">Moving values from a register to memory</a>
+</li>
+<li>
+<p><em>Moving data from one register to another</em></p>
 <ul>
 <li>寄存器字长必须相等</li>
 <li>源寄存器字长小于目的寄存器字长时, 需要做<code>位扩展操作</code></li>

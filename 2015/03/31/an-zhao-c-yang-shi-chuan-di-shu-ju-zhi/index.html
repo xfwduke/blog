@@ -278,31 +278,36 @@
 </ul>
 <p>结合栈 ( <em>stack</em> ) 可以实现 <em>C</em> 样式的值传递, 这更加适合函数式编程的开发</p>
 <a id="more"></a>
-<h2 id="回顾栈"><a href="#回顾栈" class="headerlink" title="回顾栈"></a>回顾栈</h2><ul>
+<h2 id="回顾栈">回顾栈</h2>
+<ul>
 <li>程序启动后分配的内存空间末尾保留给栈</li>
 <li>栈的起始是程序内存空间的最大值</li>
 <li>当把数据填充入栈时, 栈顶地址变小</li>
 <li><em>esp</em> 用于指向栈顶</li>
 </ul>
-<h2 id="按-C-样式传递参数"><a href="#按-C-样式传递参数" class="headerlink" title="按 C 样式传递参数"></a>按 <em>C</em> 样式传递参数</h2><p><code>C 样式要求参数存放到栈中的顺序和函数的原型中的顺序相反</code></p>
+<h2 id="按-c-样式传递参数">按 <em>C</em> 样式传递参数</h2>
+<p><code>C 样式要求参数存放到栈中的顺序和函数的原型中的顺序相反</code></p>
 <p>这是一个非常重要的规则 —— 不仅约定了用栈传递参数, 还约定了按什么样的顺序传递参数</p>
-<h3 id="参数逆序入栈"><a href="#参数逆序入栈" class="headerlink" title="参数逆序入栈"></a>参数逆序入栈</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">my_func</span><span class="params">(<span class="keyword">char</span> * str, <span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span></div><div class="line">&#123;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"%s, %d, %d\n"</span>, str, a, b);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    my_func(<span class="string">"Hello world!"</span>, <span class="number">13</span>, <span class="number">37</span>);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="参数逆序入栈">参数逆序入栈</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">my_func</span><span class="params">(<span class="keyword">char</span> * str, <span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span></div><div class="line">&#123;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"%s, %d, %d\n"</span>, str, a, b);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    my_func(<span class="string">"Hello world!"</span>, <span class="number">13</span>, <span class="number">37</span>);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line">.LC1:</div><div class="line">        .string &quot;Hello world!&quot;</div><div class="line">        .text</div><div class="line">        .globl  main</div><div class="line">        .type   main, @function</div><div class="line">main:</div><div class="line">.LFB1:</div><div class="line">        .cfi_startproc</div><div class="line">        pushl   %ebp</div><div class="line">        .cfi_def_cfa_offset 8</div><div class="line">        .cfi_offset 5, -8</div><div class="line">        movl    %esp, %ebp</div><div class="line">        .cfi_def_cfa_register 5</div><div class="line">        andl    $-16, %esp</div><div class="line">        subl    $16, %esp</div><div class="line">        movl    $37, 8(%esp)</div><div class="line">        movl    $13, 4(%esp)</div><div class="line">        movl    $.LC1, (%esp)</div><div class="line">        call    my_func</div><div class="line">        movl    $0, %eax</div><div class="line">        leave</div><div class="line">        .cfi_restore 5</div><div class="line">        .cfi_def_cfa 4, 4</div><div class="line">        ret</div><div class="line">        .cfi_endproc</div><div class="line">...</div></pre></td></tr></table></figure>
 <p>这是一段非常简单的 <em>c</em> 代码, 同时截取了 <em>main</em> 函数部分的汇编代码</p>
 <p>先忽略汇编代码的其他部分, 只关注 <em>18 ~ 21</em> 行</p>
 <ul>
-<li>_my_func(char * str, int a, int b)_ 是函数原型</li>
-<li>第 <em>21</em> 行调用了 _my_func_ 函数</li>
-<li>第 <em>18 ~ 20</em> 是将函数的参数入栈, 注意顺序刚好和原型相反<ul>
+<li><em>my_func(char * str, int a, int b)</em> 是函数原型</li>
+<li>第 <em>21</em> 行调用了 <em>my_func</em> 函数</li>
+<li>第 <em>18 ~ 20</em> 是将函数的参数入栈, 注意顺序刚好和原型相反
+<ul>
 <li>首先将 <em>37</em> 入栈, 对应参数 <em>int b</em></li>
 <li>接着将 <em>13</em> 入栈, 对应参数 <em>int a</em></li>
 <li>最后将字符串 <em>“Hello world!”</em> 入栈, 对应参数 <em>char * str</em></li>
 </ul>
 </li>
 </ul>
-<p>当程序执行进入 _my_func_ 后, 系统还会默认的将程序执行到的当前内存地址入栈用于函数结束后的返回, 所以在函数内部可以用 <em>esp</em> 间接寻址的方式获得参数的值</p>
+<p>当程序执行进入 <em>my_func</em> 后, 系统还会默认的将程序执行到的当前内存地址入栈用于函数结束后的返回, 所以在函数内部可以用 <em>esp</em> 间接寻址的方式获得参数的值</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">4(%esp)</div><div class="line">8(%esp)</div><div class="line">12(%esp)</div></pre></td></tr></table></figure>
-<h3 id="ebp-保留栈顶"><a href="#ebp-保留栈顶" class="headerlink" title="ebp 保留栈顶"></a><em>ebp</em> 保留栈顶</h3><p>前面提到进入函数后可以用 <em>esp</em> 间接寻址来获得参数的值, 但是这样会带来一个问题 —— 栈操作都会影响 <em>esp</em> 的值, 所以如果在函数内使用 <em>push pop</em> 操作后, 就很难再用固定的 <em>esp</em> 间接寻址方式来获得参数的值</p>
+<h3 id="ebp-保留栈顶"><em>ebp</em> 保留栈顶</h3>
+<p>前面提到进入函数后可以用 <em>esp</em> 间接寻址来获得参数的值, 但是这样会带来一个问题 —— 栈操作都会影响 <em>esp</em> 的值, 所以如果在函数内使用 <em>push pop</em> 操作后, 就很难再用固定的 <em>esp</em> 间接寻址方式来获得参数的值</p>
 <p>为了解决这个问题, 常用的办法是一进入函数内部就马上将 <em>esp</em> 的值传送到 <em>ebp</em> 保存起来, 后续要获取参数值之间用 <em>ebp</em> 做间接寻址即可, 任意的栈操作都不会影响</p>
 <p>同时, 为了防止程序其他地方用到 <em>ebp</em> 的值, 需要先将 <em>ebp</em> 保存下来; 函数执行结束后, 在 <em>ret</em> 前再加以恢复</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function:</div><div class="line">    pushl %ebp</div><div class="line">    movl %esp, %ebp</div><div class="line">    ...</div><div class="line">    ...</div><div class="line">    movl %ebp, %esp</div><div class="line">    popl %ebp</div><div class="line">    ret</div></pre></td></tr></table></figure>
@@ -314,24 +319,32 @@
 <li>函数结束时先恢复栈顶值, 即删除掉函数代码中入栈的所有数据</li>
 <li>从栈中恢复函数执行前 <em>ebp</em> 的值</li>
 </ul>
-<p>这样做带来的一个变化是 : 栈中多了一个 <em>ebp</em> 原值, 所以为了获取参数值, <em>esp</em> 间接寻址要从 <em>8(%esp)</em> 开始了</p>
-<h3 id="局部变量"><a href="#局部变量" class="headerlink" title="局部变量"></a>局部变量</h3><p>严格来说局部变量并不属于函数值传递的范畴, 但由于实现技术上也是用到了栈, 所以一起来说</p>
+<p>这样做带来的一个变化是 : 栈中多了一个 <em>ebp</em> 原值, 所以为了获取参数值, <em>esp</em> 间接寻址要从 <em>8(%esp)</em> 开始了### 局部变量</p>
+<p>严格来说局部变量并不属于函数值传递的范畴, 但由于实现技术上也是用到了栈, 所以一起来说</p>
 <p>简单来说, 汇编函数的局部变量, 是入函数后在栈中直接扩展出 <em>N</em> 个空位, 保留给局部变量使用</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">function:</div><div class="line">    pushl %ebp</div><div class="line">    movl %esp, %ebp</div><div class="line">    subl $N, %esp</div><div class="line">    ...</div><div class="line">    ...</div></pre></td></tr></table></figure>
-<p>这样操作后栈顶部的 <em>N</em> 字节保留给局部变量使用, 同时获取函数参数就要从 <em>(N + 4)(%esp)</em> 开始了</p>
-<p>和函数参数类似, 获取和设置局部变量的值也是都使用 <em>ebp</em> 间接寻址</p>
+<p>这样操作后栈顶部的 <em>N</em> 字节保留给局部变量使用, 同时获取函数参数就要从 <em>(N + 4)(%esp)</em> 开始了和函数参数类似, 获取和设置局部变量的值也是都使用 <em>ebp</em> 间接寻址</p>
 <p>由于在退出函数前还原了 <em>esp</em> 的原值, 栈中的局部变量值就被删除了, 函数返回后从外部无法在访问这些值 —— 局部变量</p>
-<h2 id="在函数调用之后"><a href="#在函数调用之后" class="headerlink" title="在函数调用之后"></a>在函数调用之后</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line">...</div><div class="line">pushl %eax</div><div class="line">pushl %ebx</div><div class="line">call function</div><div class="line">addl $8, %esp</div><div class="line">...</div><div class="line">...</div></pre></td></tr></table></figure>
+<h2 id="在函数调用之后">在函数调用之后</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line">...</div><div class="line">pushl %eax</div><div class="line">pushl %ebx</div><div class="line">call function</div><div class="line">addl $8, %esp</div><div class="line">...</div><div class="line">...</div></pre></td></tr></table></figure>
 <p>看这样一段示例 : 调用函数前将 <em>eax ebx</em> 入栈作为参数, 所以在完成函数调用后, 需要还原 <em>esp</em> 之前的值, 将栈空间还给系统以便后续使用</p>
-<h3 id="push-pop-和栈的间接寻址"><a href="#push-pop-和栈的间接寻址" class="headerlink" title="push / pop 和栈的间接寻址"></a><em>push / pop</em> 和栈的间接寻址</h3><p>从前面展示的代码中可以发现, 很多时候栈操作并没有使用 <em>push / pop</em> 指令, 而是使用基于 <em>esp / ebp</em> 的间接寻址方式 , 这样的选择的意义是[^1]</p>
+<h3 id="push-pop-和栈的间接寻址"><em>push / pop</em> 和栈的间接寻址</h3>
+<p>从前面展示的代码中可以发现, 很多时候栈操作并没有使用 <em>push / pop</em> 指令, 而是使用基于 <em>esp / ebp</em> 的间接寻址方式 , 这样的选择的意义是<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <ol>
 <li>当需要引用不在栈顶的数据时, 间接寻址更方便</li>
 <li>间接寻址速度更快</li>
 <li><em>ebp</em> 间接寻址能保持各变量在栈中位置的稳定性, 不受其他的 <em>push / pop</em> 影响, 减轻开发人员的负担</li>
 <li>早年的老 <em>CPU</em> 还没有 <em>push / pop</em> 指令</li>
 </ol>
-<h3 id="返回值"><a href="#返回值" class="headerlink" title="返回值"></a>返回值</h3><p>一般将函数返回值放在 <em>eax</em> 中</p>
-<p>[^1]:<a href="http://stackoverflow.com/questions/4308021/push-local-variables" target="_blank" rel="external">stackoverflow : push local variables</a></p>
+<h3 id="返回值">返回值</h3>
+<p>一般将函数返回值放在 <em>eax</em> 中</p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a href="http://stackoverflow.com/questions/4308021/push-local-variables" target="_blank" rel="external">stackoverflow : push local variables</a> <a href="#fnref1" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>
 </span>
       
     </div>
@@ -485,7 +498,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#回顾栈"><span class="nav-number">1.</span> <span class="nav-text">回顾栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#按-C-样式传递参数"><span class="nav-number">2.</span> <span class="nav-text">按 C 样式传递参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数逆序入栈"><span class="nav-number">2.1.</span> <span class="nav-text">参数逆序入栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ebp-保留栈顶"><span class="nav-number">2.2.</span> <span class="nav-text">ebp 保留栈顶</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#局部变量"><span class="nav-number">2.3.</span> <span class="nav-text">局部变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在函数调用之后"><span class="nav-number">3.</span> <span class="nav-text">在函数调用之后</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#push-pop-和栈的间接寻址"><span class="nav-number">3.1.</span> <span class="nav-text">push / pop 和栈的间接寻址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#返回值"><span class="nav-number">3.2.</span> <span class="nav-text">返回值</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#回顾栈"><span class="nav-number">1.</span> <span class="nav-text">回顾栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#按-c-样式传递参数"><span class="nav-number">2.</span> <span class="nav-text">按 C 样式传递参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数逆序入栈"><span class="nav-number">2.1.</span> <span class="nav-text">参数逆序入栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ebp-保留栈顶"><span class="nav-number">2.2.</span> <span class="nav-text">ebp 保留栈顶</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在函数调用之后"><span class="nav-number">3.</span> <span class="nav-text">在函数调用之后</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#push-pop-和栈的间接寻址"><span class="nav-number">3.1.</span> <span class="nav-text">push / pop 和栈的间接寻址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#返回值"><span class="nav-number">3.2.</span> <span class="nav-text">返回值</span></a></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">

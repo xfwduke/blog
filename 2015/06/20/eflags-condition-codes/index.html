@@ -51,16 +51,16 @@
 
 
 
-<meta name="description" content="汇编中有非常多的条件指令, 如 CMOVcc , FCMOVcc, Jcc, SETcc 等 这些指令都是参考 EFLAGS 的 CF OF SF ZF PF 状态位来决定如何执行动作[^1]">
+<meta name="description" content="汇编中有非常多的条件指令, 如 CMOVcc , FCMOVcc, Jcc, SETcc 等 这些指令都是参考 EFLAGS 的 CF OF SF ZF PF 状态位来决定如何执行动作[1]">
 <meta property="og:type" content="article">
 <meta property="og:title" content="EFLAGS Condition Codes">
 <meta property="og:url" content="http://blog.xfwduke.com/2015/06/20/eflags-condition-codes/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
-<meta property="og:description" content="汇编中有非常多的条件指令, 如 CMOVcc , FCMOVcc, Jcc, SETcc 等 这些指令都是参考 EFLAGS 的 CF OF SF ZF PF 状态位来决定如何执行动作[^1]">
+<meta property="og:description" content="汇编中有非常多的条件指令, 如 CMOVcc , FCMOVcc, Jcc, SETcc 等 这些指令都是参考 EFLAGS 的 CF OF SF ZF PF 状态位来决定如何执行动作[1]">
 <meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EFLAGS Condition Codes">
-<meta name="twitter:description" content="汇编中有非常多的条件指令, 如 CMOVcc , FCMOVcc, Jcc, SETcc 等 这些指令都是参考 EFLAGS 的 CF OF SF ZF PF 状态位来决定如何执行动作[^1]">
+<meta name="twitter:description" content="汇编中有非常多的条件指令, 如 CMOVcc , FCMOVcc, Jcc, SETcc 等 这些指令都是参考 EFLAGS 的 CF OF SF ZF PF 状态位来决定如何执行动作[1]">
 
 
 
@@ -270,7 +270,7 @@
 
       
         <span itemprop="articleBody"><p>汇编中有非常多的条件指令, 如 <em>CMOVcc , FCMOVcc, Jcc, SETcc</em> 等</p>
-<p>这些指令都是参考 <em>EFLAGS</em> 的 <em>CF OF SF ZF PF</em> 状态位来决定如何执行动作[^1]</p>
+<p>这些指令都是参考 <em>EFLAGS</em> 的 <em>CF OF SF ZF PF</em> 状态位来决定如何执行动作<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <a id="more"></a>
 <table>
 <thead>
@@ -286,11 +286,12 @@
 <td style="text-align:center">$\lor$</td>
 <td style="text-align:center">$\land$</td>
 <td style="text-align:center">$\lnot$</td>
-<td style="text-align:center">$\oplus$  </td>
+<td style="text-align:center">$\oplus$</td>
 </tr>
 </tbody>
 </table>
-<h2 id="Conditions"><a href="#Conditions" class="headerlink" title="Conditions"></a><strong><em>Conditions</em></strong></h2><table>
+<h2 id="conditions"><strong><em>Conditions</em></strong></h2>
+<table>
 <thead>
 <tr>
 <th style="text-align:center"><em>Mnemonic(cc)</em></th>
@@ -381,9 +382,11 @@
 </tr>
 </tbody>
 </table>
-<h2 id="别名"><a href="#别名" class="headerlink" title="别名"></a>别名</h2><p>从表格中可以看到部分 <em>Status Flags Setting</em> 对应两个 <em>Mnemonic</em> , 如 <em>E</em> 和 <em>Z</em></p>
+<h2 id="别名">别名</h2>
+<p>从表格中可以看到部分 <em>Status Flags Setting</em> 对应两个 <em>Mnemonic</em> , 如 <em>E</em> 和 <em>Z</em></p>
 <p>所以如 <em>JE</em> 和 <em>JZ</em> 实际是同一个指令的不同名字</p>
-<h2 id="无符号和带符号"><a href="#无符号和带符号" class="headerlink" title="无符号和带符号"></a>无符号和带符号</h2><p>表格中涉及到 <strong>大小</strong> 比较的 <em>Mnemonic</em> 有多处, 大致可以分为两类</p>
+<h2 id="无符号和带符号">无符号和带符号</h2>
+<p>表格中涉及到 <strong>大小</strong> 比较的 <em>Mnemonic</em> 有多处, 大致可以分为两类</p>
 <ul>
 <li><em>above / below</em> —— 用于无符号整数 ( <em>unsigned int</em> )的比较</li>
 <li><em>greater / less</em> —— 用于带符号整数 ( <em>signed int</em> )的比较</li>
@@ -396,22 +399,30 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(gdb) p $eflags</div><div class="line">$4 = [ PF IF OF ]</div></pre></td></tr></table></figure>
 <p>执行结果是 <em>OF</em> 被置位 ( <em>PF</em> 先不管)</p>
-<p>所以 <em>EFLAGS Condition</em> 参考的几个状态为的值分别是  </p>
+<p>所以 <em>EFLAGS Condition</em> 参考的几个状态为的值分别是</p>
 <p>$OF=1 , CF=0 , SZ=0 , ZF=0$</p>
 <ul>
 <li>$ZF=0\Longrightarrow Not\ equal\ /\ Not\ zero$</li>
-<li><em>above / below</em> 类<ul>
+<li><em>above / below</em> 类
+<ul>
 <li>$CF=0\Longrightarrow Not\ below\ /\ Above\ or\ equal$</li>
 <li>$CF\lor{ZF}=0\Longrightarrow Neither\ below\ nor\ equal\ /\ Above$</li>
 </ul>
 </li>
-<li><em>greater / less</em> 类<ul>
+<li><em>greater / less</em> 类
+<ul>
 <li>$SF\oplus OF=1\Longrightarrow {Less}\ /\ Neither\ greater\ not\ equal$</li>
 <li>$(SF\oplus OF)\lor ZF)=1 \Longrightarrow Less\ or\ equal\ /\ Not\ greater$</li>
 </ul>
 </li>
 </ul>
-<p>[^1]:《ASM86 LANGUAGE REFERNCE MANUAL》 : B.1 CONDITION CODES</p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>《ASM86 LANGUAGE REFERNCE MANUAL》 : B.1 CONDITION CODES <a href="#fnref1" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>
 </span>
       
     </div>
@@ -559,7 +570,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Conditions"><span class="nav-number">1.</span> <span class="nav-text">Conditions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#别名"><span class="nav-number">2.</span> <span class="nav-text">别名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#无符号和带符号"><span class="nav-number">3.</span> <span class="nav-text">无符号和带符号</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#conditions"><span class="nav-number">1.</span> <span class="nav-text">Conditions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#别名"><span class="nav-number">2.</span> <span class="nav-text">别名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#无符号和带符号"><span class="nav-number">3.</span> <span class="nav-text">无符号和带符号</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">

@@ -35,7 +35,7 @@
 <link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="COMMON LISP - A Gentle Introduction to Symbolic Computation,ANSI Common Lisp," />
+  <meta name="keywords" content="ANSI Common Lisp,COMMON LISP - A Gentle Introduction to Symbolic Computation," />
 
 
 
@@ -52,7 +52,7 @@
 
 
 <meta name="description" content="在 sbcl 这样的 REPL 环境中学习 Lisp 非常的方便，但调试用到闭包的函数时 REPL 也会带来些麻烦。">
-<meta name="keywords" content="COMMON LISP - A Gentle Introduction to Symbolic Computation,ANSI Common Lisp">
+<meta name="keywords" content="ANSI Common Lisp,COMMON LISP - A Gentle Introduction to Symbolic Computation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Lisp 闭包在 REPL 环境中的坑">
 <meta property="og:url" content="http://blog.xfwduke.com/2016/12/30/Lisp-闭包在-REPL-环境中的坑/index.html">
@@ -278,19 +278,19 @@
 <p>看到这样的结果很容易想到 <em>occurrences-r</em> 中定义的 <em>res</em> 作为闭包引入了 <em>occurrences-helper</em>。但从代码来看，函数执行完一次后就结束了，没有让 <em>occurrences-helper</em> 一直存在的逻辑。</p>
 <blockquote><p>When a function refers to a variable defined outside it, it’s called a free variable. A function that refers to a free lexical variable is called a closure? The variable must persist as long as the function does.</p>
 <footer><strong>Paul Graham</strong><cite>ANS Common Lisp - 6.5</cite></footer></blockquote>
-<p><br></p>
+<br>
 <p>书中对闭包的定义是这样的，有两个重点</p>
 <ul>
 <li>函数引用在外部定义的变量，成为闭包</li>
 <li>闭包的生命周期和函数相同</li>
 </ul>
 <p>造成前面结果累加的原因，重点就是这个生命周期相同以及 <em>REPL</em> 的特性:</p>
-<p><strong>在 <em>Emacs + Slime</em> 环境临时编译 ( <em>Ctrl+c+c</em> ) 的函数，只要 _</strong>REPL<strong>_ 不结束就会一直存在，所以对应的闭包也一直有效</strong></p>
+<p><strong>在 <em>Emacs + Slime</em> 环境临时编译 ( <em>Ctrl+c+c</em> ) 的函数，只要 <strong><em>REPL</em></strong> 不结束就会一直存在，所以对应的闭包也一直有效</strong></p>
 <p>这个问题也很容易验证，将源码文件编译成独立的可执行文件来执行多次</p>
 <figure class="highlight lisp"><figcaption><span>添加一句</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(<span class="name">format</span> <span class="literal">t</span> <span class="string">"~&amp;~&#123;~S ~&#125;"</span> (<span class="name">occurrences-r</span> '(a c g t c c g a t)))</div></pre></td></tr></table></figure>
 <p>代码中添加一句函数调用然后编译为可执行文件</p>
 <figure class="highlight bash"><figcaption><span>shell中的执行结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">└&gt; ./chapter-3.fasl</div><div class="line">(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    </div><div class="line">└&gt; ./chapter-3.fasl</div><div class="line">(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    </div><div class="line">└&gt; ./chapter-3.fasl</div><div class="line">(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    </div><div class="line">└&gt; ./chapter-3.fasl</div><div class="line">(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    </div><div class="line">└&gt; ./chapter-3.fasl</div><div class="line">(A . 2) (C . 3) (G . 2) (T . 2) %                                                                                    </div><div class="line">└&gt; ./chapter-3.fasl</div><div class="line">(A . 2) (C . 3) (G . 2) (T . 2) %</div></pre></td></tr></table></figure>
-<p><br></p>
+<br>
 <p>可以看到，脱离 <em>REPL</em> 环境后执行结果正常了。</p>
 </span>
       
@@ -300,9 +300,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/COMMON-LISP-A-Gentle-Introduction-to-Symbolic-Computation/" rel="tag">#COMMON LISP - A Gentle Introduction to Symbolic Computation</a>
-          
             <a href="/tags/ANSI-Common-Lisp/" rel="tag">#ANSI Common Lisp</a>
+          
+            <a href="/tags/COMMON-LISP-A-Gentle-Introduction-to-Symbolic-Computation/" rel="tag">#COMMON LISP - A Gentle Introduction to Symbolic Computation</a>
           
         </div>
       

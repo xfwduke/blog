@@ -51,16 +51,16 @@
 
 
 
-<meta name="description" content="无论内存地址是直接的明文地址, 变量名还是放在寄存器中, 差别并不大.  这类操作的特点是, 源操作数字长无法直接确认, 目的操作数字长是可以确认的.  内存地址只是用来确认一块连续内存块的起始, 内存块的长度是可变的 寄存器虽然有很多个, 但其字长总是固定的">
+<meta name="description" content="无论内存地址是直接的明文地址, 变量名还是放在寄存器中, 差别并不大. 这类操作的特点是, 源操作数字长无法直接确认, 目的操作数字长是可以确认的.  内存地址只是用来确认一块连续内存块的起始, 内存块的长度是可变的 寄存器虽然有很多个, 但其字长总是固定的">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Moving values from memory to registers">
 <meta property="og:url" content="http://blog.xfwduke.com/2015/06/06/moving-values-from-memory-to-registers/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
-<meta property="og:description" content="无论内存地址是直接的明文地址, 变量名还是放在寄存器中, 差别并不大.  这类操作的特点是, 源操作数字长无法直接确认, 目的操作数字长是可以确认的.  内存地址只是用来确认一块连续内存块的起始, 内存块的长度是可变的 寄存器虽然有很多个, 但其字长总是固定的">
+<meta property="og:description" content="无论内存地址是直接的明文地址, 变量名还是放在寄存器中, 差别并不大. 这类操作的特点是, 源操作数字长无法直接确认, 目的操作数字长是可以确认的.  内存地址只是用来确认一块连续内存块的起始, 内存块的长度是可变的 寄存器虽然有很多个, 但其字长总是固定的">
 <meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Moving values from memory to registers">
-<meta name="twitter:description" content="无论内存地址是直接的明文地址, 变量名还是放在寄存器中, 差别并不大.  这类操作的特点是, 源操作数字长无法直接确认, 目的操作数字长是可以确认的.  内存地址只是用来确认一块连续内存块的起始, 内存块的长度是可变的 寄存器虽然有很多个, 但其字长总是固定的">
+<meta name="twitter:description" content="无论内存地址是直接的明文地址, 变量名还是放在寄存器中, 差别并不大. 这类操作的特点是, 源操作数字长无法直接确认, 目的操作数字长是可以确认的.  内存地址只是用来确认一块连续内存块的起始, 内存块的长度是可变的 寄存器虽然有很多个, 但其字长总是固定的">
 
 
 
@@ -269,31 +269,38 @@
       
 
       
-        <span itemprop="articleBody"><p>无论内存地址是直接的明文地址, 变量名还是放在寄存器中, 差别并不大. </p>
+        <span itemprop="articleBody"><p>无论内存地址是直接的明文地址, 变量名还是放在寄存器中, 差别并不大.</p>
 <p>这类操作的特点是, 源操作数字长无法直接确认, 目的操作数字长是可以确认的.</p>
 <ul>
 <li>内存地址只是用来确认一块连续内存块的起始, 内存块的长度是可变的</li>
 <li>寄存器虽然有很多个, 但其字长总是固定的</li>
 </ul>
 <a id="more"></a>
-<h2 id="源字长大于目的字长"><a href="#源字长大于目的字长" class="headerlink" title="源字长大于目的字长"></a>源字长大于目的字长</h2><p>由于在 <em>Intel</em> 语法中有 <em>PTR OPS</em> , 这种情况 <em>Intel</em> 语法比 <em>AT&amp;T</em> 要复杂</p>
-<h3 id="AT-amp-T"><a href="#AT-amp-T" class="headerlink" title="AT&amp;T"></a><em>AT&amp;T</em></h3><p>多出来的高位数据被丢弃了</p>
-<h3 id="Intel"><a href="#Intel" class="headerlink" title="Intel"></a><em>Intel</em></h3><p>在不使用 <em>PTR OPS</em> 时, 和 <em>AT&amp;T</em> 一样把多出来的高位丢弃</p>
+<h2 id="源字长大于目的字长">源字长大于目的字长</h2>
+<p>由于在 <em>Intel</em> 语法中有 <em>PTR OPS</em> , 这种情况 <em>Intel</em> 语法比 <em>AT&amp;T</em> 要复杂</p>
+<h3 id="at-t"><em>AT&amp;T</em></h3>
+<p>多出来的高位数据被丢弃了</p>
+<h3 id="intel"><em>Intel</em></h3>
+<p>在不使用 <em>PTR OPS</em> 时, 和 <em>AT&amp;T</em> 一样把多出来的高位丢弃</p>
 <p>使用 <em>PTR OPS</em> 可以从源截取出特定字长(一般和寄存器字长相等)的数据</p>
-<h2 id="源字长小于目的字长"><a href="#源字长小于目的字长" class="headerlink" title="源字长小于目的字长"></a>源字长小于目的字长</h2><p>这种情况更复杂一些</p>
+<h2 id="源字长小于目的字长">源字长小于目的字长</h2>
+<p>这种情况更复杂一些</p>
 <ul>
-<li>可以只使用 <em>mov</em> </li>
+<li>可以只使用 <em>mov</em></li>
 <li>可以使用位扩展指令代替 <em>mov</em></li>
 </ul>
-<h3 id="只使用-mov"><a href="#只使用-mov" class="headerlink" title="只使用 mov"></a>只使用 <em>mov</em></h3><p>汇编并没有真正抽象出 <code>变量</code> 这个概念, 在 <code>data 段</code> 定义的所谓变量, 只是用来指向特定长度的内存块, 甚至是这个长度都没有强制性</p>
+<h3 id="只使用-mov">只使用 <em>mov</em></h3>
+<p>汇编并没有真正抽象出 <code>变量</code> 这个概念, 在 <code>data 段</code> 定义的所谓变量, 只是用来指向特定长度的内存块, 甚至是这个长度都没有强制性</p>
 <p>只使用 <em>mov</em> 将数据载入寄存器, 总会以指令中给出的内存地址位起始将足够字长的数据载入寄存器, 这一点在 <em>AT&amp;T</em> 和 <em>Intel</em> 中是一样的</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">segment .data</div><div class="line">anum dw 0x1122</div><div class="line">bnum dw 0x3344</div><div class="line"></div><div class="line">segment .bss</div><div class="line"></div><div class="line">segment .text</div><div class="line"></div><div class="line">global _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    mov eax, [anum]</div><div class="line"></div><div class="line">_exit:</div><div class="line">    mov rax, 60</div><div class="line">    mov rdi, 0</div><div class="line">    syscall</div></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(gdb) p /x $rax</div><div class="line">$1 = 0x33441122</div></pre></td></tr></table></figure>
 <p><em>anum bnum</em>  均定义为 <em>16 bit</em> 的变量 , 程序中试图将 <em>anum</em> 的值载入 <em>eax</em></p>
-<p>由于 <em>eax</em> 是 <em>32 bit</em> 寄存器, 所以结果是还将 <em>bnum</em> 载入了 <em>eax</em> </p>
-<h3 id="使用位扩展指令"><a href="#使用位扩展指令" class="headerlink" title="使用位扩展指令"></a>使用位扩展指令</h3><p><em>movsx movzx</em> 没什么好说的, 非常符合预期的结果</p>
+<p>由于 <em>eax</em> 是 <em>32 bit</em> 寄存器, 所以结果是还将 <em>bnum</em> 载入了 <em>eax</em></p>
+<h3 id="使用位扩展指令">使用位扩展指令</h3>
+<p><em>movsx movzx</em> 没什么好说的, 非常符合预期的结果</p>
 <p>唯一要提到的是, 在 <em>Intel</em> 语法中源操作数字长时 <em>dword</em> 时, 要使用 <em>movsxd</em> 和 <em>movzxd</em></p>
-<h3 id="位扩展与-PTR-OPS"><a href="#位扩展与-PTR-OPS" class="headerlink" title="位扩展与 PTR OPS"></a>位扩展与 <em>PTR OPS</em></h3><p>这是 <em>Intel</em> 语法特有的</p>
+<h3 id="位扩展与-ptr-ops">位扩展与 <em>PTR OPS</em></h3>
+<p>这是 <em>Intel</em> 语法特有的</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">segment .data</div><div class="line">anum dw 0x11B2</div><div class="line"></div><div class="line">segment .bss</div><div class="line"></div><div class="line">segment .text</div><div class="line"></div><div class="line">global _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    movsx rax, byte [anum]</div><div class="line">    movzx rbx, byte [anum]</div><div class="line">    movsx rcx, byte [anum + 1]</div><div class="line">    movzx rdx, byte [anum + 1]</div><div class="line"></div><div class="line">_exit:</div><div class="line">    mov rax, 60</div><div class="line">    mov rdi, 0</div><div class="line">    syscall</div></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">(gdb) p /x $rax</div><div class="line">$1 = 0xffffffffffffffb2</div><div class="line">(gdb) p /x $rbx</div><div class="line">$2 = 0xb2</div><div class="line">(gdb) p /x $rcx</div><div class="line">$3 = 0x11</div><div class="line">(gdb) p /x $rdx</div><div class="line">$4 = 0x11</div></pre></td></tr></table></figure>
 <p>使用位扩展指令和 <em>PTR OPS</em> 可以随意截取出需要的部分做位扩展, 扩展的符号位是参考截取出来的部分的符号位</p>
@@ -444,7 +451,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#源字长大于目的字长"><span class="nav-number">1.</span> <span class="nav-text">源字长大于目的字长</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AT-amp-T"><span class="nav-number">1.1.</span> <span class="nav-text">AT&T</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Intel"><span class="nav-number">1.2.</span> <span class="nav-text">Intel</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源字长小于目的字长"><span class="nav-number">2.</span> <span class="nav-text">源字长小于目的字长</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#只使用-mov"><span class="nav-number">2.1.</span> <span class="nav-text">只使用 mov</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用位扩展指令"><span class="nav-number">2.2.</span> <span class="nav-text">使用位扩展指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#位扩展与-PTR-OPS"><span class="nav-number">2.3.</span> <span class="nav-text">位扩展与 PTR OPS</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#源字长大于目的字长"><span class="nav-number">1.</span> <span class="nav-text">源字长大于目的字长</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#at-t"><span class="nav-number">1.1.</span> <span class="nav-text">AT&T</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#intel"><span class="nav-number">1.2.</span> <span class="nav-text">Intel</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源字长小于目的字长"><span class="nav-number">2.</span> <span class="nav-text">源字长小于目的字长</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#只使用-mov"><span class="nav-number">2.1.</span> <span class="nav-text">只使用 mov</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用位扩展指令"><span class="nav-number">2.2.</span> <span class="nav-text">使用位扩展指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#位扩展与-ptr-ops"><span class="nav-number">2.3.</span> <span class="nav-text">位扩展与 PTR OPS</span></a></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">

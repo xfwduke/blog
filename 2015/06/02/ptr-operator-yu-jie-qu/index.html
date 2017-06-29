@@ -51,16 +51,16 @@
 
 
 
-<meta name="description" content="PTR Operator 在 Intel 语法中算是一个比较重要的概念[^1] 1234567891011121314151617Syntax:	type PTR name	type filed:	1. BYTE	2. WORD	3. DWORD	4. QWORD	5. TBYTE	6. NEAR	7. FARname filed:	1. A variable name	2. A label na">
+<meta name="description" content="PTR Operator 在 Intel 语法中算是一个比较重要的概念[1] 1234567891011121314151617Syntax:	type PTR name	type filed:	1. BYTE	2. WORD	3. DWORD	4. QWORD	5. TBYTE	6. NEAR	7. FARname filed:	1. A variable name	2. A label nam">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PTR Operator 与截取">
 <meta property="og:url" content="http://blog.xfwduke.com/2015/06/02/ptr-operator-yu-jie-qu/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
-<meta property="og:description" content="PTR Operator 在 Intel 语法中算是一个比较重要的概念[^1] 1234567891011121314151617Syntax:	type PTR name	type filed:	1. BYTE	2. WORD	3. DWORD	4. QWORD	5. TBYTE	6. NEAR	7. FARname filed:	1. A variable name	2. A label na">
+<meta property="og:description" content="PTR Operator 在 Intel 语法中算是一个比较重要的概念[1] 1234567891011121314151617Syntax:	type PTR name	type filed:	1. BYTE	2. WORD	3. DWORD	4. QWORD	5. TBYTE	6. NEAR	7. FARname filed:	1. A variable name	2. A label nam">
 <meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PTR Operator 与截取">
-<meta name="twitter:description" content="PTR Operator 在 Intel 语法中算是一个比较重要的概念[^1] 1234567891011121314151617Syntax:	type PTR name	type filed:	1. BYTE	2. WORD	3. DWORD	4. QWORD	5. TBYTE	6. NEAR	7. FARname filed:	1. A variable name	2. A label na">
+<meta name="twitter:description" content="PTR Operator 在 Intel 语法中算是一个比较重要的概念[1] 1234567891011121314151617Syntax:	type PTR name	type filed:	1. BYTE	2. WORD	3. DWORD	4. QWORD	5. TBYTE	6. NEAR	7. FARname filed:	1. A variable name	2. A label nam">
 
 
 
@@ -269,32 +269,42 @@
       
 
       
-        <span itemprop="articleBody"><p><em>PTR Operator</em> 在 <em>Intel</em> 语法中算是一个比较重要的概念[^1]</p>
+        <span itemprop="articleBody"><p><em>PTR Operator</em> 在 <em>Intel</em> 语法中算是一个比较重要的概念<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">Syntax:</div><div class="line">	type PTR name</div><div class="line">	</div><div class="line">type filed:</div><div class="line">	1. BYTE</div><div class="line">	2. WORD</div><div class="line">	3. DWORD</div><div class="line">	4. QWORD</div><div class="line">	5. TBYTE</div><div class="line">	6. NEAR</div><div class="line">	7. FAR</div><div class="line"></div><div class="line">name filed:</div><div class="line">	1. A variable name</div><div class="line">	2. A label name</div><div class="line">	3. An address or register expression</div><div class="line">	4. An integer that represents an offset</div></pre></td></tr></table></figure>
 <p>需要重点注意的是 : <strong><em>PTR OPS</em> 只能作用于内存对象</strong></p>
 <p><em>PTR OPS</em> 的作用是 : 将 <code>name field</code> 所指内存位置的数据看做是 <code>type filed</code> 类型</p>
 <p>由于目前只学到了 <em>mov</em> , <em>PTR OPS</em> 也只学了前 <em>4</em> 个 <code>type filed</code> , 所以先只讨论这些</p>
 <a id="more"></a>
-<h2 id="作用于-Constant"><a href="#作用于-Constant" class="headerlink" title="作用于 Constant"></a>作用于 <em>Constant</em></h2><p>其实 <em>PTR OPS</em> 是可以作用于常量的, 只是汇编器会有告警, 结果页符合预期 —— 不得不说的是, 常量真的没什么用</p>
-<h2 id="直接寻址"><a href="#直接寻址" class="headerlink" title="直接寻址"></a>直接寻址</h2><p>在指令中直接出现内存地址 , 这其实包括了在指令中使用数字形式的内存地址和使用变量名</p>
+<h2 id="作用于-constant">作用于 <em>Constant</em></h2>
+<p>其实 <em>PTR OPS</em> 是可以作用于常量的, 只是汇编器会有告警, 结果页符合预期 —— 不得不说的是, 常量真的没什么用</p>
+<h2 id="直接寻址">直接寻址</h2>
+<p>在指令中直接出现内存地址 , 这其实包括了在指令中使用数字形式的内存地址和使用变量名</p>
 <p>但是在这里特指直接使用数字形式的地址</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mov rax, word [0x11]</div></pre></td></tr></table></figure>
 <p>这样的用法虽然合法, 但是很少有在编码阶段就知道明确地址的数据, 所以代码的执行结果大多会是</p>
 <p><code>Segmentation Fault</code></p>
-<h2 id="作用于变量"><a href="#作用于变量" class="headerlink" title="作用于变量"></a>作用于变量</h2><p>特指在 <em>data</em> 段定义的变量</p>
+<h2 id="作用于变量">作用于变量</h2>
+<p>特指在 <em>data</em> 段定义的变量</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">segment .data</div><div class="line">anum dd 0x11223344</div><div class="line"></div><div class="line">segment .bss</div><div class="line"></div><div class="line">segment .text</div><div class="line"></div><div class="line">global _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    mov ax, word [anum]</div><div class="line">    mov bx, word [anum + 1]</div><div class="line"></div><div class="line">_exit:</div><div class="line">    mov rax, 60</div><div class="line">    mov rdi, 0</div><div class="line">    syscall</div></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">(gdb) p /x $ax</div><div class="line">$2 = 0x3344</div><div class="line">(gdb) p /x $bx</div><div class="line">$3 = 0x2233</div></pre></td></tr></table></figure>
-<h2 id="和寄存器一起用"><a href="#和寄存器一起用" class="headerlink" title="和寄存器一起用"></a>和寄存器一起用</h2><p><em>PTR OPS</em> 不能直接作用于寄存器, 但是可以作用于寄存器值所指向的内存地址 —— 即把寄存器看做一个指针</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">segment .data</div><div class="line">anum dd 0x11223344</div><div class="line"></div><div class="line">segment .bss</div><div class="line"></div><div class="line">segment .text</div><div class="line"></div><div class="line">global _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    mov rcx, anum</div><div class="line">    mov ax, word [rcx]</div><div class="line">    mov bx, word [rcx +1]</div><div class="line"></div><div class="line">_exit:</div><div class="line">    mov rax, 60</div><div class="line">    mov rdi, 0</div><div class="line">    syscall</div></pre></td></tr></table></figure>
+<h2 id="和寄存器一起用">和寄存器一起用</h2>
+<p><em>PTR OPS</em> 不能直接作用于寄存器, 但是可以作用于寄存器值所指向的内存地址 —— 即把寄存器看做一个指针<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">segment .data</div><div class="line">anum dd 0x11223344</div><div class="line"></div><div class="line">segment .bss</div><div class="line"></div><div class="line">segment .text</div><div class="line"></div><div class="line">global _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    mov rcx, anum</div><div class="line">    mov ax, word [rcx]</div><div class="line">    mov bx, word [rcx +1]</div><div class="line"></div><div class="line">_exit:</div><div class="line">    mov rax, 60</div><div class="line">    mov rdi, 0</div><div class="line">    syscall</div></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">(gdb) p &amp;anum</div><div class="line">$1 = (&lt;data variable, no debug info&gt; *) 0x6000dc &lt;anum&gt;</div><div class="line">(gdb) p /x $rcx</div><div class="line">$2 = 0x6000dc</div><div class="line">(gdb) p /x $ax</div><div class="line">$3 = 0x3344</div><div class="line">(gdb) p /x $bx</div><div class="line">$4 = 0x2233</div></pre></td></tr></table></figure>
-<h2 id="error-mismatch-in-operand-sizes"><a href="#error-mismatch-in-operand-sizes" class="headerlink" title="error: mismatch in operand sizes"></a><em>error: mismatch in operand sizes</em></h2><ul>
+<h2 id="error-mismatch-in-operand-sizes"><em>error: mismatch in operand sizes</em></h2>
+<ul>
 <li><em>mov</em> 的操作数必定是寄存器</li>
 <li><em>PTR OPS</em> 只能作用于内存对象</li>
 </ul>
 <p>一旦在 <em>mov</em> 中使用了 <em>PTR OPS</em> , 则寄存器的字长必须和 <em>PTR OPS</em> 的一致, 否则就会报错</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mov ax, dword [anum]</div><div class="line">mov dword [anum], rax</div></pre></td></tr></table></figure>
 <p>像这样的用法是不行的, 因为 <em>ax</em> 应该对应 <em>word</em> , 而 <em>rax</em> 对应 <em>qword</em></p>
-<p>[^1]: ASM86 Language Referance Manual : 4-15</p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>ASM86 Language Referance Manual : 4-15 <a href="#fnref1" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>
 </span>
       
     </div>
@@ -442,7 +452,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#作用于-Constant"><span class="nav-number">1.</span> <span class="nav-text">作用于 Constant</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#直接寻址"><span class="nav-number">2.</span> <span class="nav-text">直接寻址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#作用于变量"><span class="nav-number">3.</span> <span class="nav-text">作用于变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和寄存器一起用"><span class="nav-number">4.</span> <span class="nav-text">和寄存器一起用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#error-mismatch-in-operand-sizes"><span class="nav-number">5.</span> <span class="nav-text">error: mismatch in operand sizes</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#作用于-constant"><span class="nav-number">1.</span> <span class="nav-text">作用于 Constant</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#直接寻址"><span class="nav-number">2.</span> <span class="nav-text">直接寻址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#作用于变量"><span class="nav-number">3.</span> <span class="nav-text">作用于变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和寄存器一起用"><span class="nav-number">4.</span> <span class="nav-text">和寄存器一起用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#error-mismatch-in-operand-sizes"><span class="nav-number">5.</span> <span class="nav-text">error: mismatch in operand sizes</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">

@@ -51,20 +51,20 @@
 
 
 
-<meta name="description" content="GDB 调试多进程代码可以用 set follow-fork-mode child 跟踪到子进程中去. 但是在 LLDB 中还没有对应的方法. 系统更新到 OS X 10.10 后 GDB 没有发布对应的版本, 造成现在调试多进程代码非常的麻烦   在 Stack Overflow 上找到一篇不错的文章, 自己试了下. 发现其实可以比文章中的方法更加简单">
+<meta name="description" content="GDB 调试多进程代码可以用 set follow-fork-mode child 跟踪到子进程中去. 但是在 LLDB 中还没有对应的方法. 系统更新到 OS X 10.10 后 GDB 没有发布对应的版本, 造成现在调试多进程代码非常的麻烦 在 Stack Overflow 上找到一篇不错的文章, 自己试了下. 发现其实可以比文章中的方法更加简单">
 <meta name="keywords" content="Advanced Programming in the UNIX Environment">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Xcode Follow Child">
 <meta property="og:url" content="http://blog.xfwduke.com/2014/11/21/XCODE Follow Child/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
-<meta property="og:description" content="GDB 调试多进程代码可以用 set follow-fork-mode child 跟踪到子进程中去. 但是在 LLDB 中还没有对应的方法. 系统更新到 OS X 10.10 后 GDB 没有发布对应的版本, 造成现在调试多进程代码非常的麻烦   在 Stack Overflow 上找到一篇不错的文章, 自己试了下. 发现其实可以比文章中的方法更加简单">
+<meta property="og:description" content="GDB 调试多进程代码可以用 set follow-fork-mode child 跟踪到子进程中去. 但是在 LLDB 中还没有对应的方法. 系统更新到 OS X 10.10 后 GDB 没有发布对应的版本, 造成现在调试多进程代码非常的麻烦 在 Stack Overflow 上找到一篇不错的文章, 自己试了下. 发现其实可以比文章中的方法更加简单">
 <meta property="og:image" content="http://blog.xfwduke.com/images/XCODE_follow_child_1.png">
 <meta property="og:image" content="http://blog.xfwduke.com/images/XCODE_follow_child_2.jpg">
 <meta property="og:image" content="http://blog.xfwduke.com/images/XCODE_follow_child_3.jpg">
 <meta property="og:updated_time" content="2017-06-29T12:13:31.691Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Xcode Follow Child">
-<meta name="twitter:description" content="GDB 调试多进程代码可以用 set follow-fork-mode child 跟踪到子进程中去. 但是在 LLDB 中还没有对应的方法. 系统更新到 OS X 10.10 后 GDB 没有发布对应的版本, 造成现在调试多进程代码非常的麻烦   在 Stack Overflow 上找到一篇不错的文章, 自己试了下. 发现其实可以比文章中的方法更加简单">
+<meta name="twitter:description" content="GDB 调试多进程代码可以用 set follow-fork-mode child 跟踪到子进程中去. 但是在 LLDB 中还没有对应的方法. 系统更新到 OS X 10.10 后 GDB 没有发布对应的版本, 造成现在调试多进程代码非常的麻烦 在 Stack Overflow 上找到一篇不错的文章, 自己试了下. 发现其实可以比文章中的方法更加简单">
 <meta name="twitter:image" content="http://blog.xfwduke.com/images/XCODE_follow_child_1.png">
 
 
@@ -274,17 +274,22 @@
       
 
       
-        <span itemprop="articleBody"><p>GDB 调试多进程代码可以用 <code>set follow-fork-mode child</code> 跟踪到子进程中去. 但是在 LLDB 中还没有对应的方法. 系统更新到 OS X 10.10 后 GDB 没有发布对应的版本, 造成现在调试多进程代码非常的麻烦  </p>
-<p>在 Stack Overflow 上找到一篇不错的文章, 自己试了下. 发现其实可以比文章中的方法更加简单<br><a id="more"></a></p>
-<h2 id="核心"><a href="#核心" class="headerlink" title="核心"></a>核心</h2><pre><code>SIGSTOP
-</code></pre><blockquote>
+        <span itemprop="articleBody"><p>GDB 调试多进程代码可以用 <code>set follow-fork-mode child</code> 跟踪到子进程中去. 但是在 LLDB 中还没有对应的方法. 系统更新到 OS X 10.10 后 GDB 没有发布对应的版本, 造成现在调试多进程代码非常的麻烦</p>
+<p>在 Stack Overflow 上找到一篇不错的文章, 自己试了下. 发现其实可以比文章中的方法更加简单</p>
+<a id="more"></a>
+<h2 id="核心">核心</h2>
+<pre><code>SIGSTOP
+</code></pre>
+<blockquote>
 <p>这是一个作业控制信号, 用于停止一个进程, 不能被捕捉或者忽略</p>
 </blockquote>
-<h2 id="代码实例"><a href="#代码实例" class="headerlink" title="代码实例"></a>代码实例</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"apue.h"</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[])</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">pid_t</span> pid;</div><div class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</div><div class="line">        err_sys(<span class="string">"fork error"</span>);</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid &gt; <span class="number">0</span>) &#123;</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"in parent\n"</span>);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        kill(<span class="number">0</span>, SIGSTOP);		<span class="comment">//IMPORTANT</span></div><div class="line">        <span class="built_in">printf</span>(<span class="string">"in child\n"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="代码实例">代码实例</h2>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"apue.h"</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[])</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">pid_t</span> pid;</div><div class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</div><div class="line">        err_sys(<span class="string">"fork error"</span>);</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid &gt; <span class="number">0</span>) &#123;</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"in parent\n"</span>);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        kill(<span class="number">0</span>, SIGSTOP);		<span class="comment">//IMPORTANT</span></div><div class="line">        <span class="built_in">printf</span>(<span class="string">"in child\n"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>在刚进入子进程时, 发送了一个 SIGSTOP 信号 : 这是调试子进程的关键</p>
-<h2 id="XCODE-操作"><a href="#XCODE-操作" class="headerlink" title="XCODE 操作"></a>XCODE 操作</h2><img src="/images/XCODE_follow_child_1.png" width="300">
-<p>在代码中加了个断点, 调试起来会比较方便  </p>
-<p>接下来直接执行就好了. 执行后程序会直接返回 : 因为父进程随便输出一行就结束了, 但是由于在子进程加了停止信号, 所以子进程是还在的  </p>
+<h2 id="xcode-操作">XCODE 操作</h2>
+<img src="/images/XCODE_follow_child_1.png" width="300">
+<p>在代码中加了个断点, 调试起来会比较方便</p>
+<p>接下来直接执行就好了. 执行后程序会直接返回 : 因为父进程随便输出一行就结束了, 但是由于在子进程加了停止信号, 所以子进程是还在的</p>
 <p>接着选择 Debug 菜单下的 Attach to Process 项</p>
 <img src="/images/XCODE_follow_child_2.jpg" width="300">
 <p>会看到一个和当前工程同名的进程, 这个就是停止的子进程</p>
@@ -444,7 +449,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#核心"><span class="nav-number">1.</span> <span class="nav-text">核心</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码实例"><span class="nav-number">2.</span> <span class="nav-text">代码实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XCODE-操作"><span class="nav-number">3.</span> <span class="nav-text">XCODE 操作</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#核心"><span class="nav-number">1.</span> <span class="nav-text">核心</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码实例"><span class="nav-number">2.</span> <span class="nav-text">代码实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xcode-操作"><span class="nav-number">3.</span> <span class="nav-text">XCODE 操作</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">

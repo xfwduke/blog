@@ -273,7 +273,8 @@
 <p>在 <em>AT&amp;T</em> 中虽然没有 <em>PTR OPS</em>, 但是存在指令的字长后缀, 参考 <a href="/2014/12/08/guan-yu-mov/" title="关于 mov">关于 mov</a></p>
 <p>利用指令后缀, 可以实现 <em>PTR OPS</em> 中 <em>BYTE PTR , WORD PTR , DWORD PTR , QWORD PTR</em> 一样的功能</p>
 <ul>
-<li>和 <em>Intel</em> 语法的 <em>PTR OPS</em> 一样, 当汇编器可以推断出源和目的操作数字长时, 可以不用给 <em>mov</em> 添加后缀<ul>
+<li>和 <em>Intel</em> 语法的 <em>PTR OPS</em> 一样, 当汇编器可以推断出源和目的操作数字长时, 可以不用给 <em>mov</em> 添加后缀
+<ul>
 <li>当操作数有一个是寄存器时, 几乎都可以不需要后缀</li>
 <li>将立即数载入内存, 必须要有后缀</li>
 <li>如果使用了后缀, 就必须要与字长相符</li>

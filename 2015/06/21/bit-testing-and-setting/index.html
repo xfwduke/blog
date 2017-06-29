@@ -278,7 +278,8 @@
 <li><em>Byte Set On Condition Instructions</em></li>
 </ul>
 <a id="more"></a>
-<h2 id="Bit-Test-and-Modify-Instructions"><a href="#Bit-Test-and-Modify-Instructions" class="headerlink" title="Bit Test and Modify Instructions"></a><em>Bit Test and Modify Instructions</em></h2><p>书中[^1]提到 <em>3</em> 个指令, 在查阅 <em>Intel</em> 官方文档[^2][^3]时发现实际上有 <em>4</em> 个</p>
+<h2 id="bit-test-and-modify-instructions"><em>Bit Test and Modify Instructions</em></h2>
+<p>书中<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>提到 <em>3</em> 个指令, 在查阅 <em>Intel</em> 官方文档<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup><sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>时发现实际上有 <em>4</em> 个</p>
 <table>
 <thead>
 <tr>
@@ -319,22 +320,34 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">BT BitBase, BitOffset</div></pre></td></tr></table></figure>
 <p><em>AT&amp;T</em> 中要调换个位置</p>
 <p>举个例子,  <code>BT [anum], 7</code> 的意思是测试以内存地址 <em>&amp;anum</em> 为起始偏移为 <em>7</em> ( 从 <em>0</em> 开始) 的位</p>
-<h2 id="Bit-Scan-Instructions"><a href="#Bit-Scan-Instructions" class="headerlink" title="Bit Scan Instructions"></a><em>Bit Scan Instructions</em></h2><ul>
+<h2 id="bit-scan-instructions"><em>Bit Scan Instructions</em></h2>
+<ul>
 <li><em>BSF : bit scan forward</em></li>
 <li><em>BSR : bit scan reverse</em></li>
 </ul>
-<p>有两个操作数, 在 <em>source</em> 中找 <em>1</em>, 把找到的第一个 <em>1</em> 的位置 ( 从 <em>0</em> 开始)放到 <em>destination</em> 中. 更详细的看文档[^2][^3]</p>
-<h2 id="Byte-Set-On-Condition-Instructions"><a href="#Byte-Set-On-Condition-Instructions" class="headerlink" title="Byte Set On Condition Instructions"></a><em>Byte Set On Condition Instructions</em></h2><p><em>Setcc</em> 指令在书中[^1]被归类到位操作, 但是在文档[^2]中的标题名是 <em>Byte Set</em></p>
+<p>有两个操作数, 在 <em>source</em> 中找 <em>1</em>, 把找到的第一个 <em>1</em> 的位置 ( 从 <em>0</em> 开始)放到 <em>destination</em> 中. 更详细的看文档<sup class="footnote-ref"><a href="#fn2" id="fnref2:1">[2]</a></sup><sup class="footnote-ref"><a href="#fn3" id="fnref3:1">[3]</a></sup></p>
+<h2 id="byte-set-on-condition-instructions"><em>Byte Set On Condition Instructions</em></h2>
+<p><em>Setcc</em> 指令在书中<sup class="footnote-ref"><a href="#fn1" id="fnref1:1">[1]</a></sup>被归类到位操作, 但是在文档<sup class="footnote-ref"><a href="#fn2" id="fnref2:2">[2]</a></sup>中的标题名是 <em>Byte Set</em></p>
 <p>指令的操作数确实是 <em>Byte</em> , 但都是在某种条件下将操作数的值置为 <em>1</em> 或 <em>0</em> —— 只 <em>Set 1 bit</em></p>
-<p>在文档[^3]中 <em>Setcc</em> 指令有一大版, 参考 <a href="/2015/06/20/eflags-condition-codes/" title="EFLAGS Condition Codes">EFLAGS Condition Codes</a>  , 这一大版实际就是带有各种 <em>Conditional Code</em> 的指令</p>
+<p>在文档<sup class="footnote-ref"><a href="#fn3" id="fnref3:2">[3]</a></sup>中 <em>Setcc</em> 指令有一大版, 参考 <a href="/2015/06/20/eflags-condition-codes/" title="EFLAGS Condition Codes">EFLAGS Condition Codes</a>  , 这一大版实际就是带有各种 <em>Conditional Code</em> 的指令</p>
 <p><em>Setcc</em> 指令只有一个操作数, 并且严格限制为 <em>8 bit</em> 的寄存器或者内存 —— 即只能是 <em>1 byte</em></p>
 <p>当符合 <em>cc</em> 代表的条件时操作数的值被置为 <em>1</em> , 否则置为 <em>0</em></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">anum:</div><div class="line">.byte 0b10001111</div><div class="line"></div><div class="line">.section .bss</div><div class="line"></div><div class="line">.section .text</div><div class="line"></div><div class="line">.globl _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    xor %al, %al</div><div class="line">    shlb $1, anum</div><div class="line">    setc %al</div><div class="line">    xor %al, %al</div><div class="line">    movb $11, %al</div><div class="line">    shlb $1, anum</div><div class="line">    setc %al</div><div class="line"></div><div class="line">_exit:</div><div class="line">    movq $60, %rax</div><div class="line">    movq $0, %rdi</div><div class="line">    syscall</div></pre></td></tr></table></figure>
+<p>* 执行 <em>13</em> 行左位移后 $CF=1$, 所以在 <em>14</em> 行将 $al\leftarrow1$</p>
 <ul>
-<li>执行 <em>13</em> 行左位移后 $CF=1$, 所以在 <em>14</em> 行将 $al\leftarrow1$</li>
 <li>执行 <em>17</em> 行左位移后 $CF=0$, 所以在 <em>18</em> 行将 $al\leftarrow0$ ( <em>16</em> 行的赋值是为了方便观察 <em>setc</em> 的行为)</li>
 </ul>
-<p>[^1]:《Introduction to 64 Bit Assembly Programming for Linux and OS X》 Ray Seyfarth<br>[^2]:《Intel 64 and IA-32 Architectures Software Developer’s Manual Vomume 1》<br>[^3]:《Intel 64 and IA-32 Architectures Software Developer’s Manual Vomume 2》</p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>《Introduction to 64 Bit Assembly Programming for Linux and OS X》 Ray Seyfarth <a href="#fnref1" class="footnote-backref">↩</a> <a href="#fnref1:1" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p>《Intel 64 and IA-32 Architectures Software Developer’s Manual Vomume 1》 <a href="#fnref2" class="footnote-backref">↩</a> <a href="#fnref2:1" class="footnote-backref">↩</a> <a href="#fnref2:2" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p>《Intel 64 and IA-32 Architectures Software Developer’s Manual Vomume 2》 <a href="#fnref3" class="footnote-backref">↩</a> <a href="#fnref3:1" class="footnote-backref">↩</a> <a href="#fnref3:2" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>
 </span>
       
     </div>
@@ -482,7 +495,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Bit-Test-and-Modify-Instructions"><span class="nav-number">1.</span> <span class="nav-text">Bit Test and Modify Instructions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bit-Scan-Instructions"><span class="nav-number">2.</span> <span class="nav-text">Bit Scan Instructions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Byte-Set-On-Condition-Instructions"><span class="nav-number">3.</span> <span class="nav-text">Byte Set On Condition Instructions</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#bit-test-and-modify-instructions"><span class="nav-number">1.</span> <span class="nav-text">Bit Test and Modify Instructions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bit-scan-instructions"><span class="nav-number">2.</span> <span class="nav-text">Bit Scan Instructions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#byte-set-on-condition-instructions"><span class="nav-number">3.</span> <span class="nav-text">Byte Set On Condition Instructions</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">

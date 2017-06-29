@@ -51,17 +51,17 @@
 
 
 
-<meta name="description" content="_constcast 用来去掉某个对象的 const 性质…………然而如果对象是一个常量，再使用 _constcast 执行写操作就会产生未定义的结果。 Stanley B.Lippman; Josée Lajoie; Barbara E.MooC++ Primer 4.11.3  这里提到的 未定义的结果 非常的诡异, 只看 C++ 代码的话, 世界观都被颠覆了">
+<meta name="description" content="const_cast 用来去掉某个对象的 const 性质 …… …… 然而如果对象是一个常量，再使用 const_cast 执行写操作就会产生未定义的结果。 Stanley B.Lippman; Josée Lajoie; Barbara E.MooC++ Primer 4.11.3  这里提到的 未定义的结果 非常的诡异, 只看 C++ 代码的话, 世界观都被颠覆了">
 <meta name="keywords" content="C++ Primer">
 <meta property="og:type" content="article">
 <meta property="og:title" content="const_cast 的幽灵">
 <meta property="og:url" content="http://blog.xfwduke.com/2015/12/03/const-cast-的幽灵/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
-<meta property="og:description" content="_constcast 用来去掉某个对象的 const 性质…………然而如果对象是一个常量，再使用 _constcast 执行写操作就会产生未定义的结果。 Stanley B.Lippman; Josée Lajoie; Barbara E.MooC++ Primer 4.11.3  这里提到的 未定义的结果 非常的诡异, 只看 C++ 代码的话, 世界观都被颠覆了">
+<meta property="og:description" content="const_cast 用来去掉某个对象的 const 性质 …… …… 然而如果对象是一个常量，再使用 const_cast 执行写操作就会产生未定义的结果。 Stanley B.Lippman; Josée Lajoie; Barbara E.MooC++ Primer 4.11.3  这里提到的 未定义的结果 非常的诡异, 只看 C++ 代码的话, 世界观都被颠覆了">
 <meta property="og:updated_time" content="2017-06-29T12:13:31.699Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="const_cast 的幽灵">
-<meta name="twitter:description" content="_constcast 用来去掉某个对象的 const 性质…………然而如果对象是一个常量，再使用 _constcast 执行写操作就会产生未定义的结果。 Stanley B.Lippman; Josée Lajoie; Barbara E.MooC++ Primer 4.11.3  这里提到的 未定义的结果 非常的诡异, 只看 C++ 代码的话, 世界观都被颠覆了">
+<meta name="twitter:description" content="const_cast 用来去掉某个对象的 const 性质 …… …… 然而如果对象是一个常量，再使用 const_cast 执行写操作就会产生未定义的结果。 Stanley B.Lippman; Josée Lajoie; Barbara E.MooC++ Primer 4.11.3  这里提到的 未定义的结果 非常的诡异, 只看 C++ 代码的话, 世界观都被颠覆了">
 
 
 
@@ -270,18 +270,23 @@
       
 
       
-        <span itemprop="articleBody"><blockquote><p>_const<em>cast</em> 用来去掉某个对象的 <em>const</em> 性质<br>……<br>……<br>然而如果对象是一个常量，再使用 _const<em>cast</em> 执行写操作就会产生未定义的结果。</p>
+        <span itemprop="articleBody"><blockquote><p><em>const_cast</em> 用来去掉某个对象的 <em>const</em> 性质
+……
+……
+然而如果对象是一个常量，再使用 <em>const_cast</em> 执行写操作就会产生未定义的结果。</p>
 <footer><strong>Stanley B.Lippman; Josée Lajoie; Barbara E.Moo</strong><cite>C++ Primer 4.11.3</cite></footer></blockquote>
-<p><br></p>
+<br>
 <p>这里提到的 <code>未定义的结果</code> 非常的诡异, 只看 <em>C++</em> 代码的话, 世界观都被颠覆了</p>
 <a id="more"></a>
-<h2 id="幽灵"><a href="#幽灵" class="headerlink" title="幽灵"></a>幽灵</h2><figure class="highlight cpp"><figcaption><span>幽灵代码</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">const</span> <span class="keyword">int</span> a &#123;<span class="number">10</span>&#125;;</div><div class="line">  <span class="keyword">int</span> *ptr &#123;<span class="keyword">const_cast</span>&lt;<span class="keyword">int</span> *&gt;(&amp;a)&#125;;</div><div class="line">  *ptr = <span class="number">20</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"&amp;a: "</span> &lt;&lt; &amp;a &lt;&lt; <span class="string">", a: "</span> &lt;&lt; a &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"ptr: "</span> &lt;&lt; ptr &lt;&lt; <span class="string">", *ptr: "</span> &lt;&lt; *ptr &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这段代码是不对的——试图用 _const<em>cast</em> 绕过 <em>const</em> 限制去修改常量值——但代码是可以编译运行的, 只是结果非常奇怪</p>
+<h2 id="幽灵">幽灵</h2>
+<figure class="highlight cpp"><figcaption><span>幽灵代码</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">const</span> <span class="keyword">int</span> a &#123;<span class="number">10</span>&#125;;</div><div class="line">  <span class="keyword">int</span> *ptr &#123;<span class="keyword">const_cast</span>&lt;<span class="keyword">int</span> *&gt;(&amp;a)&#125;;</div><div class="line">  *ptr = <span class="number">20</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"&amp;a: "</span> &lt;&lt; &amp;a &lt;&lt; <span class="string">", a: "</span> &lt;&lt; a &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">"ptr: "</span> &lt;&lt; ptr &lt;&lt; <span class="string">", *ptr: "</span> &lt;&lt; *ptr &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段代码是不对的——试图用 <em>const_cast</em> 绕过 <em>const</em> 限制去修改常量值——但代码是可以编译运行的, 只是结果非常奇怪</p>
 <figure class="highlight plain"><figcaption><span>诡异的结果</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&amp;a: 0x7fff4fd0c6cc, a: 10</div><div class="line">ptr: 0x7fff4fd0c6cc, *ptr: 20</div></pre></td></tr></table></figure>
 <p>当看到这个结果的时候, 简直是条件反射的说出了 <strong><em>WTF</em></strong></p>
 <p>同一个内存地址, 怎么可能有两个不同的值?</p>
-<h2 id="抓鬼"><a href="#抓鬼" class="headerlink" title="抓鬼"></a>抓鬼</h2><figure class="highlight cpp"><figcaption><span>重格式化代码</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">int</span> a &#123;<span class="number">10</span>&#125;;</div><div class="line">    <span class="keyword">int</span> *ptr &#123;<span class="keyword">const_cast</span>&lt;<span class="keyword">int</span>*&gt;(&amp;a)&#125;;</div><div class="line">    *ptr = <span class="number">20</span>;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"%x: %d\n"</span>, &amp;a, a);</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"%x: %d\n"</span>, ptr, *ptr);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;&#125;</div></pre></td></tr></table></figure>
-<p> 用 <em>printf</em> 代替 <em>cout</em>, 这样汇编代码更简单; 同时去掉了不必要的格式化, 这样代码的行号才能和调试信息对上</p>
+<h2 id="抓鬼">抓鬼</h2>
+<figure class="highlight cpp"><figcaption><span>重格式化代码</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">int</span> a &#123;<span class="number">10</span>&#125;;</div><div class="line">    <span class="keyword">int</span> *ptr &#123;<span class="keyword">const_cast</span>&lt;<span class="keyword">int</span>*&gt;(&amp;a)&#125;;</div><div class="line">    *ptr = <span class="number">20</span>;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"%x: %d\n"</span>, &amp;a, a);</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"%x: %d\n"</span>, ptr, *ptr);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;&#125;</div></pre></td></tr></table></figure>
+<p>用 <em>printf</em> 代替 <em>cout</em>, 这样汇编代码更简单; 同时去掉了不必要的格式化, 这样代码的行号才能和调试信息对上</p>
 <figure class="highlight plain"><figcaption><span>带调试信息的汇编代码</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">.loc 1 4 0</div><div class="line">movl    $10, -20(%rbp)</div><div class="line">.loc 1 5 0</div><div class="line">leaq    -20(%rbp), %rax</div><div class="line">movq    %rax, -16(%rbp)</div><div class="line">.loc 1 6 0</div><div class="line">movq    -16(%rbp), %rax</div><div class="line">movl    $20, (%rax)</div><div class="line">.loc 1 7 0</div><div class="line">leaq    -20(%rbp), %rax</div><div class="line">movl    $10, %edx</div><div class="line">movq    %rax, %rsi</div><div class="line">movl    $.LC0, %edi</div><div class="line">movl    $0, %eax</div><div class="line">call    printf</div><div class="line">.loc 1 8 0</div><div class="line">movq    -16(%rbp), %rax</div><div class="line">movl    (%rax), %edx</div><div class="line">movq    -16(%rbp), %rax</div><div class="line">movq    %rax, %rsi</div><div class="line">movl    $.LC0, %edi</div><div class="line">movl    $0, %eax</div><div class="line">call    printf</div><div class="line">.loc 1 9 0</div><div class="line">movl    $0, %eax</div></pre></td></tr></table></figure>
 <p>直到汇编代码第 <em>8</em> 行, 完成了</p>
 <ul>
@@ -289,7 +294,7 @@
 <li>初始化 <em>*ptr</em></li>
 <li>通过 <em>ptr</em> 修改 <em>a</em> 的值</li>
 </ul>
-<p>此时 </p>
+<p>此时</p>
 <ul>
 <li><em>a</em> 的值确实变成了 <em>20</em> , 即 地址是$ \%rbp - 0x20 $ 的内存处的值</li>
 <li>栈 $ \%rbp - 0x16 $的值是 <em>&amp;a</em> 即 <em>ptr</em> 的值</li>
@@ -299,7 +304,8 @@
 <li>第 <em>10</em> 和 <em>17</em> 行 分别获得了 <em>&amp;a</em> 和 <em>ptr</em> 的值, 这两个值是一样的</li>
 <li>关键就是第 <em>11</em> 行, 这里直接用到了立即数 <em>10</em>——<font color="red"><strong>这就是造成同一内存地址有两个不同值的假象的幽灵</strong></font></li>
 </ul>
-<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>鬼抓到了, 但是不理解为什么要这样处理</p>
+<h2 id="后记">后记</h2>
+<p>鬼抓到了, 但是不理解为什么要这样处理</p>
 </span>
       
     </div>

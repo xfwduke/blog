@@ -277,7 +277,7 @@
 
       
         
-          <p><code>右值引用</code>（<em>rvalue reference</em>）是 <em>C++ 11</em> 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是<a href="[https://zh.wikipedia.org/wiki/右值引用](https://zh.wikipedia.org/wiki/右值引用)">^1</a></p>
+          <p><code>右值引用</code>（<em>rvalue reference</em>）是 <em>C++ 11</em> 中新增的一个非常重要的概念，新版本的标准库还为此做了不少修改。增加右值引用的目的主要是<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <ul>
 <li>实现移动语义（<em>move semantics</em>）——主要是为了性能</li>
 <li>完美转发（<em>perfect forwarding</em>）——主要用于参数传递</li>
@@ -474,7 +474,7 @@
 
       
         
-          <p>通过将可执行对象（<em>callable element</em> 如函数）包装在 <em>function</em> 对象中，可以实现可执行对象的复制、移动等操作<a href="http://www.cplusplus.com/reference/functional/function/" target="_blank" rel="external">^1</a></p>
+          <p>通过将可执行对象（<em>callable element</em> 如函数）包装在 <em>function</em> 对象中，可以实现可执行对象的复制、移动等操作<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2015/12/28/function/#more" rel="contents">
               阅读全文 &raquo;
@@ -764,9 +764,9 @@
         
           <p><em>C++ 11</em> 中给标准容器引入了 <em>3</em> 以 <em>emplace</em> 开头的操作, 并和原有的操作存在对应关系</p>
 <ul>
-<li>_emplace_front_ $ \Longleftrightarrow $ _push_front_</li>
+<li><em>emplace_front</em> $ \Longleftrightarrow $ <em>push_front</em></li>
 <li><em>emplace</em> $ \Longleftrightarrow $ <em>insert</em></li>
-<li>_emplace_back_ $ \Longleftrightarrow $ _push_back_</li>
+<li><em>emplace_back</em> $ \Longleftrightarrow $ <em>push_back</em></li>
 </ul>
           <div class="post-more-link text-center">
             <a class="btn" href="/2015/12/05/容器的-emplace-操作/#more" rel="contents">
@@ -861,9 +861,12 @@
 
       
         
-          <blockquote><p>_const<em>cast</em> 用来去掉某个对象的 <em>const</em> 性质<br>……<br>……<br>然而如果对象是一个常量，再使用 _const<em>cast</em> 执行写操作就会产生未定义的结果。</p>
+          <blockquote><p><em>const_cast</em> 用来去掉某个对象的 <em>const</em> 性质
+……
+……
+然而如果对象是一个常量，再使用 <em>const_cast</em> 执行写操作就会产生未定义的结果。</p>
 <footer><strong>Stanley B.Lippman; Josée Lajoie; Barbara E.Moo</strong><cite>C++ Primer 4.11.3</cite></footer></blockquote>
-<p><br></p>
+<br>
 <p>这里提到的 <code>未定义的结果</code> 非常的诡异, 只看 <em>C++</em> 代码的话, 世界观都被颠覆了</p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2015/12/03/const-cast-的幽灵/#more" rel="contents">
@@ -960,9 +963,8 @@
         
           <ul>
 <li>为什么 <em>++i</em> 比 <em>i++</em> 效率高?</li>
-<li>为什么 <em>++i</em> 是左值而 _i++ 是右值?[^1]</li>
+<li>为什么 <em>++i</em> 是左值而 _i++ 是右值?<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></li>
 </ul>
-<p>[^1]:<a href="http://en.cppreference.com/w/cpp/language/value_category" target="_blank" rel="external">Value categories</a></p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2015/12/03/i-和-i/#more" rel="contents">
               阅读全文 &raquo;
@@ -1058,7 +1060,8 @@
         
           <blockquote><p>使用关键字 <em>decltype</em> 的时候，左值和右值也有所不同。如果表达式的求值结果是左值，<em>decltype</em> 作用于该表达式（不是变量）得到一个引用类型。举个例子，假定 <em>p</em> 的类型是 <em>int*</em> ，因为解引用运算符生成左值，所以 <em>decltype(*p)</em> 的结果是 <em>int&amp;</em> 。另一方面，因为取地址运算符生成右值，所以 <em>decltype(&amp;p)</em> 的结果是 <em>int**</em> ，也就是说，结果是一个指向整型指针的指针。</p>
 <footer><strong>Stanley B.Lippman; Josée Lajoie; Barbara E. Moo</strong><cite>C++ Primer 4.1.1</cite></footer></blockquote>      
-<p><br><br>这一段话隐藏了太多的细节, 看起来反而更加迷惑</p>
+<br>
+这一段话隐藏了太多的细节, 看起来反而更加迷惑
 <ul>
 <li><em>decltype</em> 和左值/右值紧密纠缠, 同时还会和 <em>auto</em> 一起用于 <code>函数返回值后置</code></li>
 <li>为了验证 <em>decltype</em> 的工作方式, 又需要能获取表达式的类型信息</li>

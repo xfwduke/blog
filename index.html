@@ -569,7 +569,7 @@
 <li><em>constexpr function</em></li>
 <li><em>constexpr constructor</em></li>
 </ul>
-<p>详细的规则比较复杂，可以看下 <a href="http://en.cppreference.com/w/cpp/language/constexpr" target="_blank" rel="external">constexpr specifier</a><a href="[http://en.cppreference.com/w/cpp/language/constexpr](http://en.cppreference.com/w/cpp/language/constexpr)">^1</a></p>
+<p>详细的规则比较复杂，可以看下 <a href="http://en.cppreference.com/w/cpp/language/constexpr" target="_blank" rel="external">constexpr specifier</a><sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/02/10/constexpr/#more" rel="contents">
               阅读全文 &raquo;
@@ -666,7 +666,7 @@
           <p><em>literal type</em> 这个概念可以说是专为 <em>constexpr</em> 而生</p>
 <blockquote><p>Literal types are the types of constexpr variables and they can be constructed, manipulated, and returned from constexpr functions.</p>
 <footer><strong>@LiteralType</strong><cite><a href="http://en.cppreference.com/w/cpp/concept/LiteralType" target="_blank" rel="external">en.cppreference.com/w/cpp/concept/LiteralType</a></cite></footer></blockquote>
-<p><br></p>
+<br>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/02/04/literal-type/#more" rel="contents">
               阅读全文 &raquo;
@@ -858,7 +858,7 @@
           <p><em>trivial type</em> 表示结构相对简单的数据类型</p>
 <blockquote><p>A trivial type is a type whose storage is contiguous (trivially copyable) and which only supports static default initialization (trivially default constructible), either cv-qualified or not. It includes scalar types, trivial classes and arrays of any such types.</p>
 <footer><strong>@C++ Reference</strong><cite><a href="http://www.cplusplus.com/reference/type_traits/is_trivial/" target="_blank" rel="external">www.cplusplus.com/reference/type_traits/is_trivial</a></cite></footer></blockquote>
-<p><br></p>
+<br>
 <p>这段话很精简的描述了什么是 <em>trivial type</em> ，但要完全看懂却很不容易</p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/02/03/trivial-type/#more" rel="contents">
@@ -1053,7 +1053,8 @@
         
           <p><code>reference collapse</code>——引用折叠</p>
 <p>在使用类型别名（<em>alias</em>）和模板参数的时候，会遇到引用的引用（<em>reference to reference</em>） 的情况</p>
-<p>如：<br><figure class="highlight cpp"><figcaption><span>reference to reference in alias</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">using</span> rr_i = <span class="keyword">int</span> &amp;&amp;;</div><div class="line"><span class="keyword">using</span> lr_i = <span class="keyword">int</span> &amp;;</div><div class="line"><span class="keyword">using</span> rr_rr_i = rr_i &amp;&amp;;</div><div class="line"><span class="keyword">using</span> lr_rr_i = rr_i &amp;;</div><div class="line"><span class="keyword">using</span> rr_lr_i = lr_i &amp;&amp;;</div><div class="line"><span class="keyword">using</span> lr_lr_i = lr_i &amp;;</div></pre></td></tr></table></figure></p>
+<p>如：</p>
+<figure class="highlight cpp"><figcaption><span>reference to reference in alias</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">using</span> rr_i = <span class="keyword">int</span> &amp;&amp;;</div><div class="line"><span class="keyword">using</span> lr_i = <span class="keyword">int</span> &amp;;</div><div class="line"><span class="keyword">using</span> rr_rr_i = rr_i &amp;&amp;;</div><div class="line"><span class="keyword">using</span> lr_rr_i = rr_i &amp;;</div><div class="line"><span class="keyword">using</span> rr_lr_i = lr_i &amp;&amp;;</div><div class="line"><span class="keyword">using</span> lr_lr_i = lr_i &amp;;</div></pre></td></tr></table></figure>
 <p>代码中 <em>3 ~ 6</em> 行的类型最终是 <em>&amp;</em> 或 <em>&amp;&amp;</em> 中的一个——这就是引用折叠的效果</p>
 <p>但具体是哪个呢？</p>
           <div class="post-more-link text-center">

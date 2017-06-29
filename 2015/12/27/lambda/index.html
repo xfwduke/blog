@@ -274,12 +274,12 @@
 <blockquote><p>谓词是一个可调用的表达式，其返回结果是一个能用作条件的值。标准库算法所使用的谓词分为两类：一元谓词（<em>unary predicate</em>，意味着它们只接受单一参数）和二元谓词（<em>binary predicate</em>，意味着它们有两个参数）。接受谓词参数的算法对输入序列中的元素调用谓词。因此，元素类型必须能转换为谓词的参数类型。</p>
 <footer><strong>Nicolai M.Josuttis 侯捷</strong><cite>C++标准库第二版-10.3.1</cite></footer></blockquote>
 <a id="more"></a>
-<h2 id="lambda-的基本形式"><a href="#lambda-的基本形式" class="headerlink" title="lambda 的基本形式"></a><em>lambda</em> 的基本形式</h2><p><em>lambda</em> 是 <em>C++11</em> 新增的<code>可调用对象(callable object)</code></p>
-<p>[^1]一个 <em>lambda</em> 表达式表示一个可调用的代码单元，可以将其理解为一个未命名的内联函数。完整形式是</p>
+<h2 id="lambda-的基本形式"><em>lambda</em> 的基本形式</h2>
+<p><em>lambda</em> 是 <em>C++11</em> 新增的<code>可调用对象(callable object)</code></p>
+<p><sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>一个 <em>lambda</em> 表达式表示一个可调用的代码单元，可以将其理解为一个未命名的内联函数。完整形式是</p>
 <figure class="highlight plain"><figcaption><span>lambda 的通用形式</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[capture list] (parameter list) -&gt; return type &#123;function body&#125;</div></pre></td></tr></table></figure>
 <p>其中 <em>capture list、parameter list</em> 和 <em>return type</em> 都可以省略，即没有捕捉、参数和返回值</p>
 <figure class="highlight cpp"><figcaption><span>lambda 的最简形式</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[]()&#123;some code&#125;</div></pre></td></tr></table></figure>
-<p>[^1]:《C++ Primer 5th》- 10.3.2</p>
 <blockquote><p><em>C++</em> 的可调用对象还有</p>
 <ul>
 <li>函数</li>
@@ -287,12 +287,13 @@
 <li>重载了函数调用运算符<code>()</code>的类</li>
 </ul>
 </blockquote>
-<h2 id="传递参数"><a href="#传递参数" class="headerlink" title="传递参数"></a>传递参数</h2><p><em>lambda</em> 的参数传递和普通的函数几乎没有差别，唯一需要了解的是</p>
+<h2 id="传递参数">传递参数</h2>
+<p><em>lambda</em> 的参数传递和普通的函数几乎没有差别，唯一需要了解的是</p>
 <p><strong><em>lambda</em></strong> <strong>的参数不能有默认值</strong></p>
-<h2 id="捕获列表"><a href="#捕获列表" class="headerlink" title="捕获列表"></a>捕获列表</h2><p><em>capture list</em> 给了 <em>lambda</em> 不需要参数传递即可以访问所属代码块的局部变量的能力</p>
+<h2 id="捕获列表">捕获列表</h2>
+<p><em>capture list</em> 给了 <em>lambda</em> 不需要参数传递即可以访问所属代码块的局部变量的能力</p>
 <figure class="highlight cpp"><figcaption><span>捕获示例</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">int</span> ival &#123;<span class="number">10</span>&#125;;</div><div class="line">  <span class="keyword">auto</span> bf = [ival] ()</div><div class="line">  &#123;</div><div class="line">      <span class="built_in">cout</span> &lt;&lt; ival &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  &#125;;</div><div class="line">  bf ();</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>捕获列表的基本形式有[^2]</p>
-<p>[^2]:《C++ Primer 5th》- 10.3.3</p>
+<p>捕获列表的基本形式有<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup></p>
 <table>
 <thead>
 <tr>
@@ -318,27 +319,29 @@
 <td style="text-align:left">隐式值捕获</td>
 </tr>
 <tr>
-<td style="text-align:center">_[&amp;, identifier<em>list]</em></td>
-<td style="text-align:left">_identifier<em>list</em> 是一个逗号分隔的列表，包含 <em>0</em> 个或多个来自所在函数的变量。这些变量采用值捕获方式，而任何隐式捕获的变量都采用引用方式捕获。_identifier<em>list</em> 中的名字前面不能使用 <em>&amp;</em></td>
+<td style="text-align:center"><em>[&amp;, identifier_list]</em></td>
+<td style="text-align:left"><em>identifier_list</em> 是一个逗号分隔的列表，包含 <em>0</em> 个或多个来自所在函数的变量。这些变量采用值捕获方式，而任何隐式捕获的变量都采用引用方式捕获。<em>identifier_list</em> 中的名字前面不能使用 <em>&amp;</em></td>
 </tr>
 <tr>
-<td style="text-align:center">_[=, identifier<em>list]</em></td>
-<td style="text-align:left">_identifier<em>list</em> 中的变量都采用引用方式捕获，而任何隐式捕获的变量都采用值方式捕获。_identifier<em>list</em> 中的名字不能包括 <em>this</em> ，且这些名字之前必须使用 <em>&amp;</em></td>
+<td style="text-align:center"><em>[=, identifier_list]</em></td>
+<td style="text-align:left"><em>identifier_list</em> 中的变量都采用引用方式捕获，而任何隐式捕获的变量都采用值方式捕获。<em>identifier_list</em> 中的名字不能包括 <em>this</em> ，且这些名字之前必须使用 <em>&amp;</em></td>
 </tr>
 </tbody>
 </table>
-<h3 id="捕获的意义"><a href="#捕获的意义" class="headerlink" title="捕获的意义"></a>捕获的意义</h3><p>在使用标准库算法时，<em>lambda</em> 捕获能让问题变得简单。</p>
+<h3 id="捕获的意义">捕获的意义</h3>
+<p>在使用标准库算法时，<em>lambda</em> 捕获能让问题变得简单。</p>
 <p>考虑：</p>
 <ul>
 <li>一个 <em>vector</em> 容器存储了随机长度的 <em>string</em></li>
-<li>用 _for<em>each</em> 打印出容器中  $长度 \le N$  的字符串</li>
+<li>用 <em>for_each</em> 打印出容器中  $长度 \le N$  的字符串</li>
 </ul>
 <figure class="highlight cpp"><figcaption><span>for_each 原型</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span>&lt; <span class="class"><span class="keyword">class</span> <span class="title">InputIt</span>, <span class="title">class</span> <span class="title">UnaryFunction</span> &gt;</span></div><div class="line"><span class="title">UnaryFunction</span> <span class="title">for_each</span>( <span class="title">InputIt</span> <span class="title">first</span>, <span class="title">InputIt</span> <span class="title">last</span>, <span class="title">UnaryFunction</span> <span class="title">f</span> );</div></pre></td></tr></table></figure>
-<p>_for<em>each</em> 的第 <em>3</em> 个参数是一元谓词，为了能输出字符串内容，谓词的参数肯定是 <em>string</em> 类型——<em>N</em> 没有地方表达</p>
+<p><em>for_each</em> 的第 <em>3</em> 个参数是一元谓词，为了能输出字符串内容，谓词的参数肯定是 <em>string</em> 类型——<em>N</em> 没有地方表达</p>
 <figure class="highlight cpp"><figcaption><span>硬编码 N</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;random&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="built_in">std</span>::random_device rd;</div><div class="line">  <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; svec;</div><div class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; ++i)</div><div class="line">    svec.push_back (<span class="built_in">string</span> (rd () % <span class="number">15</span> + <span class="number">1</span>, <span class="string">'x'</span>));</div><div class="line"></div><div class="line">  for_each (svec.begin (), svec.end (), [] (<span class="keyword">const</span> <span class="built_in">string</span> &amp; s)</div><div class="line">  &#123;</div><div class="line">      <span class="keyword">if</span> (s.length () &lt;= <span class="number">5</span>)</div><div class="line">        <span class="built_in">cout</span> &lt;&lt; s &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  &#125;);</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">  </div></pre></td></tr></table></figure>
 <p>为了能应对  $N = 6$  的情况，必须修改源代码把 <em>lambda</em> 中的 <em>N</em> 改为 <em>6</em>——这个时候就该<code>捕获</code>发挥作用了</p>
 <figure class="highlight cpp"><figcaption><span>捕获 N</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">  <span class="comment">/*</span></div><div class="line">   * 构造一个 svec </div><div class="line">  */</div><div class="line"></div><div class="line">  <span class="keyword">int</span> N = <span class="number">6</span>;</div><div class="line"></div><div class="line">  for_each (svec.begin (), svec.end (), [N] (<span class="keyword">const</span> <span class="built_in">string</span> &amp; s)</div><div class="line">  &#123;</div><div class="line">      <span class="keyword">if</span> (s.length () &lt;= N)</div><div class="line">        <span class="built_in">cout</span> &lt;&lt; s &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  &#125;);</div><div class="line">  <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="可变-lambda"><a href="#可变-lambda" class="headerlink" title="可变 lambda"></a>可变 <em>lambda</em></h3><p>默认情况下，<em>lambda</em> 内的代码是不允许修改值捕获对象的</p>
+<h3 id="可变-lambda">可变 <em>lambda</em></h3>
+<p>默认情况下，<em>lambda</em> 内的代码是不允许修改值捕获对象的</p>
 <figure class="highlight cpp"><figcaption><span>错误的示例</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> iv &#123;<span class="number">10</span>&#125;;</div><div class="line"><span class="keyword">auto</span> lmb = [=] ()</div><div class="line">&#123;</div><div class="line">    iv = <span class="number">1</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p>这段代码无法通过编译</p>
 <figure class="highlight plain"><figcaption><span>gcc 的错误提示</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">error: assignment of read-only variable ‘iv’</div></pre></td></tr></table></figure>
@@ -346,22 +349,35 @@
 <p>应对这种情况，必须在参数列表后加上 <em>mutable</em> 关键字</p>
 <figure class="highlight cpp"><figcaption><span>mutable lambda</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">auto</span> lmb = [=] () <span class="keyword">mutable</span></div><div class="line">&#123;</div><div class="line">    iv = <span class="number">1</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p>在 <em>lambda</em> 内修改值捕获对象并不会影响外部的值，<em>C++</em> 的这个限制应该是为了防止值被无修改引发的 <em>bug</em></p>
-<h3 id="修改引用捕获"><a href="#修改引用捕获" class="headerlink" title="修改引用捕获"></a>修改引用捕获</h3><p>引用捕获对象的修改没有值捕获的限制，仅仅受引用原始对象是否是 <em>const</em> 类型影响</p>
-<h2 id="返回类型"><a href="#返回类型" class="headerlink" title="返回类型"></a>返回类型</h2><blockquote><ul>
-<li>until C++14<ul>
+<h3 id="修改引用捕获">修改引用捕获</h3>
+<p>引用捕获对象的修改没有值捕获的限制，仅仅受引用原始对象是否是 <em>const</em> 类型影响</p>
+<h2 id="返回类型">返回类型</h2>
+<blockquote><ul>
+<li>until C++14
+<ul>
 <li>if the body consists of nothing but a single return statement with an expression, the return type is the type of the returned expression (after lvalue-to-rvalue, array-to-pointer, or function-to-pointer implicit conversion);</li>
 <li>otherwise, the return type is void.</li>
 </ul>
 </li>
-<li>since C++14<ul>
+<li>since C++14
+<ul>
 <li>The return type is deduced from return statements as if for a function whose return type is declared auto.</li>
 </ul>
 </li>
 </ul>
 <footer><strong>@C++ Reference</strong><cite><a href="http://en.cppreference.com/w/cpp/language/lambda" target="_blank" rel="external">en.cppreference.com/w/cpp/language/lambda</a></cite></footer></blockquote>
-<p> <br>   </p>
+ <br>   
 <p><em>lambda</em> 返回类型在实际使用中发现并不像上面说的这样——实际上是可以正确推导的——从<a href="https://gcc.gnu.org/ml/gcc-patches/2011-08/msg01901.html" target="_blank" rel="external">C++ PATCH for core issue 975 (extended lambda return type deduction)</a> 可以看到，这一问题已经被修复了</p>
 <p>同时在<a href="http://stackoverflow.com/questions/14450608/return-type-deduction-with-multi-statement-lambdas" target="_blank" rel="external">Return type deduction with multi-statement lambdas</a>提到，<em>GCC 4.8.1</em> 和 <em>clang 3.3</em> 已经包含了这个 <em>path</em></p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>《C++ Primer 5th》- 10.3.2 <a href="#fnref1" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p>《C++ Primer 5th》- 10.3.3 <a href="#fnref2" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>
 </span>
       
     </div>

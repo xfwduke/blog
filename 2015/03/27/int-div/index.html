@@ -312,18 +312,21 @@
 </tbody>
 </table>
 <p><em>divisor</em> 可以是寄存器或内存中的值</p>
-<h2 id="异常"><a href="#异常" class="headerlink" title="异常"></a>异常</h2><p>整数除法的异常有两类</p>
+<h2 id="异常">异常</h2>
+<p>整数除法的异常有两类</p>
 <ul>
 <li>除 <em>0</em> 异常</li>
 <li>商溢出异常</li>
 </ul>
 <a id="more"></a>
-<h3 id="除-0-异常"><a href="#除-0-异常" class="headerlink" title="除 0 异常"></a>除 <em>0</em> 异常</h3><p>当除数( <em>divisor</em> )为 <em>0</em> 时, 执行除法指令会抛出系统异常</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line"></div><div class="line">.section .bss</div><div class="line"></div><div class="line">.section .text</div><div class="line"></div><div class="line">.globl _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    xor %eax, %eax</div><div class="line">    xor %ebx, %ebx</div><div class="line">    movw $10, %ax</div><div class="line">    divb %bl</div><div class="line"></div><div class="line">_exit:</div><div class="line">    pushl $0</div><div class="line">    call exit</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ ./test</div><div class="line">Floating point exception</div></pre></td></tr></table></figure>
+<h3 id="除-0-异常">除 <em>0</em> 异常</h3>
+<p>当除数( <em>divisor</em> )为 <em>0</em> 时, 执行除法指令会抛出系统异常</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line"></div><div class="line">.section .bss</div><div class="line"></div><div class="line">.section .text</div><div class="line"></div><div class="line">.globl _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    xor %eax, %eax</div><div class="line">    xor %ebx, %ebx</div><div class="line">    movw $10, %ax</div><div class="line">    divb %bl</div><div class="line"></div><div class="line">_exit:</div><div class="line">    pushl $0</div><div class="line">    call exit</div></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ ./test</div><div class="line">Floating point exception</div></pre></td></tr></table></figure>
 <p>这种错误在代码中很容易写逻辑检查</p>
-<h3 id="商溢出异常"><a href="#商溢出异常" class="headerlink" title="商溢出异常"></a>商溢出异常</h3><p>当商结果字长大于商寄存器时, 会引发商溢出异常</p>
-<h4 id="无符号除法-以-divb-为例"><a href="#无符号除法-以-divb-为例" class="headerlink" title="无符号除法( 以 divb 为例 )"></a>无符号除法( 以 <em>divb</em> 为例 )</h4><p>当 <em>dividend</em> 高 <em>8bit</em> 的值大于 <em>divisor</em> 时, <em>quotient</em> 的字长必定大于 <em>8bit</em>, 无法存入 <em>AL</em> 导致商溢出</p>
+<h3 id="商溢出异常">商溢出异常</h3>
+<p>当商结果字长大于商寄存器时, 会引发商溢出异常</p>
+<h4 id="无符号除法-以-divb-为例">无符号除法( 以 <em>divb</em> 为例 )</h4>
+<p>当 <em>dividend</em> 高 <em>8bit</em> 的值大于 <em>divisor</em> 时, <em>quotient</em> 的字长必定大于 <em>8bit</em>, 无法存入 <em>AL</em> 导致商溢出</p>
 <p>当除法会导致商溢出时并不是不能计算, 而是需要对操作数做一些处理, 把原始的除法拆分</p>
 
 $$
@@ -369,14 +372,16 @@ $$
 <p>这段代码即是前面算法的实现, 尝试做 $56723(0xdd93) \div {113}(0x71)$ , 不做任何处理的话肯定会出现商溢出, 因为被除数高位 <em>0xdd</em> 比除数 <em>0x71</em> 要大</p>
 <ul>
 <li><em>17</em> 行比较被除数高位与除数, 判断是否需要做扩展除法</li>
-<li><em>24 ~ 28</em> 行做高位除法<ul>
+<li><em>24 ~ 28</em> 行做高位除法
+<ul>
 <li><em>25</em> 行将 <em>%eax</em> 右移 <em>8bit</em>, 即将 <em>%ah</em> 移动到 <em>%al</em></li>
 <li><em>26</em> 行将 <em>%ah</em> 清零, 此时 <em>%ax</em> 即为原被除数的高 <em>8bit</em></li>
 <li><em>28</em> 行将高位商暂存到 <em>%dh</em>, 因为最终需要 $\times 2^{8}$ , 所以直接存入 <em>%dh</em>, 后面和低位商(将会存入 <em>%dl</em> )组合时, 可以省掉一次左位移 <em>8bit</em></li>
 <li>余数在 <em>%ah</em> 中</li>
 </ul>
 </li>
-<li><em>31 ~ 35</em> 行做低位除法<ul>
+<li><em>31 ~ 35</em> 行做低位除法
+<ul>
 <li><em>31, 32</em> 行将原被除数低 <em>8bit</em> 存入 <em>%al</em>, 和 <em>%ah</em> 的高位余数组合, 刚好构成新被除数</li>
 <li><em>35</em> 行将低位商存入 <em>%dl</em></li>
 <li>低位余数在 <em>%ah</em> 中</li>
@@ -385,7 +390,8 @@ $$
 <li><em>38 ~ 40</em> 行处理最终余数, 由于最终余数(即低位余数)在 <em>%ah</em> 中, 所以先将值右移到 <em>%al</em>, 同时扩展到 <em>%eax</em> 存入 <em>stack</em> —— 无法把 <em>8bit</em> 值放入 <em>stack</em>, 所以必须做无符号扩展</li>
 <li><em>42, 43</em> 行处理商, 同样 <em>%dx</em> 扩展为 <em>%edx</em></li>
 </ul>
-<h4 id="带符号除法"><a href="#带符号除法" class="headerlink" title="带符号除法"></a>带符号除法</h4><p>对于带符号除法, 前面提到的溢出判据 <code>当 dividend 高 8bit 的值大于 divisor 时, quotient 的字长必定大于 8bit, 无法存入 AL 导致商溢出</code> 只需要修改为比较绝对值即可</p>
+<h4 id="带符号除法">带符号除法</h4>
+<p>对于带符号除法, 前面提到的溢出判据 <code>当 dividend 高 8bit 的值大于 divisor 时, quotient 的字长必定大于 8bit, 无法存入 AL 导致商溢出</code> 只需要修改为比较绝对值即可</p>
 <p>所以对于整数除法是否会发生商溢出的判据是</p>
 <p><strong>当 <em>dividend</em> 高半部分的绝对值大于 <em>divisor</em> 时, 会发生商溢出</strong></p>
 </span>

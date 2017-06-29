@@ -51,17 +51,17 @@
 
 
 
-<meta name="description" content="书上的第二个例子是在一堆数字里面找最大的一个, 这里的程序稍微改了下流程, 单基本还是差不多的. 另一个差别是, 最大值设定成了 257 这个程序的结果, 是用了 _sys__exit 调用返回的, 因为还没学到怎么把一个数字输出到屏幕上">
+<meta name="description" content="书上的第二个例子是在一堆数字里面找最大的一个, 这里的程序稍微改了下流程, 单基本还是差不多的. 另一个差别是, 最大值设定成了 257 这个程序的结果, 是用了 sys___exit 调用返回的, 因为还没学到怎么把一个数字输出到屏幕上">
 <meta name="keywords" content="Programming from the Ground Up Book">
 <meta property="og:type" content="article">
 <meta property="og:title" content="找最大值">
 <meta property="og:url" content="http://blog.xfwduke.com/2014/12/05/zhao-zui-da-zhi/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
-<meta property="og:description" content="书上的第二个例子是在一堆数字里面找最大的一个, 这里的程序稍微改了下流程, 单基本还是差不多的. 另一个差别是, 最大值设定成了 257 这个程序的结果, 是用了 _sys__exit 调用返回的, 因为还没学到怎么把一个数字输出到屏幕上">
+<meta property="og:description" content="书上的第二个例子是在一堆数字里面找最大的一个, 这里的程序稍微改了下流程, 单基本还是差不多的. 另一个差别是, 最大值设定成了 257 这个程序的结果, 是用了 sys___exit 调用返回的, 因为还没学到怎么把一个数字输出到屏幕上">
 <meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="找最大值">
-<meta name="twitter:description" content="书上的第二个例子是在一堆数字里面找最大的一个, 这里的程序稍微改了下流程, 单基本还是差不多的. 另一个差别是, 最大值设定成了 257 这个程序的结果, 是用了 _sys__exit 调用返回的, 因为还没学到怎么把一个数字输出到屏幕上">
+<meta name="twitter:description" content="书上的第二个例子是在一堆数字里面找最大的一个, 这里的程序稍微改了下流程, 单基本还是差不多的. 另一个差别是, 最大值设定成了 257 这个程序的结果, 是用了 sys___exit 调用返回的, 因为还没学到怎么把一个数字输出到屏幕上">
 
 
 
@@ -273,10 +273,11 @@
 
       
         <span itemprop="articleBody"><p>书上的第二个例子是在一堆数字里面找最大的一个, 这里的程序稍微改了下流程, 单基本还是差不多的. 另一个差别是, 最大值设定成了 <em>257</em></p>
-<p>这个程序的结果, 是用了 _sys<em>__exit</em> 调用返回的, 因为还没学到怎么把一个数字输出到屏幕上</p>
+<p>这个程序的结果, 是用了 <em>sys___exit</em> 调用返回的, 因为还没学到怎么把一个数字输出到屏幕上</p>
 <a id="more"></a>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line">    data_items:</div><div class="line">        .long 256,257,3,67,34,222,45,75,54,34,44,33,22,11,66,-1</div><div class="line">.section .text</div><div class="line">.globl _start</div><div class="line"></div><div class="line"></div><div class="line">_start:</div><div class="line">    movl $0, %edi</div><div class="line">    movl $0, %eax</div><div class="line">    movl $0, %ebx</div><div class="line"></div><div class="line">start_loop:</div><div class="line">    cmpl $0,%eax</div><div class="line">    jl loop_exit</div><div class="line">    movl data_items(,%edi,4), %eax</div><div class="line">    incl %edi</div><div class="line">    cmpl %ebx,%eax</div><div class="line">    jle start_loop</div><div class="line">    movl %eax,%ebx</div><div class="line">    jmp start_loop</div><div class="line"></div><div class="line">loop_exit:</div><div class="line">    movl $1, %eax</div><div class="line">    int $0x80</div></pre></td></tr></table></figure>
-<h1 id="sys-exit"><a href="#sys-exit" class="headerlink" title="_sys_exit_"></a>_sys_exit_</h1><table>
+<h1><em>sys_exit</em></h1>
+<table>
 <thead>
 <tr>
 <th style="text-align:center">Name</th>
@@ -459,7 +460,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#sys-exit"><span class="nav-number">1.</span> <span class="nav-text">_sys_exit_</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">1.</span> <span class="nav-text">sys_exit</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
