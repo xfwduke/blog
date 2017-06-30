@@ -35,7 +35,7 @@
 <link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="a b c," />
 
 
 
@@ -51,16 +51,17 @@
 
 
 
-<meta name="description" content="有两个加法指令 add 和 inc inc 比较简单, 只有一个操作数, 作用是将操作数的值加 1, 并且不影响标志位 ( rflags ) add 是普通的加法操作, 带有两个操作数  源操作数( source operand ) 可以是 32 bit 立即数, 内存地址 (变量) 或者寄存器 目的操作数( destination operand ) 可以是内存地址或者寄存器 两个操作数中, 只">
+<meta name="description" content="test">
+<meta name="keywords" content="a b c">
 <meta property="og:type" content="article">
-<meta property="og:title" content="加法">
-<meta property="og:url" content="http://blog.xfwduke.com/2015/06/14/jia-fa/index.html">
+<meta property="og:title" content="TEST-HEXO">
+<meta property="og:url" content="http://blog.xfwduke.com/2017/06/30/TEST-HEXO/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
-<meta property="og:description" content="有两个加法指令 add 和 inc inc 比较简单, 只有一个操作数, 作用是将操作数的值加 1, 并且不影响标志位 ( rflags ) add 是普通的加法操作, 带有两个操作数  源操作数( source operand ) 可以是 32 bit 立即数, 内存地址 (变量) 或者寄存器 目的操作数( destination operand ) 可以是内存地址或者寄存器 两个操作数中, 只">
-<meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
+<meta property="og:description" content="test">
+<meta property="og:updated_time" content="2017-06-30T13:18:28.235Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="加法">
-<meta name="twitter:description" content="有两个加法指令 add 和 inc inc 比较简单, 只有一个操作数, 作用是将操作数的值加 1, 并且不影响标志位 ( rflags ) add 是普通的加法操作, 带有两个操作数  源操作数( source operand ) 可以是 32 bit 立即数, 内存地址 (变量) 或者寄存器 目的操作数( destination operand ) 可以是内存地址或者寄存器 两个操作数中, 只">
+<meta name="twitter:title" content="TEST-HEXO">
+<meta name="twitter:description" content="test">
 
 
 
@@ -72,7 +73,7 @@
   };
 </script>
 
-  <title> 加法 | 向日葵和小葵 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title> TEST-HEXO | 向日葵和小葵 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -223,7 +224,7 @@
             
             
               
-                加法
+                TEST-HEXO
               
             
           </h1>
@@ -232,26 +233,11 @@
         <div class="post-meta">
           <span class="post-time">
             发表于
-            <time itemprop="dateCreated" datetime="2015-06-14T20:29:49+08:00" content="2015-06-14">
-              2015-06-14
+            <time itemprop="dateCreated" datetime="2017-06-30T18:12:41+08:00" content="2017-06-30">
+              2017-06-30
             </time>
           </span>
 
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/汇编/" itemprop="url" rel="index">
-                    <span itemprop="name">汇编</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
           
 
           
@@ -269,75 +255,30 @@
       
 
       
-        <span itemprop="articleBody"><p>有两个加法指令 <code>add</code> 和 <code>inc</code></p>
-<p><code>inc</code> 比较简单, 只有一个操作数, 作用是将操作数的值加 <em>1</em>, 并且不影响标志位 ( <em>rflags</em> )</p>
-<p><code>add</code> 是普通的加法操作, 带有两个操作数</p>
-<ul>
-<li>源操作数( <em>source operand</em> ) 可以是 <em>32 bit</em> 立即数, 内存地址 (变量) 或者寄存器</li>
-<li>目的操作数( <em>destination operand</em> ) 可以是内存地址或者寄存器</li>
-<li>两个操作数中, 只能有一个是内存地址</li>
-</ul>
-<p>主要相关标志位 <em>OF CF SF ZF</em></p>
-<a id="more"></a>
-<h2 id="32-bit-限制"><em>32 bit</em> 限制</h2>
-<p>上面提到操作数是立即数时, 最大只能 <em>32 bit</em></p>
-<p>当立即数超过 <em>32 bit</em> 时, 必须先将立即数传送到寄存器中再做运算, 否则汇编器会报错</p>
-<p>这个限制并非仅仅针对 <code>add</code> —— 在 <em>64 bit</em> 汇编中, 立即数作为操作数时, 很多时候都只支持最大 <em>32 bit</em>, 超过的时候必须使用寄存器做中转</p>
-<h2 id="标志位">标志位</h2>
-<p><em>SF ZF</em> 看下原始定义就好, 比较简单</p>
-<p><em>OF CF</em> 可以参考 <a href="/2015/02/10/cf-and-of/" title="CF and OF">CF and OF</a></p>
-<p>需要再次强调的是, <em>OF CF</em> 只是用来判断 <code>add</code> 后各相关位状态如何变化的, 并不能直接给出结果是否正确</p>
-<h3 id="of-示例"><em>OF</em> 示例</h3>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">segment .data</div><div class="line"></div><div class="line">segment .bss</div><div class="line"></div><div class="line">segment .text</div><div class="line"></div><div class="line">global _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    mov al, 0x11</div><div class="line">    mov bl, 0x7E</div><div class="line">    add al, bl</div><div class="line"></div><div class="line">_exit:</div><div class="line">    mov rax, 60</div><div class="line">    mov rdi, 0</div><div class="line">    syscall</div></pre></td></tr></table></figure>
-<p>执行 <code>add</code> 前</p>
-<ul>
-<li><em>al</em> 为 <em>0x11 ( 0001 0001 )</em></li>
-<li><em>bl</em> 为 <em>0x7E ( 0111 1110 )</em></li>
-</ul>
-<p>执行 <code>add</code> 后</p>
-<ul>
-<li><em>al</em> 为 <em>0x8F ( 1000 1111 )</em></li>
-<li><em>OF SF</em> 被置位</li>
-</ul>
-<p>结果无疑是对的 ( 虽然在 <em>GDB</em> 中 <em>print $al</em> 会得到 <em>-113</em> )</p>
-<h3 id="cf-示例"><em>CF</em> 示例</h3>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">.section .data</div><div class="line"></div><div class="line">.section .bss</div><div class="line"></div><div class="line">.section .text</div><div class="line"></div><div class="line">.globl _start</div><div class="line"></div><div class="line">_start:</div><div class="line">    movb $0x11, %al</div><div class="line">    movb $0xFE, %bl</div><div class="line">    addb %bl, %al</div><div class="line"></div><div class="line">_exit:</div><div class="line">    movq $60, %rax</div><div class="line">    movq $0, %rdi</div><div class="line">    syscall</div></pre></td></tr></table></figure>
-<p>执行 <code>add</code> 前</p>
-<ul>
-<li><em>al</em> 为 <em>0x11 ( 0001 0001 )</em></li>
-<li><em>bl</em> 为 <em>0xFE ( 1111 1110 )</em></li>
-</ul>
-<p>执行 <code>add</code> 后</p>
-<ul>
-<li><em>al</em> 为 <em>0x0F ( 0000 1111 )</em></li>
-<li><em>CF</em> 被置位</li>
-</ul>
-<p>以不同的方式来看待源操作数, 决定如何使用执行后的信息</p>
-<ul>
-<li>将源操作数 <em>0x11 0xFE</em> 看做无符号数即 <em>17</em> 和 <em>254</em> , 则需要把 <em>CF</em> 位添加到计算结果之前来构成最重结果 <em>0x10F ( 1 0000 1111 )</em> 即 <em>271</em></li>
-<li>将源操作数看做带符号数, 则 <em>0xFE</em> 实际上是 <em>-2</em> , <em>CF</em> 不参与构成结果, $al = 15$ 就是最终结果</li>
-</ul>
+        <span itemprop="articleBody"><p>test</p>
 </span>
       
     </div>
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/a-b-c/" rel="tag">#a b c</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/06/14/jian-fa/" rel="prev" title="减法">
-                <i class="fa fa-chevron-left"></i> 减法
-              </a>
-            
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/06/07/about-negation/" rel="next" title="About Negation">
-                About Negation <i class="fa fa-chevron-right"></i>
+              <a href="/2017/01/18/一个错误的Lisp-incf-宏定义/" rel="next" title="一个错误的Lisp incf 宏定义">
+                一个错误的Lisp incf 宏定义 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -464,7 +405,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#32-bit-限制"><span class="nav-number">1.</span> <span class="nav-text">32 bit 限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标志位"><span class="nav-number">2.</span> <span class="nav-text">标志位</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#of-示例"><span class="nav-number">2.1.</span> <span class="nav-text">OF 示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cf-示例"><span class="nav-number">2.2.</span> <span class="nav-text">CF 示例</span></a></li></ol></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
