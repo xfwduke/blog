@@ -58,7 +58,7 @@
 <meta property="og:url" content="http://blog.xfwduke.com/2015/12/02/decltype-和左-右值/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
 <meta property="og:description" content="使用关键字 decltype 的时候，左值和右值也有所不同。如果表达式的求值结果是左值，decltype 作用于该表达式（不是变量）得到一个引用类型。举个例子，假定 p 的类型是 int* ，因为解引用运算符生成左值，所以 decltype(*p) 的结果是 int&amp;amp; 。另一方面，因为取地址运算符生成右值，所以 decltype(&amp;amp;p) 的结果是 int** ，也就是说，结果是一个">
-<meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
+<meta property="og:updated_time" content="2017-06-30T18:10:12.751Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="decltype 的规则">
 <meta name="twitter:description" content="使用关键字 decltype 的时候，左值和右值也有所不同。如果表达式的求值结果是左值，decltype 作用于该表达式（不是变量）得到一个引用类型。举个例子，假定 p 的类型是 int* ，因为解引用运算符生成左值，所以 decltype(*p) 的结果是 int&amp;amp; 。另一方面，因为取地址运算符生成右值，所以 decltype(&amp;amp;p) 的结果是 int** ，也就是说，结果是一个">
@@ -434,7 +434,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">65</span>
+              <span class="site-state-item-count">64</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -448,7 +448,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-count">8</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>

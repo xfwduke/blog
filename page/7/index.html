@@ -228,8 +228,8 @@
             
               
                 
-                <a class="post-title-link" href="/2014/11/21/XCODE Follow Child/" itemprop="url">
-                  Xcode Follow Child
+                <a class="post-title-link" href="/2014/11/21/关于 IO 重定向/" itemprop="url">
+                  关于 IO 重定向
                 </a>
               
             
@@ -239,7 +239,7 @@
         <div class="post-meta">
           <span class="post-time">
             发表于
-            <time itemprop="dateCreated" datetime="2014-11-21T21:41:09+08:00" content="2014-11-21">
+            <time itemprop="dateCreated" datetime="2014-11-21T21:41:05+08:00" content="2014-11-21">
               2014-11-21
             </time>
           </span>
@@ -262,6 +262,8 @@
           
 
           
+            
+          
 
           
 
@@ -277,10 +279,9 @@
 
       
         
-          <p>GDB 调试多进程代码可以用 <code>set follow-fork-mode child</code> 跟踪到子进程中去. 但是在 LLDB 中还没有对应的方法. 系统更新到 OS X 10.10 后 GDB 没有发布对应的版本, 造成现在调试多进程代码非常的麻烦</p>
-<p>在 Stack Overflow 上找到一篇不错的文章, 自己试了下. 发现其实可以比文章中的方法更加简单</p>
+          <p><em>shell</em> 的 <em>IO</em> 重定向对应到 <em>c</em> 代码都可以看做是调用 <em>dup2</em></p>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2014/11/21/XCODE Follow Child/#more" rel="contents">
+            <a class="btn" href="/2014/11/21/关于 IO 重定向/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -375,102 +376,6 @@
           <p>在写多进程代码时, 有时候为了方便查看父/子进程的执行序列, 会随手在代码中添加 sleep 调用. 但是这样的调用, 在 Xcode 中以 debug 方式执行程序时, 执行序列很可能是不正确的</p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2014/11/21/Xcode debug sleep in parent/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2014/11/21/关于 IO 重定向/" itemprop="url">
-                  关于 IO 重定向
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2014-11-21T21:41:05+08:00" content="2014-11-21">
-              2014-11-21
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/C-C/" itemprop="url" rel="index">
-                    <span itemprop="name">C/C++</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p><em>shell</em> 的 <em>IO</em> 重定向对应到 <em>c</em> 代码都可以看做是调用 <em>dup2</em></p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2014/11/21/关于 IO 重定向/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -741,7 +646,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">65</span>
+              <span class="site-state-item-count">64</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -755,7 +660,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-count">8</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>

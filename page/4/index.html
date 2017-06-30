@@ -228,101 +228,6 @@
             
               
                 
-                <a class="post-title-link" href="/2015/06/04/moving-a-constant-into-a-register/" itemprop="url">
-                  Moving a constant into a register
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2015-06-04T22:08:31+08:00" content="2015-06-04">
-              2015-06-04
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/汇编/" itemprop="url" rel="index">
-                    <span itemprop="name">汇编</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p><em>constant</em> 在 <em>AT&amp;T</em> 语法中叫做 立即数 ( <em>immediately number</em> )</p>
-<p>这个操作感觉其实没什么正经作用-_-</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/06/04/moving-a-constant-into-a-register/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2015/06/02/attzhong-de-jie-qu/" itemprop="url">
                   AT&T 中的截取
                 </a>
@@ -1184,6 +1089,117 @@
 
 
     
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2015/03/28/dfbiao-zhi/" itemprop="url">
+                  DF 标志
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-03-28T21:44:14+08:00" content="2015-03-28">
+              2015-03-28
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/汇编/" itemprop="url" rel="index">
+                    <span itemprop="name">汇编</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>在 <a href="/2015/03/27/trans-string/" title="字符串传送">字符串传送</a> 中, 使用 <em>movsb</em> 指令复制了一个长度为 <em>23</em> 的字符串. 在示例代码中可以看到 <em>esi</em> 和 <em>edi</em> 没有显示的自增操作, 却可以在循环中自动的每次加 <em>1</em>.</p>
+<p>每次执行 <em>movs</em> 指令时, 数据传送后 <em>esi</em> 和 <em>edi</em> 的值会自动改变, 为另一次传送做准备, 默认情况下</p>
+<ul>
+<li>执行 <em>movsb</em> 后 <em>esi</em> 和 <em>edi</em> 的值都增加 <em>1</em></li>
+<li>执行 <em>movsw</em> 后 <em>esi</em> 和 <em>edi</em> 的值都增加 <em>2</em></li>
+<li>执行 <em>movsl</em> 后 <em>esi</em> 和 <em>edi</em> 的值都增加 <em>4</em></li>
+</ul>
+<p>实际上 <em>esi</em> 和 <em>edi</em> 是可以向两个方向变动的, 即可以增加也可以减少, 而这一行为是受 <em>eflags</em> 的 <em>df</em> 标志影响</p>
+<ul>
+<li><em>df</em> 的值如果为 <em>0</em> 则 <em>esi</em> 和 <em>edi</em> 递增</li>
+<li><em>df</em> 的值如果为 <em>1</em> 则 <em>esi</em> 和 <em>edi</em> 递减</li>
+</ul>
+<p>有两个指令专门用于操作 <em>df</em> 标志的值</p>
+<ul>
+<li><em>cld</em> 将 <em>df</em> 标志置 <em>0</em></li>
+<li><em>std</em> 将 <em>df</em> 标志置 <em>1</em></li>
+</ul>
+<p>通常情况下 <em>df</em> 的默认值是 <em>0</em> , 而我们常规的思维也更习惯 <em>df</em> 为 <em>0</em> 时的逻辑. 但是为了避免意外情况, 建议总是显示的调用 <em>cld</em> 指令.</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/03/28/dfbiao-zhi/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
 
   </section>
 
@@ -1230,7 +1246,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">65</span>
+              <span class="site-state-item-count">64</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1244,7 +1260,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-count">8</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
