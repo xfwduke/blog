@@ -58,7 +58,7 @@
 <meta property="og:url" content="http://blog.xfwduke.com/2014/11/22/O_APPEND的一次犯二测试/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
 <meta property="og:description" content="在看 APUE 的时候, 顺手写了个程序试试 O_APPEND 在多进程时候的效果, 发现在 FreeBSD 和 Debian 上得到的文件不是 2000000 行 研究了半天还以为是 O_APPEND 不能保证原子性, 还专门跑到 StackOverFlow 上发了个问题. 从别人的回答里面才发现是 open 文件的时候多加了个 O_TRUNC 标志, 纯属犯二啊">
-<meta property="og:updated_time" content="2017-06-29T12:13:31.691Z">
+<meta property="og:updated_time" content="2017-07-01T13:53:27.885Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="O_APPEND 的一次犯二测试">
 <meta name="twitter:description" content="在看 APUE 的时候, 顺手写了个程序试试 O_APPEND 在多进程时候的效果, 发现在 FreeBSD 和 Debian 上得到的文件不是 2000000 行 研究了半天还以为是 O_APPEND 不能保证原子性, 还专门跑到 StackOverFlow 上发了个问题. 从别人的回答里面才发现是 open 文件的时候多加了个 O_TRUNC 标志, 纯属犯二啊">

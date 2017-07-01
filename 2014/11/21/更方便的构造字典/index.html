@@ -57,7 +57,7 @@
 <meta property="og:url" content="http://blog.xfwduke.com/2014/11/21/更方便的构造字典/index.html">
 <meta property="og:site_name" content="向日葵和小葵">
 <meta property="og:description" content="通常情况, Python的字典定义比较麻烦, key必须是字符串 1dict = &amp;#123;&apos;a&apos;:1, &apos;b&apos;:2&amp;#125; 有更方便的方法来获得一个字典, 不需要在key的两边打引号 只要多定义一个函数就行 1234def Dict(**dict):    return dict    dict = Dict(a=1, b=2) 然后… Python标准库里面已经这样做了 1a = dic">
-<meta property="og:updated_time" content="2017-06-29T12:13:31.695Z">
+<meta property="og:updated_time" content="2017-07-01T13:53:05.884Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="更方便的构造字典">
 <meta name="twitter:description" content="通常情况, Python的字典定义比较麻烦, key必须是字符串 1dict = &amp;#123;&apos;a&apos;:1, &apos;b&apos;:2&amp;#125; 有更方便的方法来获得一个字典, 不需要在key的两边打引号 只要多定义一个函数就行 1234def Dict(**dict):    return dict    dict = Dict(a=1, b=2) 然后… Python标准库里面已经这样做了 1a = dic">
@@ -275,7 +275,8 @@
 只要多定义一个函数就行</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">Dict</span><span class="params">(**dict)</span>:</span></div><div class="line">    <span class="keyword">return</span> dict</div><div class="line">    </div><div class="line">dict = Dict(a=<span class="number">1</span>, b=<span class="number">2</span>)</div></pre></td></tr></table></figure>
 <p>然后… Python标准库里面已经这样做了</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">a = dict(one=<span class="number">1</span>, two=<span class="number">2</span>, three=<span class="number">3</span>)</div></pre></td></tr></table></figure></span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">a = dict(one=<span class="number">1</span>, two=<span class="number">2</span>, three=<span class="number">3</span>)</div></pre></td></tr></table></figure>
+</span>
       
     </div>
 
